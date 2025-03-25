@@ -1,20 +1,22 @@
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-import '@mantine/core/styles.css';
+import { MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
+import Layout from "./components/layout";
 
-export const metadata = {
-  title: 'Bittensor dApp',
-  description: 'Stake, Swap, Buy, Subnet Manage',
-};
+//styles
+import "@mantine/core/styles.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
-      <body>
-        <MantineProvider defaultColorScheme="dark">
-          {children}
+      <body suppressHydrationWarning={true}>
+        <MantineProvider>
+          <ModalsProvider>
+            <Layout>{children}</Layout>
+          </ModalsProvider>
         </MantineProvider>
       </body>
     </html>
