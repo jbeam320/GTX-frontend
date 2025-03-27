@@ -1,9 +1,24 @@
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import { PrivateGuard } from "./guards";
 import Layout from "./components/layout";
 
 //styles
 import "@mantine/core/styles.css";
+
+// Create a client with default options
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 2, // 2 minutes
+    },
+  },
+});
 
 export default function RootLayout({
   children,
@@ -13,11 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <MantineProvider>
-          <ModalsProvider>
-            <Layout>{children}</Layout>
-          </ModalsProvider>
-        </MantineProvider>
+        <QueryClientProvider client={queryClient}>
+          <MantineProvider>
+            <ModalsProvider>
+              <PrivateGuard>
+                <Layout>{children}</Layout>
+              </PrivateGuard>
+            </ModalsProvider>
+          </MantineProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
