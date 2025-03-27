@@ -1,21 +1,36 @@
 "use client";
 
 //third party
-import { Button, Text, Flex, ActionIcon, Box, Container } from "@mantine/core";
+import {
+  Button,
+  Text,
+  Flex,
+  ActionIcon,
+  Box,
+  Container,
+  Loader,
+} from "@mantine/core";
 import { MoonStars, Settings } from "tabler-icons-react";
 
 //hooks
-import { useWalletStore, useConnectWallet } from "../../core";
+import { useWallet } from "../../core";
 
 //components
 import WalletConnectModal from "../modals/WalletConnectModal";
 
+//constants
+import { TAO, PLANCK_PER_TAO } from "../../utils/constants";
+
 const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 
 export default function Header() {
-  const { disconnect } = useConnectWallet();
-
-  const accountInfo = useWalletStore((state) => state.walletAddress);
+  const {
+    disconnectWallet,
+    walletAddress,
+    walletBalance,
+    stakedBalance,
+    loading,
+  } = useWallet();
 
   return (
     <Box bg="white" style={{ borderBottom: "1px solid #eee" }}>
@@ -50,18 +65,28 @@ export default function Header() {
 
           {/* RIGHT SECTION */}
           <Flex align="center" gap="xs" style={{ flexShrink: 0 }}>
-            {accountInfo ? (
+            {walletAddress ? (
               <Flex align="center" gap="xs">
                 <Text size="sm">
-                  {accountInfo.slice(0, 6)}...{accountInfo.slice(-4)}
+                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </Text>
-                <Text size="sm">Staked: 504.00t | Wallet: 1443.00t</Text>
+
+                {loading ? (
+                  <Loader color="blue" />
+                ) : (
+                  <Text size="sm">
+                    Staked: {stakedBalance.toString()}
+                    {TAO} | Wallet: {walletBalance.toString()}
+                    {TAO}
+                  </Text>
+                )}
+
                 <Button
                   size="xs"
                   variant="outline"
                   color="gray"
                   radius="xl"
-                  onClick={disconnect}
+                  onClick={disconnectWallet}
                 >
                   Disconnect
                 </Button>

@@ -13,7 +13,6 @@
     "@mantine/modals": "^7.17.2",
     "@polkadot/api": "^15.8.1",
     "@polkadot/extension-dapp": "^0.58.6",
-    "autoprefixer": "^10.4.13",
     "next": "15.2.3",
     "postcss": "^8.4.21",
     "react": "18.2.0",
