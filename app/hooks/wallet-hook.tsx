@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useWalletStore } from "../store";
 import { PLANCK_PER_TAO } from "../utils/constants";
-import { info } from "console";
-import { web3Enable } from "@polkadot/extension-dapp";
-import { web3FromAddress } from "@polkadot/extension-dapp";
+import { useQuery } from "@tanstack/react-query";
+import * as services from "../services";
 
 export const useWallet = () => {
   const { walletAddress, setWalletAddress } = useWalletStore((state) => state);
 
   const [stakedBalance, setStakedBalance] = useState<string>("0");
   const [walletBalance, setWalletBalance] = useState<string>("0");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [balanceLoading, setBalanceLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let api: any = null;
@@ -22,10 +21,10 @@ export const useWallet = () => {
       );
       const api = await ApiPromise.create({ provider });
 
-      setLoading(true);
+      setBalanceLoading(true);
       await fetchWalletBalance(walletAddress, api);
       await fetchStakedBalance(walletAddress, api);
-      setLoading(false);
+      setBalanceLoading(false);
     };
 
     if (walletAddress) {
@@ -70,7 +69,7 @@ export const useWallet = () => {
       setWalletAddress("");
       setWalletBalance("0");
       setStakedBalance("0");
-      setLoading(true);
+      setBalanceLoading(true);
     } catch (error) {
       console.error("Error disconnecting wallet:", error);
     }
@@ -190,11 +189,33 @@ export const useWallet = () => {
     return txHash;
   };
 
+  const {
+    data: subnets,
+    isLoading: subnetsLoading,
+    error: subnetsError,
+  } = useQuery({
+    queryKey: ["subnets"],
+    queryFn: services.getSubnets,
+  });
+
+  const {
+    data: taoPrice,
+    isLoading: taoPriceLoading,
+    error: taoPriceError,
+  } = useQuery({
+    queryKey: ["taoPrice"],
+    queryFn: services.getTaoPrice,
+  });
+
   return {
     walletAddress,
     walletBalance,
     stakedBalance,
-    loading,
+    subnets,
+    taoPrice,
+    balanceLoading,
+    subnetsLoading,
+    taoPriceLoading,
     connectWallet,
     disconnectWallet,
     stakeTx,

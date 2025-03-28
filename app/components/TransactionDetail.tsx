@@ -1,11 +1,11 @@
 import { Collapse } from "@mantine/core";
 import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
-import { useSubnets } from "../hooks";
+import { useWallet } from "../hooks";
 import { useState } from "react";
 import { taoPrice } from "../utils/data";
 
 export default function TransactionDetail({ amount }: { amount: string }) {
-  //   const { taoPrice } = useSubnets();
+  // const { taoPrice } = useWallet();
 
   const [expanded, setExpanded] = useState(false);
 

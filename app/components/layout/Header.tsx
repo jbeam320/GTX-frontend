@@ -32,7 +32,7 @@ export default function Header() {
     walletAddress,
     walletBalance,
     stakedBalance,
-    loading,
+    balanceLoading,
   } = useWallet();
 
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
@@ -82,7 +82,7 @@ export default function Header() {
                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </Text>
 
-                {loading ? (
+                {balanceLoading ? (
                   <Loader color="blue" />
                 ) : (
                   <Text size="sm">

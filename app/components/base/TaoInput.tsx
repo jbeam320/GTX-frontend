@@ -10,7 +10,7 @@ export function TaoInput({
   isStake: boolean;
   setValue: (value: string) => void;
 }) {
-  const { walletBalance, stakedBalance, loading } = useWallet();
+  const { walletBalance, stakedBalance, balanceLoading } = useWallet();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +66,7 @@ export function TaoInput({
 
       <div className="text-xs mt-2 text-amber-700 tracking-widest font-mono">
         {isStake ? "WALLET BALANCE" : "STAKED BALANCE"}:
-        {loading ? (
+        {balanceLoading ? (
           <span className="ml-1 animate-pulse">Loading...</span>
         ) : (
           <span className="ml-1">
