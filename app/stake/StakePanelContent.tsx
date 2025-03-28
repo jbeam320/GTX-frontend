@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import { motion, AnimatePresence } from "framer-motion";
 import { IconCheck } from "@tabler/icons-react";
 import Confetti from "react-confetti";
-import TaoInput from "../components/base/TaoInput";
+import { TaoInput } from "../components/base";
 import { useWallet } from "../core/wallet";
 import TransactionDetail from "../components/TransactionDetail";
 

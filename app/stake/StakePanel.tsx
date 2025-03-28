@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Collapse } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
-import { IconCheck, IconChevronUp, IconChevronDown } from "@tabler/icons-react";
-import Confetti from "react-confetti";
-import TaoInput from "../components/base/TaoInput";
-import { useWallet } from "../core/wallet";
-import TransactionDetail from "../components/TransactionDetail";
 import StakePanelContent from "./StakePanelContent";
 
 export default function StakePanel({

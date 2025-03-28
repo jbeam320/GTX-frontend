@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWallet } from "../../core/wallet";
 
-export default function TaoInput({
+export function TaoInput({
   value,
   label = "WALLET BALANCE",
   setValue,
