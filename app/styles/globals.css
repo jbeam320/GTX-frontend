@@ -1,3 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+:root {
+    --green-stroke: #22c55e;
+    --red-stroke: #ef4444;
+    --green-fill: #22c55e20;
+    --red-fill: #ef444420;
+}   
