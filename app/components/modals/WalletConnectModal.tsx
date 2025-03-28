@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button, Select, Text } from "@mantine/core";
 import { useModals } from "@mantine/modals";
-import { useWallet } from "../../core";
+import { useWallet } from "../../hooks";
 
 export default function WalletConnectModal() {
   const { connectWallet } = useWallet();

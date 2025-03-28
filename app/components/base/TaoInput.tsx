@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useWallet } from "../../core/wallet";
+import { useWallet } from "../../hooks";
 
 export function TaoInput({
   value,

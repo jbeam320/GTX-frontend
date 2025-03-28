@@ -14,7 +14,7 @@ import {
 import { MoonStars, Settings } from "tabler-icons-react";
 
 //hooks
-import { useWallet } from "../../core";
+import { useWallet } from "../../hooks";
 
 //components
 import WalletConnectModal from "../modals/WalletConnectModal";
@@ -57,19 +57,20 @@ export default function Header() {
             </Text>
 
             <Flex gap="xs">
-              {walletAddress && tabs.map((tab, i) => (
-                <Button
-                  key={tab}
-                  variant={isActive(tab) ? "filled" : "light"}
-                  color={isActive(tab) ? "dark" : "gray"}
-                  radius="xl"
-                  size="xs"
-                  px="md"
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab}
-                </Button>
-              ))}
+              {walletAddress &&
+                tabs.map((tab, i) => (
+                  <Button
+                    key={tab}
+                    variant={isActive(tab) ? "filled" : "light"}
+                    color={isActive(tab) ? "dark" : "gray"}
+                    radius="xl"
+                    size="xs"
+                    px="md"
+                    onClick={() => handleTabClick(tab)}
+                  >
+                    {tab}
+                  </Button>
+                ))}
             </Flex>
           </Flex>
 

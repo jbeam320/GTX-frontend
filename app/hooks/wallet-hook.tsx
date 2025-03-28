@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { useWalletStore } from "./wallet.store";
-import { PLANCK_PER_TAO } from "../../utils/constants";
+import { useWalletStore } from "../store";
+import { PLANCK_PER_TAO } from "../utils/constants";
 import { info } from "console";
 import { web3Enable } from "@polkadot/extension-dapp";
 import { web3FromAddress } from "@polkadot/extension-dapp";

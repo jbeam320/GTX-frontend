@@ -5,7 +5,7 @@ import { Button } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import Confetti from "react-confetti";
 import { TaoInput } from "../components/base";
-import { useWallet } from "../core/wallet";
+import { useWallet } from "../hooks";
 import TransactionDetail from "../components/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
 
