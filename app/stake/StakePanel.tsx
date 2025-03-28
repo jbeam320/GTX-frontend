@@ -49,8 +49,7 @@ export default function StakePanel({
           exit={{ opacity: 0, x: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {mode === "stake" && <StakePanelContent label="WALLET BALANCE" />}
-          {mode === "unstake" && <StakePanelContent label="STAKED BALANCE" />}
+          <StakePanelContent isStake={mode === "stake"} />
         </motion.div>
       </AnimatePresence>
 

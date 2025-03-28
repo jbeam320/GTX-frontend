@@ -3,14 +3,14 @@ import { useWallet } from "../../core/wallet";
 
 export function TaoInput({
   value,
-  label = "WALLET BALANCE",
+  isStake = true,
   setValue,
 }: {
   value: string;
-  label: string;
+  isStake: boolean;
   setValue: (value: string) => void;
 }) {
-  const { walletBalance, loading } = useWallet();
+  const { walletBalance, stakedBalance, loading } = useWallet();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -62,11 +62,13 @@ export function TaoInput({
       )}
 
       <div className="text-xs mt-2 text-amber-700 tracking-widest font-mono">
-        {label}:{" "}
+        {isStake ? "WALLET BALANCE" : "STAKED BALANCE"}:
         {loading ? (
           <span className="ml-1 animate-pulse">Loading...</span>
         ) : (
-          <span className="ml-1">{walletBalance}</span>
+          <span className="ml-1">
+            {isStake ? walletBalance : stakedBalance}
+          </span>
         )}
       </div>
     </div>

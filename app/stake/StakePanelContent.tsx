@@ -7,27 +7,35 @@ import Confetti from "react-confetti";
 import { TaoInput } from "../components/base";
 import { useWallet } from "../core/wallet";
 import TransactionDetail from "../components/TransactionDetail";
+import { PLANCK_PER_TAO } from "../utils/constants";
 
-export default function StakePanelContent({ label }: { label: string }) {
-  const { walletBalance } = useWallet();
+export default function StakePanelContent({ isStake }: { isStake: boolean }) {
+  const { walletBalance, stakeTx } = useWallet();
 
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!amount || isNaN(+amount)) return;
     if (+amount > +walletBalance) {
       return;
     }
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 5000);
+
+    try {
+      const validator = "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT";
+      await stakeTx(validator, +amount * PLANCK_PER_TAO);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
       {success && <Confetti numberOfPieces={250} recycle={false} />}
 
-      <TaoInput value={amount} setValue={setAmount} label={label} />
+      <TaoInput value={amount} setValue={setAmount} isStake={isStake} />
 
       <TransactionDetail amount={amount} />
 

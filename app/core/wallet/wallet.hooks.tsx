@@ -3,6 +3,8 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useWalletStore } from "./wallet.store";
 import { PLANCK_PER_TAO } from "../../utils/constants";
 import { info } from "console";
+import { web3Enable } from "@polkadot/extension-dapp";
+import { web3FromAddress } from "@polkadot/extension-dapp";
 
 export const useWallet = () => {
   const { walletAddress, setWalletAddress } = useWalletStore((state) => state);
@@ -105,8 +107,16 @@ export const useWallet = () => {
     }
   };
 
-  const stakeTx = async (amount: number, validator: string) => {
-    if (!walletAddress) return null;
+  const stakeTx = async (validator: string, amount: number) => {
+    if (!walletAddress) throw new Error("wallet address not found");
+
+    const { web3Enable, web3FromAddress } = await import(
+      "@polkadot/extension-dapp"
+    );
+    await web3Enable("my-dapp");
+    const account = await web3FromAddress(walletAddress);
+
+    if (!account) throw new Error("Account not found");
 
     const provider = new WsProvider(
       process.env.NEXT_PUBLIC_BITTENSOR_NODE_ENDPOINT
@@ -114,8 +124,27 @@ export const useWallet = () => {
     const api = await ApiPromise.create({ provider });
     await api.isReady;
 
-    const stakeTx = api.tx.subtensorModule.addStake(validator, amount);
-    const txHash = await stakeTx.signAndSend(walletAddress);
+    const stakeTx = api.tx.subtensorModule.addStake(validator, 0, amount);
+
+    const txHash = await stakeTx.signAndSend(
+      walletAddress,
+      {
+        signer: account.signer,
+        withSignedTransaction: !0,
+      },
+      async (result) => {
+        const { dispatchError, isInBlock, isFinalized } = result;
+        if (!isFinalized) return;
+
+        if (dispatchError) {
+          console.error("Transaction failed:", dispatchError.toString());
+          throw dispatchError;
+        } else {
+          console.log("Block:", isInBlock);
+        }
+      }
+    );
+
     return txHash;
   };
 
