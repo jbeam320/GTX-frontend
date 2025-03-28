@@ -105,6 +105,20 @@ export const useWallet = () => {
     }
   };
 
+  const stakeTx = async (amount: number, validator: string) => {
+    if (!walletAddress) return null;
+
+    const provider = new WsProvider(
+      process.env.NEXT_PUBLIC_BITTENSOR_NODE_ENDPOINT
+    );
+    const api = await ApiPromise.create({ provider });
+    await api.isReady;
+
+    const stakeTx = api.tx.subtensorModule.addStake(validator, amount);
+    const txHash = await stakeTx.signAndSend(walletAddress);
+    return txHash;
+  };
+
   return {
     walletAddress,
     walletBalance,
@@ -112,5 +126,6 @@ export const useWallet = () => {
     loading,
     connectWallet,
     disconnectWallet,
+    stakeTx,
   };
 };
