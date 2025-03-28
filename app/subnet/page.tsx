@@ -99,7 +99,7 @@ export default function SubnetPage() {
                 </Table.Td>
               </Table.Tr>
             ) : (
-              filtered.map((s, i) => (
+              filtered?.map((s, i) => (
                 <Table.Tr key={s.netuid}>
                   <Table.Td>{i}</Table.Td>
                   <Table.Td>
