@@ -7,7 +7,9 @@ import { PrivateGuard } from "./guards";
 import Layout from "./components/layout";
 
 //styles
-import "@mantine/core/styles.css";
+import './styles/globals.css'
+import '@mantine/core/styles.css';  // Make sure this comes after globals.css
+import '@mantine/charts/styles.css';
 
 // Create a client with default options
 const queryClient = new QueryClient({
@@ -15,7 +17,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 2, // 2 minutes
+      staleTime: 1000 * 12, // 12 seconds
     },
   },
 });

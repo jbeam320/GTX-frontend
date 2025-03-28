@@ -1,12 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import * as services from "../services";
 
-export const useSubnets = () => {
-    const { data, isLoading } = useQuery({
-        queryKey: ["subnets"],
-        queryFn: services.getSubnets,
-        initialData: [], // or null, depending on your needs
-    });
+export const useSubnets =  () => {
+  const {
+    data,
+    isLoading: subnetsLoading,
+    error: subnetsError,
+  } =  useQuery({
+    queryKey: ["subnets"],
+    queryFn: services.getSubnets,
+  });
 
-    return { subnets: data || [], isLoading };
+  const {
+    data: taoPrice,
+    isLoading: taoPriceLoading,
+    error: taoPriceError,
+  } =  useQuery({
+    queryKey: ["taoPrice"],
+    queryFn: services.getTaoPrice,
+  });
+
+  return {
+    subnets: data,
+    taoPrice,
+    isLoading: subnetsLoading || taoPriceLoading,
+    error: subnetsError || taoPriceError,
+  };
 };

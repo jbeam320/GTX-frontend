@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  baseURL: `${process.env.NEXT_PUBLIC_SERVER_URL}`,
 });
 
 export const get = async (url: string, params: any = {}) => {
@@ -41,7 +41,7 @@ export const del = async (url: string, data: any) => {
 };
 
 const errorHandler = (error: any) => {
-  console.log(error);
+  throw error;
   // TODO: handle error
 };
 
