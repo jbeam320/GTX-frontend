@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useWalletStore } from "./wallet.store";
 import { PLANCK_PER_TAO } from "../../utils/constants";
+import { info } from "console";
 
 export const useWallet = () => {
   const { walletAddress, setWalletAddress } = useWalletStore((state) => state);
 
-  const [stakedBalance, setStakedBalance] = useState<Number>(0);
-  const [walletBalance, setWalletBalance] = useState<Number>(0);
+  const [stakedBalance, setStakedBalance] = useState<string>("0");
+  const [walletBalance, setWalletBalance] = useState<string>("0");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -65,8 +66,8 @@ export const useWallet = () => {
     try {
       // Clear state variables related to wallet info
       setWalletAddress("");
-      setWalletBalance(0);
-      setStakedBalance(0);
+      setWalletBalance("0");
+      setStakedBalance("0");
       setLoading(true);
     } catch (error) {
       console.error("Error disconnecting wallet:", error);
@@ -81,7 +82,7 @@ export const useWallet = () => {
         .toString()
         .replace(/,/g, "");
 
-      setWalletBalance(Number(freeBalance) / PLANCK_PER_TAO);
+      setWalletBalance((freeBalance / PLANCK_PER_TAO).toFixed(2));
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
@@ -91,11 +92,14 @@ export const useWallet = () => {
     try {
       const infos: any[] =
         await api.call.stakeInfoRuntimeApi.getStakeInfoForColdkey(userAddress);
-      const stakedBalance = infos?.reduce((total: Number, curr: any) => {
+      const stakes =
+        infos?.filter((info) => info.netuid.toString() === "0") ?? [];
+
+      const stakedBalance = stakes?.reduce((total: number, curr: any) => {
         return total + curr.stake.toString().replace(/,/g, "");
       }, 0);
 
-      setStakedBalance(stakedBalance / PLANCK_PER_TAO);
+      setStakedBalance((stakedBalance / PLANCK_PER_TAO).toFixed(2));
     } catch (error) {
       console.error("Error fetching staked balance:", error);
     }

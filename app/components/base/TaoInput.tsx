@@ -3,12 +3,14 @@ import { useWallet } from "../../core/wallet";
 
 export default function TaoInput({
   value,
+  label = "WALLET BALANCE",
   setValue,
 }: {
   value: string;
+  label: string;
   setValue: (value: string) => void;
 }) {
-  const { walletBalance } = useWallet();
+  const { walletBalance, loading } = useWallet();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +26,7 @@ export default function TaoInput({
     if (value === "" || !isNaN(+value)) {
       setValue(value);
 
-      if (value !== "" && +value > walletBalance.valueOf()) {
+      if (value !== "" && +value > +walletBalance) {
         setError("Insufficient balance");
       }
     }
@@ -60,7 +62,12 @@ export default function TaoInput({
       )}
 
       <div className="text-xs mt-2 text-amber-700 tracking-widest font-mono">
-        WALLET BALANCE: <span className="ml-1">{walletBalance.toFixed(2)}</span>
+        {label}:{" "}
+        {loading ? (
+          <span className="ml-1 animate-pulse">Loading...</span>
+        ) : (
+          <span className="ml-1">{walletBalance}</span>
+        )}
       </div>
     </div>
   );
