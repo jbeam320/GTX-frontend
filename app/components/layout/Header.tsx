@@ -1,6 +1,7 @@
 "use client";
 
 //third party
+import { usePathname, useRouter } from "next/navigation";
 import {
   Button,
   Text,
@@ -19,11 +20,13 @@ import { useWallet } from "../../core";
 import WalletConnectModal from "../modals/WalletConnectModal";
 
 //constants
-import { TAO, PLANCK_PER_TAO } from "../../utils/constants";
+import { TAO } from "../../utils/constants";
 
 const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 
 export default function Header() {
+  const pathname = usePathname();
+  const router = useRouter();
   const {
     disconnectWallet,
     walletAddress,
@@ -31,6 +34,12 @@ export default function Header() {
     stakedBalance,
     loading,
   } = useWallet();
+
+  const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
+
+  const handleTabClick = (tab: string) => {
+    router.push(`/${tab.toLowerCase()}`);
+  };
 
   return (
     <Box bg="white" style={{ borderBottom: "1px solid #eee" }}>
@@ -48,14 +57,15 @@ export default function Header() {
             </Text>
 
             <Flex gap="xs">
-              {tabs.map((tab, i) => (
+              {walletAddress && tabs.map((tab, i) => (
                 <Button
                   key={tab}
-                  variant={i === 0 ? "filled" : "light"}
-                  color={i === 0 ? "dark" : "gray"}
+                  variant={isActive(tab) ? "filled" : "light"}
+                  color={isActive(tab) ? "dark" : "gray"}
                   radius="xl"
                   size="xs"
                   px="md"
+                  onClick={() => handleTabClick(tab)}
                 >
                   {tab}
                 </Button>
