@@ -7,6 +7,7 @@ import { IconCheck, IconChevronUp, IconChevronDown } from "@tabler/icons-react";
 import Confetti from "react-confetti";
 import TaoInput from "../components/base/TaoInput";
 import { useWallet } from "../core/wallet";
+import TransactionDetail from "../components/TransactionDetail";
 export default function StakePanel({
   onToggle,
   showValidators,
@@ -18,7 +19,6 @@ export default function StakePanel({
 
   const [amount, setAmount] = useState("");
   const [mode, setMode] = useState<"stake" | "unstake">("stake");
-  const [expanded, setExpanded] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const handleConfirm = () => {
@@ -57,41 +57,7 @@ export default function StakePanel({
       </div>
 
       <TaoInput value={amount} setValue={setAmount} />
-
-      {/* Transaction Details */}
-      <div className="text-center text-sm mt-6 font-mono">
-        <div className="mb-2 text-gray-600">TRANSACTION DETAILS</div>
-        <div className="flex justify-center items-center gap-2">
-          <div>{amount || 0} TAO ($400.33 USD)</div>
-          <div className="text-xs bg-yellow-100 text-black px-2 rounded">
-            +45.04%
-          </div>
-          <button onClick={() => setExpanded(!expanded)}>
-            {expanded ? (
-              <IconChevronUp size={14} />
-            ) : (
-              <IconChevronDown size={14} />
-            )}
-          </button>
-        </div>
-
-        <Collapse in={expanded}>
-          <div className="mt-4 text-left text-xs">
-            <div className="flex justify-between">
-              <span>FEE</span>
-              <span className="italic text-gray-600">0.00005</span>
-            </div>
-            <div className="flex justify-between">
-              <span>PRICE IMPACT</span>
-              <span>0.08%</span>
-            </div>
-            <div className="flex justify-between">
-              <span>SLIPPAGE TOLERANCE</span>
-              <span>0.99%</span>
-            </div>
-          </div>
-        </Collapse>
-      </div>
+      <TransactionDetail amount={amount} />
 
       {/* Confirm button */}
       <Button
