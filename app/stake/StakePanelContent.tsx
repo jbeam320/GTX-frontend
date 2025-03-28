@@ -10,20 +10,26 @@ import TransactionDetail from "../components/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
 
 export default function StakePanelContent({ isStake }: { isStake: boolean }) {
-  const { walletBalance, stakeTx } = useWallet();
+  const { walletBalance, stakedBalance, stakeTx, unstakeTx } = useWallet();
 
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
 
   const handleConfirm = async () => {
     if (!amount || isNaN(+amount)) return;
-    if (+amount > +walletBalance) {
+    if (+amount > (isStake ? +walletBalance : +stakedBalance)) {
       return;
     }
 
     try {
       const validator = "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT";
-      await stakeTx(validator, +amount * PLANCK_PER_TAO);
+
+      if (isStake) {
+        await stakeTx(validator, +amount * PLANCK_PER_TAO);
+      } else {
+        await unstakeTx(validator, +amount * PLANCK_PER_TAO);
+      }
+
       setSuccess(true);
       setTimeout(() => setSuccess(false), 5000);
     } catch (error) {

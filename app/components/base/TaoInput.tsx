@@ -26,7 +26,10 @@ export function TaoInput({
     if (value === "" || !isNaN(+value)) {
       setValue(value);
 
-      if (value !== "" && +value > +walletBalance) {
+      if (
+        value !== "" &&
+        +value > (isStake ? +walletBalance : +stakedBalance)
+      ) {
         setError("Insufficient balance");
       }
     }
