@@ -1,31 +1,9 @@
 "use client";
 
 import { Table, Avatar, Text, Group, Card } from "@mantine/core";
-
-interface ValidatorData {
-  name: string;
-  infraRating: string;
-  apy: string;
-  stake: string;
-  yield: string;
-  balance: string;
-  fee: string;
-}
-
+import { validators } from "../utils/data";
+import { formatPercent, formatCompactSimple } from "../utils/format";
 export default function ValidatorTable() {
-  const validators: ValidatorData[] = [
-    {
-      name: "RoundTable21",
-      infraRating: "100%",
-      apy: "99.99%",
-      stake: "233,674τ",
-      yield: "1330.82τ",
-      balance: "7483.82τ",
-      fee: "100%",
-    },
-    // Add more validator data as needed
-  ];
-
   return (
     <Card shadow="sm" p="md" radius="md" w="100%">
       <Table striped highlightOnHover>
@@ -51,27 +29,27 @@ export default function ValidatorTable() {
                   <Text size="sm">{validator.name}</Text>
                 </Group>
               </Table.Td>
-              <Table.Td>{validator.infraRating}</Table.Td>
-              <Table.Td>{validator.apy}</Table.Td>
+              <Table.Td>{formatPercent(validator.infra_rating)}</Table.Td>
+              <Table.Td>{formatPercent(validator.tao_7d_apy)}</Table.Td>
               <Table.Td>
-                <Text>{validator.stake}</Text>
+                <Text>{formatCompactSimple(validator.stake)}</Text>
                 <Text size="xs" c="dimmed">
                   +80,396τ
                 </Text>
               </Table.Td>
               <Table.Td>
-                <Text>{validator.yield}</Text>
+                <Text>{formatCompactSimple(validator.yield_7d)}</Text>
                 <Text size="xs" c="dimmed">
                   $474,371
                 </Text>
               </Table.Td>
               <Table.Td>
-                <Text>{validator.balance}</Text>
+                {/* <Text>{validator.balance}</Text> */}
                 <Text size="xs" c="dimmed">
                   $530,000
                 </Text>
               </Table.Td>
-              <Table.Td>{validator.fee}</Table.Td>
+              <Table.Td>{formatPercent(validator.fee)}</Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>

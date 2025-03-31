@@ -1,3 +1,5 @@
+export const validators = [{"tao_7d_apy":0.4818973873912223,"id":141,"yield_7d":3158.76898962298,"hotkey":"5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v","name":"RoundTable21","infra_rating":0.01,"stake":385989.588087792,"fee":0.0899977111467155},{"tao_7d_apy":0.25711048325778696,"id":1,"yield_7d":3543.5897170684457,"hotkey":"5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3","name":"OpenTensor","infra_rating":0.01,"stake":675719.647024614,"fee":0.179995422293431}]
+
 export const taoPrice = {
     price: 269.122301305426,
     market_cap: 2291054836.5957265,
@@ -5,32 +7,6 @@ export const taoPrice = {
     percent_24h_change: -0.00614152,
     last_updated: "2025-03-26T00:13:00.000Z",
   };
-
-  export const validators = [
-    {
-      name: "RoundTable21",
-      rating: 100,
-      apy: 99.99,
-      stake: "233,674τ",
-      stakeChange: "+80,396τ",
-      yield: "1330.82τ",
-      yieldUsd: "$474,371",
-      balance: "7483.82τ",
-      fee: "100%",
-    },
-    {
-      name: "Subnet Name",
-      rating: 100,
-      apy: 99.99,
-      stake: "233,674τ",
-      stakeChange: "+80,396τ",
-      yield: "1330.82τ",
-      yieldUsd: "$474,371",
-      balance: "7483.82τ",
-      fee: "100%",
-    },
-    // Add more...
-  ];
 
 export const loading_subnets = false;
 export const loading_taoPrice = false;
