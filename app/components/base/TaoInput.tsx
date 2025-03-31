@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useWallet } from "../../hooks";
+import { Loader } from "@mantine/core";
 
 export function TaoInput({
   value,
   isStake = true,
   setValue,
+  balance,
 }: {
   value: string;
   isStake: boolean;
   setValue: (value: string) => void;
+  balance: string;
 }) {
-  const { walletBalance, stakedBalance, balanceLoading } = useWallet();
-
   const [error, setError] = useState<string | null>(null);
+  const { loading_validatorStake } = useWallet();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -26,10 +28,7 @@ export function TaoInput({
     if (value === "" || !isNaN(+value)) {
       setValue(value);
 
-      if (
-        value !== "" &&
-        +value > (isStake ? +walletBalance : +stakedBalance)
-      ) {
+      if (value !== "" && +value > +balance) {
         setError("Insufficient balance");
       }
     }
@@ -66,13 +65,9 @@ export function TaoInput({
 
       <div className="text-xs mt-2 text-amber-700 tracking-widest font-mono">
         {isStake ? "WALLET BALANCE" : "STAKED BALANCE"}:
-        {balanceLoading ? (
-          <span className="ml-1 animate-pulse">Loading...</span>
-        ) : (
-          <span className="ml-1">
-            {isStake ? walletBalance : stakedBalance}
-          </span>
-        )}
+        <span className="ml-1">
+          {loading_validatorStake ? "loading..." : balance}
+        </span>
       </div>
     </div>
   );

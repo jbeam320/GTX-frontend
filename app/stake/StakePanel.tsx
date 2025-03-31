@@ -12,6 +12,7 @@ export default function StakePanel({
   showValidators: boolean;
 }) {
   const [mode, setMode] = useState<"stake" | "unstake">("stake");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   return (
     <div className="relative bg-white rounded-xl border shadow-lg px-6 pt-12 pb-8 w-full max-w-md">
@@ -20,21 +21,23 @@ export default function StakePanel({
         <div className="bg-gray-100 rounded-full overflow-hidden flex shadow">
           <button
             onClick={() => setMode("stake")}
+            disabled={isProcessing}
             className={`px-10 py-2.5 rounded-full transition-all duration-300 text-sm font-medium ${
               mode === "stake"
                 ? "bg-black text-white"
                 : "text-gray-500 hover:bg-gray-50"
-            }`}
+            } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             STAKE
           </button>
           <button
             onClick={() => setMode("unstake")}
+            disabled={isProcessing}
             className={`px-10 py-2.5 rounded-full transition-all duration-300 text-sm font-medium ${
               mode === "unstake"
                 ? "bg-black text-white"
                 : "text-gray-500 hover:bg-gray-50"
-            }`}
+            } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             UNSTAKE
           </button>
@@ -49,7 +52,11 @@ export default function StakePanel({
           exit={{ opacity: 0, x: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <StakePanelContent isStake={mode === "stake"} />
+          <StakePanelContent
+            isStake={mode === "stake"}
+            isProcessing={isProcessing}
+            setIsProcessing={setIsProcessing}
+          />
         </motion.div>
       </AnimatePresence>
 

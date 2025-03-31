@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import Confetti from "react-confetti";
@@ -8,32 +8,44 @@ import { TaoInput } from "../components/base";
 import { useWallet } from "../hooks";
 import TransactionDetail from "../components/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
+import { useWalletStore } from "../store";
 
-export default function StakePanelContent({ isStake }: { isStake: boolean }) {
-  const { walletBalance, stakedBalance, stakeTx, unstakeTx } = useWallet();
-
+export default function StakePanelContent({
+  isStake,
+  isProcessing,
+  setIsProcessing,
+}: {
+  isStake: boolean;
+  isProcessing: boolean;
+  setIsProcessing: (value: boolean) => void;
+}) {
+  const { validatorStake, setValidatorStake, stakeTx, unstakeTx } = useWallet();
+  const { walletBalance, selectedValidator } = useWalletStore();
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
 
   const handleConfirm = async () => {
     if (!amount || isNaN(+amount)) return;
-    if (+amount > (isStake ? +walletBalance : +stakedBalance)) {
+    if (+amount > (isStake ? +walletBalance : +validatorStake)) {
       return;
     }
 
+    setIsProcessing(true);
     try {
-      const validator = "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT";
-
       if (isStake) {
-        await stakeTx(validator, +amount * PLANCK_PER_TAO);
+        await stakeTx(selectedValidator, +amount * PLANCK_PER_TAO);
       } else {
-        await unstakeTx(validator, +amount * PLANCK_PER_TAO);
+        await unstakeTx(selectedValidator, +amount * PLANCK_PER_TAO);
       }
-
+      setValidatorStake((prev) => (+prev - +amount).toString());
       setSuccess(true);
+      setAmount(""); // Clear amount after success
+
       setTimeout(() => setSuccess(false), 5000);
     } catch (error) {
-      console.error(error);
+      console.error("Transaction failed:", error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -41,13 +53,22 @@ export default function StakePanelContent({ isStake }: { isStake: boolean }) {
     <>
       {success && <Confetti numberOfPieces={250} recycle={false} />}
 
-      <TaoInput value={amount} setValue={setAmount} isStake={isStake} />
+      <TaoInput
+        value={amount}
+        setValue={setAmount}
+        isStake={isStake}
+        balance={isStake ? walletBalance : validatorStake}
+      />
 
       <TransactionDetail amount={amount} />
 
       <Button
         disabled={
-          !amount || isNaN(+amount) || +amount <= 0 || +amount > +walletBalance
+          isProcessing ||
+          !amount ||
+          isNaN(+amount) ||
+          +amount <= 0 ||
+          +amount > (isStake ? +walletBalance : +validatorStake)
         }
         onClick={handleConfirm}
         fullWidth
@@ -57,9 +78,12 @@ export default function StakePanelContent({ isStake }: { isStake: boolean }) {
         variant={success ? "light" : "filled"}
         color={success ? "gray" : "dark"}
         leftSection={success ? <IconCheck size={16} /> : null}
+        loading={isProcessing}
       >
         {success
           ? "SUCCESS"
+          : isProcessing
+          ? "PROCESSING..."
           : !amount || +amount <= 0
           ? "ENTER AMOUNT"
           : "CONFIRM"}

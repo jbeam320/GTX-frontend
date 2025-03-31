@@ -11,3 +11,15 @@ export interface Subnet {
     liquidity: number;
     last_7days_trends: number[];
   }
+
+  export interface Validator {
+    name: string;
+    rating: number;
+    apy: number;
+    stake: string;
+    stakeChange: string;
+    yield: string;
+    yieldUsd: string;
+    balance: string;
+    fee: string;
+  }

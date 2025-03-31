@@ -21,19 +21,15 @@ import WalletConnectModal from "../modals/WalletConnectModal";
 
 //constants
 import { TAO } from "../../utils/constants";
+import { useWalletStore } from "../../store";
 
 const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const {
-    disconnectWallet,
-    walletAddress,
-    walletBalance,
-    stakedBalance,
-    balanceLoading,
-  } = useWallet();
+  const { disconnectWallet, walletAddress, loading_balances } = useWallet();
+  const { walletBalance, stakedBalance } = useWalletStore();
 
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
 
@@ -82,7 +78,7 @@ export default function Header() {
                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </Text>
 
-                {balanceLoading ? (
+                {loading_balances ? (
                   <Loader color="blue" />
                 ) : (
                   <Text size="sm">
