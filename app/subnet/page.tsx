@@ -14,15 +14,15 @@ import {
 } from "@mantine/core";
 import { formatCompact, formatPercent, formatPrice } from "../utils/format";
 import { useWallet } from "../hooks";
-// import {
-//   subnets,
-//   taoPrice,
-//   subnetsLoading,
-//   taoPriceLoading,
-// } from "../utils/data";
+import {
+  subnets,
+  taoPrice,
+  loading_subnets,
+  loading_taoPrice,
+} from "../utils/data";
 
 export default function SubnetPage() {
-  const { subnets, taoPrice, loading_subnets, loading_taoPrice } = useWallet();
+  // const { subnets, taoPrice, loading_subnets, loading_taoPrice } = useWallet();
 
   const [filtered, setFiltered] = useState<Subnet[]>([]);
   const [search, setSearch] = useState("");
