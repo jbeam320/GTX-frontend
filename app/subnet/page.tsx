@@ -13,7 +13,7 @@ import {
   Center,
 } from "@mantine/core";
 import { formatCompact, formatPercent, formatPrice } from "../utils/format";
-import { useWallet } from "../hooks";
+import { useSubnet } from "../hooks";
 import {
   subnets,
   taoPrice,
