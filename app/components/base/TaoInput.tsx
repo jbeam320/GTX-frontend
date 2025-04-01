@@ -26,7 +26,7 @@ export function TaoInput({
   label,
   subLabel,
   isSelectable = false,
-  balance,
+  balance = "0",
   error: externalError,
   size = "md",
 }: TaoInputProps) {
@@ -90,8 +90,7 @@ export function TaoInput({
           styles.container
         } flex justify-between items-center ${
           error || externalError ? "border-red-500" : ""
-        } ${isSelectable ? "cursor-pointer" : ""}`}
-        onClick={isSelectable ? onClick : undefined}
+        }`}
       >
         <input
           type="number"
@@ -101,19 +100,29 @@ export function TaoInput({
           min="0"
           step="any"
           className={`${styles.input} font-bold w-full bg-transparent outline-none`}
-          readOnly={isSelectable}
+          readOnly={!token}
         />
-        <button className="flex items-center gap-2" onClick={onClick}>
-          <div className={`${styles.icon} rounded-full bg-gray-400`} />
-          <div>
-            <div className={`${styles.tokenText} font-bold`}>
-              {token?.symbol || "SELECT"}
+        <button
+          className="flex items-center gap-2"
+          onClick={isSelectable ? onClick : undefined}
+        >
+          {token ? (
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-5 h-5 rounded-full ${
+                  token.symbol === "TAO" ? "bg-black" : "bg-gray-300"
+                }`}
+              />
+              <span className="font-medium">{token.symbol}</span>
+              {isSelectable && <span className="text-gray-400">▼</span>}
             </div>
-            {!isSelectable && (
-              <div className="text-xs text-gray-400 -mt-1">ROOT</div>
-            )}
-          </div>
-          {isSelectable && <span>▼</span>}
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-gray-200" />
+              <span className="text-gray-400">SELECT</span>
+              {isSelectable && <span className="text-gray-400">▼</span>}
+            </div>
+          )}
         </button>
       </div>
 
@@ -125,7 +134,7 @@ export function TaoInput({
 
       {balance && (
         <div className={`${styles.balance} mt-2 text-gray-500 font-mono`}>
-          {subLabel}: {balance}
+          {subLabel && `${subLabel}: ${balance}`}
         </div>
       )}
     </div>

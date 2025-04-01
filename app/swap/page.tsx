@@ -2,7 +2,8 @@ import SwapPanel from "../components/swap/SwapPanel";
 
 export default function Swap() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f9f9f9]">
+    <div className="w-full px-4 flex items-center justify-center mt-[-100px] min-h-screen">
+      {/* <div className="min-h-screen flex items-center justify-center  mt-[100px]"> */}
       <SwapPanel />
     </div>
   );

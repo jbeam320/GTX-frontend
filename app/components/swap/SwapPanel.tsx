@@ -57,7 +57,7 @@ const SwapPanel = () => {
   };
 
   return (
-    <div className="relative w-[360px] bg-white rounded-xl shadow-lg p-6">
+    <div className="relative w-[380px] bg-white rounded-xl shadow-lg p-6">
       <div className="space-y-4">
         {/* Swap Button (Overflowing at the top) */}
         <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center">
@@ -74,31 +74,45 @@ const SwapPanel = () => {
           isSelectable
           onClick={() => handleSubnetClick(true)}
           onChange={setAmount}
+          subLabel={fromToken?.symbol && "BALANCE"}
         />
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-between">
           <button
             onClick={handleSwapToggle}
-            className="p-3 rounded-full bg-gray-100 hover:bg-gray-200"
+            className="w-[120px] h-[48px] bg-gray-100 rounded-2xl relative flex items-center justify-between px-4"
           >
-            ↑↓
+            <div
+              className={`w-6 h-6 rounded-full ${
+                fromToken?.symbol === "TAO" ? "bg-black" : "bg-gray-300"
+              }`}
+            />
+            <div className="absolute left-1/2 -translate-x-1/2 text-gray-500 text-sm">
+              ⟷
+            </div>
+            <div
+              className={`w-6 h-6 rounded-full ${
+                toToken?.symbol === "TAO" ? "bg-black" : "bg-gray-300"
+              }`}
+            />
           </button>
-          <div className="flex gap-2 mt-2">
+
+          <div className="flex gap-2">
             <button
               onClick={() => handlePercentageClick(25)}
-              className="px-4 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-sm"
+              className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
             >
               25%
             </button>
             <button
               onClick={() => handlePercentageClick(50)}
-              className="px-4 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-sm"
+              className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
             >
               50%
             </button>
             <button
               onClick={() => handlePercentageClick(100)}
-              className="px-4 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-sm"
+              className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
             >
               MAX
             </button>
@@ -113,6 +127,7 @@ const SwapPanel = () => {
           isSelectable
           onClick={() => handleSubnetClick(false)}
           onChange={setAmount}
+          subLabel={toToken?.symbol && "BALANCE"}
         />
       </div>
 
