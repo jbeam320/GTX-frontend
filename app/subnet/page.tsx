@@ -13,11 +13,17 @@ import {
   Center,
 } from "@mantine/core";
 import { formatCompact, formatPercent, formatPrice } from "../utils/format";
-import { subnets, taoPrice, isLoading } from "../utils/data";
-import { useSubnets } from "../hooks";
+import { useSubnet, useTaoPrice } from "../hooks";
+import {
+  subnets,
+  taoPrice,
+  loading_subnets,
+  loading_taoPrice,
+} from "../utils/data";
 
 export default function SubnetPage() {
-  // const { subnets, taoPrice, isLoading } = useSubnets();
+  // const { subnets, loading_subnets } = useSubnet();
+  // const { taoPrice, loading_taoPrice } = useTaoPrice();
 
   const [filtered, setFiltered] = useState<Subnet[]>([]);
   const [search, setSearch] = useState("");
@@ -90,7 +96,7 @@ export default function SubnetPage() {
           </Table.Thead>
 
           <Table.Tbody>
-            {isLoading ? (
+            {loading_subnets || loading_taoPrice ? (
               <Table.Tr>
                 <Table.Td colSpan={columns.length}>
                   <Center>
@@ -99,7 +105,7 @@ export default function SubnetPage() {
                 </Table.Td>
               </Table.Tr>
             ) : (
-              filtered.map((s, i) => (
+              filtered?.map((s, i) => (
                 <Table.Tr key={s.netuid}>
                   <Table.Td>{i}</Table.Td>
                   <Table.Td>

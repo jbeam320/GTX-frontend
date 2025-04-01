@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useWalletStore } from "../core";
 import { useEffect, useState } from "react";
+import { useWalletStore } from "../store";
 
 const PrivateGuard = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();

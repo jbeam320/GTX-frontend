@@ -14,7 +14,8 @@ import {
 import { MoonStars, Settings } from "tabler-icons-react";
 
 //hooks
-import { useWallet } from "../../core";
+import { useWalletStore } from "../../store";
+import { useBalances } from "../../hooks";
 
 //components
 import WalletConnectModal from "../modals/WalletConnectModal";
@@ -27,13 +28,8 @@ const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const {
-    disconnectWallet,
-    walletAddress,
-    walletBalance,
-    stakedBalance,
-    loading,
-  } = useWallet();
+  const { disconnectWallet, walletAddress } = useWalletStore();
+  const { walletBalance, stakedBalance, loading_balances } = useBalances();
 
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
 
@@ -57,19 +53,20 @@ export default function Header() {
             </Text>
 
             <Flex gap="xs">
-              {walletAddress && tabs.map((tab, i) => (
-                <Button
-                  key={tab}
-                  variant={isActive(tab) ? "filled" : "light"}
-                  color={isActive(tab) ? "dark" : "gray"}
-                  radius="xl"
-                  size="xs"
-                  px="md"
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab}
-                </Button>
-              ))}
+              {walletAddress &&
+                tabs.map((tab, i) => (
+                  <Button
+                    key={tab}
+                    variant={isActive(tab) ? "filled" : "light"}
+                    color={isActive(tab) ? "dark" : "gray"}
+                    radius="xl"
+                    size="xs"
+                    px="md"
+                    onClick={() => handleTabClick(tab)}
+                  >
+                    {tab}
+                  </Button>
+                ))}
             </Flex>
           </Flex>
 
@@ -81,12 +78,12 @@ export default function Header() {
                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </Text>
 
-                {loading ? (
+                {loading_balances ? (
                   <Loader color="blue" />
                 ) : (
                   <Text size="sm">
-                    Staked: {stakedBalance.toString()}
-                    {TAO} | Wallet: {walletBalance.toString()}
+                    Staked: {stakedBalance?.toString()}
+                    {TAO} | Wallet: {walletBalance?.toString()}
                     {TAO}
                   </Text>
                 )}
