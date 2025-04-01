@@ -9,6 +9,7 @@ import ConfirmPanel from "./ConfirmPanel";
 import { motion } from "framer-motion"; // For animations
 import { SUBNETS } from "../../utils/data";
 import { Token } from "../../utils/types";
+import { TaoInput } from "../base";
 
 const SwapPanel = () => {
   const [fromToken, setFromToken] = useState<Token | null>(null);
@@ -43,18 +44,23 @@ const SwapPanel = () => {
   };
 
   return (
-    <div className="w-[360px] bg-white rounded-xl shadow-lg p-6">
-      <div className="bg-black text-white rounded-full py-1 px-6 w-fit mx-auto mb-6">
-        <span className="text-lg font-medium">SWAP</span>
-      </div>
-
+    <div className="relative w-[360px] bg-white rounded-xl shadow-lg p-6">
       <div className="space-y-4">
-        <TokenInput
+        {/* Swap Button (Overflowing at the top) */}
+        <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center">
+          <button className="w-40 py-2 bg-black text-white text-sm rounded-full shadow-xl">
+            SWAP
+          </button>
+        </div>
+
+        <TaoInput
+          size="lg"
           label="FROM"
           token={fromToken}
-          amount={amount}
+          value={amount}
+          isSelectable
           onClick={() => handleSubnetClick(true)}
-          onAmountChange={setAmount}
+          onChange={setAmount}
         />
 
         <div className="flex flex-col items-center gap-2">
@@ -64,7 +70,7 @@ const SwapPanel = () => {
           >
             ↑↓
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-2">
             <button
               onClick={() => handlePercentageClick(25)}
               className="px-4 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-sm"
@@ -86,16 +92,18 @@ const SwapPanel = () => {
           </div>
         </div>
 
-        <TokenInput
+        <TaoInput
+          size="lg"
           label="TO"
           token={toToken}
-          amount={amount}
+          value={amount}
+          isSelectable
           onClick={() => handleSubnetClick(false)}
-          onAmountChange={setAmount}
+          onChange={setAmount}
         />
       </div>
 
-      {/* View Validators button */}
+      {/* View Chart button */}
       <div className="flex justify-center mt-6">
         <button
           onClick={() => setChartVisible(!isChartVisible)}

@@ -1,31 +1,80 @@
 import { useState } from "react";
 
+interface Token {
+  symbol: string;
+  balance: string;
+}
+
+interface TaoInputProps {
+  value: string;
+  onChange?: (value: string) => void;
+  onClick?: () => void;
+  token?: Token | null;
+  label?: string;
+  subLabel?: string;
+  isSelectable?: boolean;
+  balance?: string;
+  error?: string;
+  size?: "sm" | "md" | "lg";
+}
+
 export function TaoInput({
   value,
-  isStake = true,
-  setValue,
+  onChange,
+  onClick,
+  token,
+  label,
+  subLabel,
+  isSelectable = false,
   balance,
-}: {
-  value: string;
-  isStake: boolean;
-  setValue: (value: string) => void;
-  balance: string;
-}) {
+  error: externalError,
+  size = "md",
+}: TaoInputProps) {
   const [error, setError] = useState<string | null>(null);
 
+  const sizeClasses = {
+    sm: {
+      container: "px-3 py-2",
+      input: "text-lg",
+      label: "text-xs",
+      balance: "text-xs",
+      icon: "w-2 h-2",
+      tokenText: "text-xs",
+    },
+    md: {
+      container: "px-4 py-3",
+      input: "text-2xl",
+      label: "text-sm",
+      balance: "text-xs",
+      icon: "w-3 h-3",
+      tokenText: "text-sm",
+    },
+    lg: {
+      container: "px-5 py-4",
+      input: "text-3xl",
+      label: "text-base",
+      balance: "text-sm",
+      icon: "w-4 h-4",
+      tokenText: "text-base",
+    },
+  };
+
+  const styles = sizeClasses[size];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!onChange) return;
     const value = e.target.value;
     setError(null);
 
     if (value.startsWith("-")) {
-      setError("Tao amount cannot be negative");
+      setError("Amount cannot be negative");
       return;
     }
 
     if (value === "" || !isNaN(+value)) {
-      setValue(value);
+      onChange(value);
 
-      if (value !== "" && +value > +balance) {
+      if (balance && value !== "" && +value > +balance) {
         setError("Insufficient balance");
       }
     }
@@ -33,10 +82,16 @@ export function TaoInput({
 
   return (
     <div>
+      {label && (
+        <div className={`${styles.label} text-gray-500 mb-1`}>{label}</div>
+      )}
       <div
-        className={`mt-4 border rounded-lg px-4 py-3 flex justify-between items-center ${
-          error ? "border-red-500" : ""
-        }`}
+        className={`border rounded-lg ${
+          styles.container
+        } flex justify-between items-center ${
+          error || externalError ? "border-red-500" : ""
+        } ${isSelectable ? "cursor-pointer" : ""}`}
+        onClick={isSelectable ? onClick : undefined}
       >
         <input
           type="number"
@@ -45,25 +100,34 @@ export function TaoInput({
           placeholder="0"
           min="0"
           step="any"
-          className="text-2xl font-bold w-full bg-transparent outline-none"
+          className={`${styles.input} font-bold w-full bg-transparent outline-none`}
+          readOnly={isSelectable}
         />
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-black" />
+        <button className="flex items-center gap-2" onClick={onClick}>
+          <div className={`${styles.icon} rounded-full bg-gray-400`} />
           <div>
-            <div className="text-sm font-bold">TAO</div>
-            <div className="text-xs text-gray-400 -mt-1">ROOT</div>
+            <div className={`${styles.tokenText} font-bold`}>
+              {token?.symbol || "SELECT"}
+            </div>
+            {!isSelectable && (
+              <div className="text-xs text-gray-400 -mt-1">ROOT</div>
+            )}
           </div>
-        </div>
+          {isSelectable && <span>▼</span>}
+        </button>
       </div>
 
-      {error && (
-        <div className="text-xs text-red-500 mt-1 font-mono">{error}</div>
+      {(error || externalError) && (
+        <div className="text-xs text-red-500 mt-1 font-mono">
+          {error || externalError}
+        </div>
       )}
 
-      <div className="text-xs mt-2 text-amber-700 tracking-widest font-mono">
-        {isStake ? "WALLET BALANCE" : "STAKED BALANCE"}:
-        <span className="ml-1">{balance}</span>
-      </div>
+      {balance && (
+        <div className={`${styles.balance} mt-2 text-gray-500 font-mono`}>
+          {subLabel}: {balance}
+        </div>
+      )}
     </div>
   );
 }

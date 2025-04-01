@@ -56,9 +56,11 @@ export default function StakePanelContent({
 
       <TaoInput
         value={amount}
-        setValue={setAmount}
-        isStake={isStake}
+        onChange={setAmount}
+        subLabel={isStake ? "WALLET BALANCE" : "STAKED BALANCE"}
         balance={isStake ? walletBalance : validatorStake}
+        token={{ symbol: "TAO", balance: "" }}
+        size="lg"
       />
 
       <TransactionDetail amount={amount} />
