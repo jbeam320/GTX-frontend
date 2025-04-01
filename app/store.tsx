@@ -27,7 +27,7 @@ interface WalletState extends PersistedState {
   unstakeTx: (validator: string, amount: number) => Promise<string>;
   fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
   fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
-  getValidatorStake: (validator: string) => Promise<string | undefined>;
+  getValidatorStake: (validator: string) => Promise<string>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -47,7 +47,7 @@ export const useWalletStore = create<WalletState>()(
       walletAddress: "",
       walletBalance: "0",
       stakedBalance: "0",
-      selectedValidator: "",
+      selectedValidator: "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT",
       validatorStake: "0",
 
       // Non-persisted state
@@ -182,6 +182,7 @@ export const useWalletStore = create<WalletState>()(
           setWalletAddress,
           setWalletBalance,
           setStakedBalance,
+          setSelectedValidator,
           api,
           setApi,
         } = get();
@@ -189,6 +190,9 @@ export const useWalletStore = create<WalletState>()(
           setWalletAddress("");
           setWalletBalance("0");
           setStakedBalance("0");
+          setSelectedValidator(
+            "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT"
+          );
           if (api) {
             api.disconnect();
             setApi(null);
@@ -395,21 +399,31 @@ export const useWalletStore = create<WalletState>()(
 
       getValidatorStake: async (validator: string) => {
         const { walletAddress, api } = get();
-        if (!api || !walletAddress)
-          throw new Error("API or wallet address not found");
+        if (!api || !walletAddress) return "0";
 
-        const info: any =
-          await api.call.stakeInfoRuntimeApi.getStakeInfoForHotkeyColdkeyNetuid(
-            validator,
-            walletAddress,
-            0
-          );
+        try {
+          const info: any =
+            await api.call.stakeInfoRuntimeApi.getStakeInfoForHotkeyColdkeyNetuid(
+              validator,
+              walletAddress,
+              0
+            );
 
-        const stakeStr = info.toHuman().stake.toString().replace(/,/g, "");
-        const stakeValue = Number(stakeStr);
-        const stakeInTao = stakeValue / Number(PLANCK_PER_TAO);
-        const formattedStake = stakeInTao.toFixed(2);
-        return formattedStake;
+          if (!info) return "0";
+
+          // Handle different response formats
+          const stake = info.toJSON ? info.toJSON().stake : info.stake;
+          if (!stake) return "0";
+
+          const stakeStr = stake.toString().replace(/,/g, "");
+          const stakeValue = Number(stakeStr);
+          const stakeInTao = stakeValue / Number(PLANCK_PER_TAO);
+          const formattedStake = stakeInTao.toFixed(2);
+          return formattedStake;
+        } catch (error) {
+          console.error("Error getting validator stake:", error);
+          return "0";
+        }
       },
     }),
 

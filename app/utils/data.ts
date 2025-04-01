@@ -1,4 +1,4 @@
-export const validators = [{"tao_7d_apy":0.4818973873912223,"id":141,"yield_7d":3158.76898962298,"hotkey":"5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v","name":"RoundTable21","infra_rating":0.01,"stake":385989.588087792,"fee":0.0899977111467155},{"tao_7d_apy":0.25711048325778696,"id":1,"yield_7d":3543.5897170684457,"hotkey":"5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3","name":"OpenTensor","infra_rating":0.01,"stake":675719.647024614,"fee":0.179995422293431}]
+export const validators = [{"tao_7d_apy":0.4818973873912223,"id":141,"yield_7d":3158.76898962298,"hotkey":"5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT","name":"RoundTable21","infra_rating":0.01,"stake":385989.588087792,"fee":0.0899977111467155},{"tao_7d_apy":0.25711048325778696,"id":1,"yield_7d":3543.5897170684457,"hotkey":"5Hddm3iBFD2GLT5ik7LZnT3XJUnRnN8PoeCFgGQgawUVKNm8","name":"OpenTensor","infra_rating":0.01,"stake":675719.647024614,"fee":0.179995422293431}]
 
 export const taoPrice = {
     price: 269.122301305426,

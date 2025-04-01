@@ -82,8 +82,8 @@ export default function Header() {
                   <Loader color="blue" />
                 ) : (
                   <Text size="sm">
-                    Staked: {stakedBalance.toString()}
-                    {TAO} | Wallet: {walletBalance.toString()}
+                    Staked: {stakedBalance?.toString()}
+                    {TAO} | Wallet: {walletBalance?.toString()}
                     {TAO}
                   </Text>
                 )}
