@@ -1,8 +1,8 @@
 import { Collapse } from "@mantine/core";
 import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
-import { useTaoPrice } from "../hooks";
+import { useTaoPrice } from "../../hooks";
 import { useState } from "react";
-import { taoPrice } from "../utils/data";
+import { taoPrice } from "../../utils/data";
 
 export default function TransactionDetail({ amount }: { amount: string }) {
   // const { taoPrice } = useTaoPrice();

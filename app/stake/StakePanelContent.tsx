@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { TaoInput } from "../components/base";
 import { ConfirmButton } from "../components/base/ConfirmButton";
-import TransactionDetail from "../components/TransactionDetail";
+import TransactionDetail from "../components/complex/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
 import { useWalletStore } from "../store";
 import { useValidatorStake } from "../hooks";

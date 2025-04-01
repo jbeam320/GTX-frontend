@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import SubnetSelector from "./SubnetSelector";
-import ChartDrawer from "./ChartDrawer";
-import { motion } from "framer-motion"; // For animations
-import { Token } from "../../utils/types";
-import { TaoInput } from "../base";
-import { ConfirmButton } from "../base/ConfirmButton";
+import SubnetSelector from "../components/complex/SubnetSelector";
+import { Token } from "../utils/types";
+import { TaoInput } from "../components/base";
+import { ConfirmButton } from "../components/base/ConfirmButton";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",

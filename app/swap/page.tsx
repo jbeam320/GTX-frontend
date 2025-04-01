@@ -1,4 +1,4 @@
-import SwapPanel from "../components/swap/SwapPanel";
+import SwapPanel from "./SwapPanel";
 
 export default function Swap() {
   return (

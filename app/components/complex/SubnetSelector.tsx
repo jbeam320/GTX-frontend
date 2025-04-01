@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { SUBNETS } from "../../utils/data";
 import { Token } from "../../utils/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchableList } from "../base/SearchableList";
+import { SearchableList } from "./SearchableList";
 
 interface SubnetSelectorProps {
   onSelect: (subnet: Token) => void;
