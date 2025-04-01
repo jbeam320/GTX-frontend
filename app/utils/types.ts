@@ -23,3 +23,8 @@ export interface Subnet {
     balance: string;
     fee: string;
   }
+
+  export interface Token {
+    symbol: string;
+    balance: string;
+  }

@@ -1,3 +1,12 @@
+export const SUBNETS = [
+  { symbol: 'TAO', label: 'ROOT', netuid: 'SN0' },
+  { symbol: 'ALPHA', label: 'APEX', netuid: 'SN1' },
+  { symbol: 'BETA', label: 'Omron', netuid: 'SN2' },
+  { symbol: 'GAMMA', label: 'TEMPLAR', netuid: 'SN3' },
+  { symbol: 'DELTA', label: 'TARGON', netuid: 'SN4' },
+  // Add more from Figma
+];
+
 export const validators = [{"tao_7d_apy":0.4818973873912223,"id":141,"yield_7d":3158.76898962298,"hotkey":"5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT","name":"RoundTable21","infra_rating":0.01,"stake":385989.588087792,"fee":0.0899977111467155},{"tao_7d_apy":0.25711048325778696,"id":1,"yield_7d":3543.5897170684457,"hotkey":"5Hddm3iBFD2GLT5ik7LZnT3XJUnRnN8PoeCFgGQgawUVKNm8","name":"OpenTensor","infra_rating":0.01,"stake":675719.647024614,"fee":0.179995422293431}]
 
 export const taoPrice = {
