@@ -3,8 +3,17 @@ export const SUBNETS = [
   { symbol: 'ALPHA', label: 'APEX', netuid: 'SN1' },
   { symbol: 'BETA', label: 'Omron', netuid: 'SN2' },
   { symbol: 'GAMMA', label: 'TEMPLAR', netuid: 'SN3' },
-  { symbol: 'DELTA', label: 'TARGON', netuid: 'SN4' },
-  // Add more from Figma
+  { symbol: 'DELTA', label: 'NEXUS', netuid: 'SN4' },
+  { symbol: 'EPSILON', label: 'CIPHER', netuid: 'SN5' },
+  { symbol: 'ZETA', label: 'QUANTUM', netuid: 'SN6' },
+  { symbol: 'ETA', label: 'MATRIX', netuid: 'SN7' },
+  { symbol: 'THETA', label: 'VECTOR', netuid: 'SN8' },
+  { symbol: 'IOTA', label: 'PRISM', netuid: 'SN9' },
+  { symbol: 'KAPPA', label: 'HORIZON', netuid: 'SN10' },
+  { symbol: 'LAMBDA', label: 'ZENITH', netuid: 'SN11' },
+  { symbol: 'MU', label: 'ORACLE', netuid: 'SN12' },
+  { symbol: 'NU', label: 'PHOENIX', netuid: 'SN13' },
+  { symbol: 'XI', label: 'ATLAS', netuid: 'SN14' }
 ];
 
 export const validators = [{"tao_7d_apy":0.4818973873912223,"id":141,"yield_7d":3158.76898962298,"hotkey":"5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT","name":"RoundTable21","infra_rating":0.01,"stake":385989.588087792,"fee":0.0899977111467155},{"tao_7d_apy":0.25711048325778696,"id":1,"yield_7d":3543.5897170684457,"hotkey":"5Hddm3iBFD2GLT5ik7LZnT3XJUnRnN8PoeCFgGQgawUVKNm8","name":"OpenTensor","infra_rating":0.01,"stake":675719.647024614,"fee":0.179995422293431}]
