@@ -14,22 +14,22 @@ import {
 import { MoonStars, Settings } from "tabler-icons-react";
 
 //hooks
-import { useWallet } from "../../hooks";
+import { useWalletStore } from "../../store";
+import { useBalances } from "../../hooks";
 
 //components
 import WalletConnectModal from "../modals/WalletConnectModal";
 
 //constants
 import { TAO } from "../../utils/constants";
-import { useWalletStore } from "../../store";
 
 const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { disconnectWallet, walletAddress, loading_balances } = useWallet();
-  const { walletBalance, stakedBalance } = useWalletStore();
+  const { disconnectWallet, walletAddress } = useWalletStore();
+  const { walletBalance, stakedBalance, loading_balances } = useBalances();
 
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
 
