@@ -395,7 +395,8 @@ export const useWalletStore = create<WalletState>()(
 
       getValidatorStake: async (validator: string) => {
         const { walletAddress, api } = get();
-        if (!api || !walletAddress) return;
+        if (!api || !walletAddress)
+          throw new Error("API or wallet address not found");
 
         const info: any =
           await api.call.stakeInfoRuntimeApi.getStakeInfoForHotkeyColdkeyNetuid(

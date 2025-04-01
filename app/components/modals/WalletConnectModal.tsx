@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button, Select, Text } from "@mantine/core";
 import { useModals } from "@mantine/modals";
-import { useWallet } from "../../hooks";
+import { useWalletStore } from "../../store";
 
 export default function WalletConnectModal() {
-  const { connectWallet } = useWallet();
+  const { connectWallet } = useWalletStore();
   const modals = useModals();
 
   const [walletProvider, setWalletProvider] =

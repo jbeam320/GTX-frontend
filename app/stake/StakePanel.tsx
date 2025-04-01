@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StakePanelContent from "./StakePanelContent";
+import { useValidatorStake } from "../hooks/useValidatorStake";
 
 export default function StakePanel({
   onToggle,

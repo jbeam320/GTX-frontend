@@ -5,11 +5,10 @@ import { Button } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import Confetti from "react-confetti";
 import { TaoInput } from "../components/base";
-import { useWallet } from "../hooks";
 import TransactionDetail from "../components/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
 import { useWalletStore } from "../store";
-
+import { useValidatorStake } from "../hooks";
 export default function StakePanelContent({
   isStake,
   isProcessing,
@@ -19,8 +18,11 @@ export default function StakePanelContent({
   isProcessing: boolean;
   setIsProcessing: (value: boolean) => void;
 }) {
-  const { validatorStake, setValidatorStake, stakeTx, unstakeTx } = useWallet();
-  const { walletBalance, selectedValidator } = useWalletStore();
+  const { walletBalance, selectedValidator, stakeTx, unstakeTx } =
+    useWalletStore();
+
+  const { validatorStake } = useValidatorStake();
+
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -37,7 +39,6 @@ export default function StakePanelContent({
       } else {
         await unstakeTx(selectedValidator, +amount * PLANCK_PER_TAO);
       }
-      setValidatorStake((prev) => (+prev - +amount).toString());
       setSuccess(true);
       setAmount(""); // Clear amount after success
 

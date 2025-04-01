@@ -2,9 +2,10 @@ import ValidatorTable from "./ValidatorTable";
 import { Card } from "../components/base";
 import { taoPrice } from "../utils/data";
 import { formatPercent, formatCompactSimple } from "../utils/format";
+import { useTaoPrice } from "../hooks";
 
 export default function ValidatorDashboard() {
-  // const { taoPrice } = useWallet();
+  // const { taoPrice } = useTaoPrice();
   const price_percent = formatPercent(taoPrice.percent_24h_change);
 
   return (

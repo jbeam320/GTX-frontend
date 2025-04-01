@@ -3,7 +3,7 @@ import { useWalletStore } from "../store";
 
 
 export const useValidatorStake = () => {
-  const { selectedValidator, getValidatorStake, setValidatorStake} = useWalletStore();
+  const { selectedValidator, validatorStake, getValidatorStake, setValidatorStake} = useWalletStore();
 
   useEffect(() => {
     if (selectedValidator) {
@@ -15,6 +15,8 @@ export const useValidatorStake = () => {
     }
   }, [selectedValidator]);
   
-  
+  return {
+    validatorStake
+  };
 };
     
