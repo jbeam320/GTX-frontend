@@ -10,6 +10,7 @@ interface PersistedState {
   walletBalance: string;
   stakedBalance: string;
   selectedValidator: string;
+  validatorStake: string;
 }
 
 interface WalletState extends PersistedState {
@@ -26,6 +27,7 @@ interface WalletState extends PersistedState {
   unstakeTx: (validator: string, amount: number) => Promise<string>;
   fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
   fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
+  getValidatorStake: (validator: string) => Promise<string | undefined>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -35,6 +37,7 @@ interface WalletState extends PersistedState {
   setApi: (api: ApiPromise | null) => void;
   setIsInitialized: (isInitialized: boolean) => void;
   setExtension: (extension: InjectedExtension | null) => void;
+  setValidatorStake: (stake: string) => void;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -45,6 +48,7 @@ export const useWalletStore = create<WalletState>()(
       walletBalance: "0",
       stakedBalance: "0",
       selectedValidator: "",
+      validatorStake: "0",
 
       // Non-persisted state
       api: null,
@@ -57,6 +61,8 @@ export const useWalletStore = create<WalletState>()(
       setStakedBalance: (balance) => set({ stakedBalance: balance }),
       setSelectedValidator: (validator) =>
         set({ selectedValidator: validator }),
+      setValidatorStake: (stake) => set({ validatorStake: stake }),
+
       setApi: (api) => set({ api }),
       setIsInitialized: (isInitialized) => set({ isInitialized }),
       setExtension: (extension) => set({ extension }),
@@ -386,7 +392,26 @@ export const useWalletStore = create<WalletState>()(
           throw error;
         }
       },
+
+      getValidatorStake: async (validator: string) => {
+        const { walletAddress, api } = get();
+        if (!api || !walletAddress) return;
+
+        const info: any =
+          await api.call.stakeInfoRuntimeApi.getStakeInfoForHotkeyColdkeyNetuid(
+            validator,
+            walletAddress,
+            0
+          );
+
+        const stakeStr = info.toHuman().stake.toString().replace(/,/g, "");
+        const stakeValue = Number(stakeStr);
+        const stakeInTao = stakeValue / Number(PLANCK_PER_TAO);
+        const formattedStake = stakeInTao.toFixed(2);
+        return formattedStake;
+      },
     }),
+
     {
       name: "wallet-storage",
       storage: createJSONStorage(() => localStorage),
@@ -395,6 +420,7 @@ export const useWalletStore = create<WalletState>()(
         walletBalance: state.walletBalance,
         stakedBalance: state.stakedBalance,
         selectedValidator: state.selectedValidator,
+        validatorStake: state.validatorStake,
       }),
     }
   )
