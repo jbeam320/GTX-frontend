@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
-import Confetti from "react-confetti";
 import { TaoInput } from "../components/base";
+import { ConfirmButton } from "../components/base/ConfirmButton";
 import TransactionDetail from "../components/TransactionDetail";
 import { PLANCK_PER_TAO } from "../utils/constants";
 import { useWalletStore } from "../store";
 import { useValidatorStake } from "../hooks";
+
 export default function StakePanelContent({
   isStake,
   isProcessing,
@@ -20,7 +19,6 @@ export default function StakePanelContent({
 }) {
   const { walletBalance, selectedValidator, stakeTx, unstakeTx } =
     useWalletStore();
-
   const { validatorStake } = useValidatorStake();
 
   const [amount, setAmount] = useState("");
@@ -50,10 +48,15 @@ export default function StakePanelContent({
     }
   };
 
+  const isDisabled =
+    isProcessing ||
+    !amount ||
+    isNaN(+amount) ||
+    +amount <= 0 ||
+    +amount > (isStake ? +walletBalance : +validatorStake);
+
   return (
     <>
-      {success && <Confetti numberOfPieces={250} recycle={false} />}
-
       <TaoInput
         value={amount}
         onChange={setAmount}
@@ -65,32 +68,15 @@ export default function StakePanelContent({
 
       <TransactionDetail amount={amount} />
 
-      <Button
-        disabled={
-          isProcessing ||
-          !amount ||
-          isNaN(+amount) ||
-          +amount <= 0 ||
-          +amount > (isStake ? +walletBalance : +validatorStake)
-        }
+      <ConfirmButton
+        isProcessing={isProcessing}
+        isSuccess={success}
+        isDisabled={isDisabled}
         onClick={handleConfirm}
-        fullWidth
-        size="md"
-        mt="md"
-        className="mt-6 font-mono tracking-wide"
-        variant={success ? "light" : "filled"}
-        color={success ? "gray" : "dark"}
-        leftSection={success ? <IconCheck size={16} /> : null}
-        loading={isProcessing}
-      >
-        {success
-          ? "SUCCESS"
-          : isProcessing
-          ? "PROCESSING..."
-          : !amount || +amount <= 0
-          ? "ENTER AMOUNT"
-          : "CONFIRM"}
-      </Button>
+        disabledText={
+          !amount || +amount <= 0 ? "ENTER AMOUNT" : "INSUFFICIENT BALANCE"
+        }
+      />
     </>
   );
 }

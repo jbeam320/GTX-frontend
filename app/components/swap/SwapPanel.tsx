@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import TokenInput from "./TokenInput";
 import SubnetSelector from "./SubnetSelector";
-import SwapToggle from "./SwapToggle";
 import ChartDrawer from "./ChartDrawer";
-import ConfirmPanel from "./ConfirmPanel";
 import { motion } from "framer-motion"; // For animations
-import { SUBNETS } from "../../utils/data";
 import { Token } from "../../utils/types";
 import { TaoInput } from "../base";
+import { ConfirmButton } from "../base/ConfirmButton";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -20,9 +17,13 @@ const SwapPanel = () => {
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("0");
+  const [alphaBalance, setAlphaBalance] = useState("2");
+  const [taoBalance, setTaoBalance] = useState("2");
   const [isSelectorOpen, setSelectorOpen] = useState(false);
   const [isSelectingFrom, setSelectingFrom] = useState(true);
   const [isChartVisible, setChartVisible] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
@@ -56,8 +57,35 @@ const SwapPanel = () => {
     setAmount(newAmount.toString());
   };
 
+  const handleConfirm = async () => {
+    if (!amount || !fromToken || !toToken) return;
+
+    setIsProcessing(true);
+    try {
+      // Add your swap transaction logic here
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
+      setIsSuccess(true);
+      setAmount(""); // Clear amount after success
+
+      setTimeout(() => setIsSuccess(false), 5000); // Match the 5 second duration from StakePanelContent
+    } catch (error) {
+      console.error("Swap failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const isDisabled =
+    isProcessing ||
+    !amount ||
+    !fromToken ||
+    !toToken ||
+    isNaN(+amount) ||
+    +amount <= 0 ||
+    +amount > +taoBalance;
+
   return (
-    <div className="relative w-[380px] bg-white rounded-xl shadow-lg p-6">
+    <div className="relative w-[360px] bg-white rounded-xl shadow-lg p-6">
       <div className="space-y-4">
         {/* Swap Button (Overflowing at the top) */}
         <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center">
@@ -75,6 +103,7 @@ const SwapPanel = () => {
           onClick={() => handleSubnetClick(true)}
           onChange={setAmount}
           subLabel={fromToken?.symbol && "BALANCE"}
+          balance={alphaBalance}
         />
 
         <div className="flex items-center justify-between">
@@ -118,18 +147,27 @@ const SwapPanel = () => {
             </button>
           </div>
         </div>
-
-        <TaoInput
-          size="lg"
-          label="TO"
-          token={toToken}
-          value={amount}
-          isSelectable
-          onClick={() => handleSubnetClick(false)}
-          onChange={setAmount}
-          subLabel={toToken?.symbol && "BALANCE"}
-        />
       </div>
+
+      <TaoInput
+        size="lg"
+        label="TO"
+        token={toToken}
+        value={amount}
+        isSelectable
+        onClick={() => handleSubnetClick(false)}
+        onChange={setAmount}
+        subLabel={toToken?.symbol && "BALANCE"}
+        balance={taoBalance}
+      />
+
+      <ConfirmButton
+        isProcessing={isProcessing}
+        isSuccess={isSuccess}
+        isDisabled={isDisabled}
+        onClick={handleConfirm}
+        disabledText={"SELECT TOKENS"}
+      />
 
       {/* View Chart button */}
       <div className="flex justify-center mt-6">
@@ -145,14 +183,6 @@ const SwapPanel = () => {
         <SubnetSelector
           onSelect={handleSelect}
           onClose={() => setSelectorOpen(false)}
-        />
-      )}
-
-      {isChartVisible && (
-        <ChartDrawer
-          fromToken={fromToken}
-          toToken={toToken}
-          onClose={() => setChartVisible(false)}
         />
       )}
     </div>
