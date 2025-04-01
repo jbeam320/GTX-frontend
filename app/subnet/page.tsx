@@ -13,7 +13,7 @@ import {
   Center,
 } from "@mantine/core";
 import { formatCompact, formatPercent, formatPrice } from "../utils/format";
-import { useSubnet } from "../hooks";
+import { useSubnet, useTaoPrice } from "../hooks";
 import {
   subnets,
   taoPrice,
@@ -22,7 +22,8 @@ import {
 } from "../utils/data";
 
 export default function SubnetPage() {
-  // const { subnets, taoPrice, loading_subnets, loading_taoPrice } = useWallet();
+  // const { subnets, loading_subnets } = useSubnet();
+  // const { taoPrice, loading_taoPrice } = useTaoPrice();
 
   const [filtered, setFiltered] = useState<Subnet[]>([]);
   const [search, setSearch] = useState("");
