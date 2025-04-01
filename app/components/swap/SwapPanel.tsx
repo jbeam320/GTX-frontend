@@ -11,6 +11,11 @@ import { SUBNETS } from "../../utils/data";
 import { Token } from "../../utils/types";
 import { TaoInput } from "../base";
 
+const ROOT_TOKEN: Token = {
+  symbol: "TAO",
+  balance: "0",
+};
+
 const SwapPanel = () => {
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
@@ -25,12 +30,20 @@ const SwapPanel = () => {
   };
 
   const handleSelect = (token: Token) => {
-    if (isSelectingFrom) setFromToken(token);
-    else setToToken(token);
+    if (isSelectingFrom) {
+      // If selecting FROM token, set selected token as FROM and TAO as TO
+      setFromToken(token);
+      setToToken(ROOT_TOKEN);
+    } else {
+      // If selecting TO token, set TAO as FROM and selected token as TO
+      setFromToken(ROOT_TOKEN);
+      setToToken(token);
+    }
     setSelectorOpen(false);
   };
 
   const handleSwapToggle = () => {
+    // Swap positions of subnet token and TAO
     const temp = fromToken;
     setFromToken(toToken);
     setToToken(temp);

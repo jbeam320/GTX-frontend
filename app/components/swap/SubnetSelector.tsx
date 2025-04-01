@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { SUBNETS } from "../../utils/data";
 import { Token } from "../../utils/types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,10 @@ import { SearchableList } from "../base/SearchableList";
 interface SubnetSelectorProps {
   onSelect: (subnet: Token) => void;
   onClose: () => void;
+}
+
+interface ExtendedToken extends Token {
+  netuid: number;
 }
 
 const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
@@ -26,16 +30,25 @@ const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  const renderSubnet = (subnet: (typeof SUBNETS)[0]) => (
+  // Only show non-TAO subnets
+  const availableSubnets = SUBNETS.map((subnet) => ({
+    symbol: subnet.symbol,
+    balance: "0",
+    netuid: Number(subnet.netuid),
+  }));
+
+  const renderSubnet = (subnet: ExtendedToken) => (
     <button
-      onClick={() => onSelect({ ...subnet, balance: "0" })}
+      onClick={() =>
+        onSelect({ symbol: subnet.symbol, balance: subnet.balance })
+      }
       className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#2C2C2C] transition-colors"
     >
       <div className="flex items-center gap-3">
         <div className="w-5 h-5 rounded-full bg-gray-600" />
         <div className="text-left">
           <div className="text-white font-medium">{subnet.symbol}</div>
-          <div className="text-xs text-gray-500 uppercase">{subnet.label}</div>
+          <div className="text-xs text-gray-500 uppercase">SUBNET TOKEN</div>
         </div>
       </div>
       <div className="text-sm text-gray-400 font-mono">SN{subnet.netuid}</div>
@@ -59,7 +72,7 @@ const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
           className="w-[480px] mx-auto mt-20 bg-[#1C1C1C] rounded-xl p-6"
         >
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-mono text-white">SELECT A SUBNET</h3>
+            <h3 className="text-lg font-mono text-white">SELECT SUBNET</h3>
             <button
               onClick={onClose}
               className="text-white hover:text-gray-300 text-2xl"
@@ -69,13 +82,13 @@ const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
           </div>
 
           <SearchableList
-            data={SUBNETS}
+            data={availableSubnets}
             searchConfig={{
-              fields: ["symbol", "label", "netuid"],
+              fields: ["symbol", "netuid"],
             }}
             renderItem={renderSubnet}
-            searchPlaceholder="Search by Subnet name or number"
-            maxHeight="400px"
+            searchPlaceholder="Search subnets"
+            className="w-full"
           />
         </motion.div>
       </motion.div>
