@@ -27,7 +27,8 @@ interface WalletState extends PersistedState {
   unstakeTx: (validator: string, amount: number) => Promise<string>;
   fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
   fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
-  getValidatorStake: (validator: string) => Promise<string>;
+  getValidatorStake: (validator: string, netuid: number) => Promise<string>;
+  getStakedBalanceForSubnet: (netuid: string) => Promise<string>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -239,9 +240,12 @@ export const useWalletStore = create<WalletState>()(
         }
       },
 
-      getStakedBalanceForSubnet: async (netuid: number) => {
-        const { walletAddress, api, setStakedBalance } = get();
-        if (!api || !walletAddress) return "0";
+      getStakedBalanceForSubnet: async (netuid: string) => {
+        const { walletAddress, api } = get();
+        if (!api || !walletAddress) {
+          console.error("API or wallet address not found");
+          return "0";
+        }
 
         try {
           const infos: any[] =
@@ -249,7 +253,8 @@ export const useWalletStore = create<WalletState>()(
               walletAddress
             );
 
-          const stakes = infos?.filter((info) => info.netuid === netuid) ?? [];
+          const stakes =
+            infos?.filter((info) => info.netuid.toString() === netuid) ?? [];
           const totalStaked = stakes?.reduce((total: number, curr: any) => {
             return total + Number(curr.stake.toString().replace(/,/g, ""));
           }, 0);
@@ -423,7 +428,7 @@ export const useWalletStore = create<WalletState>()(
         }
       },
 
-      getValidatorStake: async (validator: string) => {
+      getValidatorStake: async (validator: string, netuid: number = 0) => {
         const { walletAddress, api } = get();
         if (!api || !walletAddress) return "0";
 
@@ -432,7 +437,7 @@ export const useWalletStore = create<WalletState>()(
             await api.call.stakeInfoRuntimeApi.getStakeInfoForHotkeyColdkeyNetuid(
               validator,
               walletAddress,
-              0
+              netuid
             );
 
           if (!info) return "0";

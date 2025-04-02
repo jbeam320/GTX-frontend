@@ -29,8 +29,8 @@ export default function SubnetPage() {
   const [search, setSearch] = useState("");
   const [isUSD, setIsUSD] = useState(false);
 
-  const columns: (keyof Subnet)[] = Object.keys(
-    subnets?.[0] || {}
+  const columns: (keyof Subnet)[] = Object.keys(subnets?.[0] || {}).filter(
+    (key) => key !== "symbol"
   ) as (keyof Subnet)[];
 
   // Filter subnets based on search term

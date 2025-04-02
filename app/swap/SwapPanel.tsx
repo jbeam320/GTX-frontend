@@ -1,29 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import SubnetSelector from "../components/complex/SubnetSelector";
 import { Token } from "../utils/types";
 import { TaoInput } from "../components/base";
 import { ConfirmButton } from "../components/base/ConfirmButton";
+import { useWalletStore } from "../store";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
   subnetName: "ROOT",
   netuid: 0,
   balance: "0",
+  isStaked: false,
 };
 
 const SwapPanel = () => {
+  const { getValidatorStake, walletBalance, selectedValidator } =
+    useWalletStore();
+
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("0");
-  const [alphaBalance, setAlphaBalance] = useState("2");
-  const [taoBalance, setTaoBalance] = useState("2");
   const [isSelectorOpen, setSelectorOpen] = useState(false);
   const [isSelectingFrom, setSelectingFrom] = useState(true);
   const [isChartVisible, setChartVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchFromTokenBalance = async () => {
+      if (fromToken?.netuid !== undefined) {
+        const { isStaked, netuid } = fromToken;
+        const balance = isStaked
+          ? await getValidatorStake(selectedValidator, netuid)
+          : walletBalance;
+
+        setFromToken({ ...fromToken, balance });
+      }
+    };
+
+    const fetchToTokenBalance = async () => {
+      if (toToken?.netuid !== undefined) {
+        const { isStaked, netuid } = toToken;
+        const balance = isStaked
+          ? await getValidatorStake(selectedValidator, netuid)
+          : walletBalance;
+
+        setToToken({ ...toToken, balance });
+      }
+    };
+
+    fetchFromTokenBalance();
+    fetchToTokenBalance();
+  }, [fromToken?.netuid, toToken?.netuid]);
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
@@ -82,7 +112,7 @@ const SwapPanel = () => {
     !toToken ||
     isNaN(+amount) ||
     +amount <= 0 ||
-    +amount > +taoBalance;
+    +amount > +fromToken.balance;
 
   return (
     <div className="relative w-[360px] bg-white rounded-xl shadow-lg p-6">
@@ -103,7 +133,7 @@ const SwapPanel = () => {
           onClick={() => handleSubnetClick(true)}
           onChange={setAmount}
           subLabel={fromToken?.symbol && "BALANCE"}
-          balance={alphaBalance}
+          balance={fromToken?.balance}
         />
 
         <div className="flex items-center justify-between">
@@ -158,7 +188,7 @@ const SwapPanel = () => {
         onClick={() => handleSubnetClick(false)}
         onChange={setAmount}
         subLabel={toToken?.symbol && "BALANCE"}
-        balance={taoBalance}
+        balance={toToken?.balance}
       />
 
       <ConfirmButton
