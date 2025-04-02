@@ -37,8 +37,10 @@ export default function SubnetPage() {
   useEffect(() => {
     if (!search) return setFiltered(subnets);
     setFiltered(
-      subnets.filter((s: Subnet) =>
-        s.name.toLowerCase().includes(search.toLowerCase())
+      subnets.filter(
+        (s: Subnet) =>
+          s.name.toLowerCase().includes(search.toLowerCase()) ||
+          s.netuid.toString().includes(search.toLowerCase())
       )
     );
   }, [search, subnets]);

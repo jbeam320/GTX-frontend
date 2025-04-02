@@ -1,11 +1,14 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SubnetSelector from "../components/complex/SubnetSelector";
 import { Token } from "../utils/types";
 import { TaoInput } from "../components/base";
 import { ConfirmButton } from "../components/base/ConfirmButton";
 import { useWalletStore } from "../store";
+import { useSubnet } from "../hooks";
+import { subnets } from "../utils/data";
+import { PLANCK_PER_TAO } from "../utils/constants";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -13,11 +16,14 @@ const ROOT_TOKEN: Token = {
   netuid: 0,
   balance: "0",
   isStaked: false,
+  price: 1,
 };
 
 const SwapPanel = () => {
   const { getValidatorStake, walletBalance, selectedValidator } =
     useWalletStore();
+
+  // const { subnets } = useSubnet();
 
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
@@ -32,28 +38,37 @@ const SwapPanel = () => {
     const fetchFromTokenBalance = async () => {
       if (fromToken?.netuid !== undefined) {
         const { isStaked, netuid } = fromToken;
+        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+
         const balance = isStaked
           ? await getValidatorStake(selectedValidator, netuid)
           : walletBalance;
+        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
-        setFromToken({ ...fromToken, balance });
-      }
-    };
-
-    const fetchToTokenBalance = async () => {
-      if (toToken?.netuid !== undefined) {
-        const { isStaked, netuid } = toToken;
-        const balance = isStaked
-          ? await getValidatorStake(selectedValidator, netuid)
-          : walletBalance;
-
-        setToToken({ ...toToken, balance });
+        setFromToken({ ...fromToken, balance, price });
       }
     };
 
     fetchFromTokenBalance();
+  }, [fromToken?.netuid, subnets]);
+
+  useEffect(() => {
+    const fetchToTokenBalance = async () => {
+      if (toToken?.netuid !== undefined) {
+        const { isStaked, netuid } = toToken;
+        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+
+        const balance = isStaked
+          ? await getValidatorStake(selectedValidator, netuid)
+          : walletBalance;
+        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
+
+        setToToken({ ...toToken, balance, price });
+      }
+    };
+
     fetchToTokenBalance();
-  }, [fromToken?.netuid, toToken?.netuid]);
+  }, [toToken?.netuid, subnets]);
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
@@ -64,10 +79,10 @@ const SwapPanel = () => {
     if (isSelectingFrom) {
       // If selecting FROM token, set selected token as FROM and TAO as TO
       setFromToken(token);
-      setToToken(ROOT_TOKEN);
+      setToToken({ ...ROOT_TOKEN, balance: walletBalance });
     } else {
       // If selecting TO token, set TAO as FROM and selected token as TO
-      setFromToken(ROOT_TOKEN);
+      setFromToken({ ...ROOT_TOKEN, balance: walletBalance });
       setToToken(token);
     }
     setSelectorOpen(false);
@@ -183,7 +198,10 @@ const SwapPanel = () => {
         size="lg"
         label="TO"
         token={toToken}
-        value={amount}
+        value={(
+          (+amount * (fromToken?.price ?? 0)) /
+          (toToken?.price ?? 0)
+        ).toFixed(4)}
         isSelectable
         onClick={() => handleSubnetClick(false)}
         onChange={setAmount}

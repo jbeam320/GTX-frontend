@@ -28,24 +28,15 @@ const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
 
   // Only show non-TAO subnets
   const availableSubnets = subnets.map((subnet) => ({
-    symbol: subnet.symbol,
+    ...subnet,
     balance: "0",
-    netuid: Number(subnet.netuid),
-    subnetName: subnet.name,
     isStaked: true,
+    subnetName: subnet.name,
   }));
 
   const renderSubnet = (token: Token) => (
     <button
-      onClick={() =>
-        onSelect({
-          symbol: token.symbol,
-          netuid: token.netuid,
-          balance: "0",
-          subnetName: token.subnetName,
-          isStaked: token.isStaked,
-        })
-      }
+      onClick={() => onSelect(token)}
       className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#2C2C2C] transition-colors"
     >
       <div className="flex items-center gap-3">
