@@ -15,13 +15,18 @@ const ROOT_TOKEN: Token = {
   subnetName: "ROOT",
   netuid: 0,
   balance: "0",
-  isStaked: false,
+  isStaked: false, // wallet balance
   price: 1,
 };
 
 const SwapPanel = () => {
-  const { getValidatorStake, walletBalance, selectedValidator } =
-    useWalletStore();
+  const {
+    getValidatorStake,
+    walletBalance,
+    selectedValidator,
+    stakeTx,
+    unstakeTx,
+  } = useWalletStore();
 
   // const { subnets } = useSubnet();
 
@@ -107,8 +112,14 @@ const SwapPanel = () => {
 
     setIsProcessing(true);
     try {
-      // Add your swap transaction logic here
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
+      if (!fromToken.isStaked) {
+        // stake
+        await stakeTx(selectedValidator, toToken.netuid, +amount);
+      } else {
+        // unstake
+        await unstakeTx(selectedValidator, fromToken.netuid, +amount);
+      }
+
       setIsSuccess(true);
       setAmount(""); // Clear amount after success
 

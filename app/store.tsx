@@ -23,8 +23,16 @@ interface WalletState extends PersistedState {
   setupExtension: () => Promise<InjectedExtension | null>;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => Promise<void>;
-  stakeTx: (validator: string, amount: number) => Promise<string>;
-  unstakeTx: (validator: string, amount: number) => Promise<string>;
+  stakeTx: (
+    validator: string,
+    netuid: number,
+    amount: number
+  ) => Promise<string>;
+  unstakeTx: (
+    validator: string,
+    netuid: number,
+    amount: number
+  ) => Promise<string>;
   fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
   fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
   getValidatorStake: (validator: string, netuid: number) => Promise<string>;
@@ -267,7 +275,11 @@ export const useWalletStore = create<WalletState>()(
         }
       },
 
-      stakeTx: async (validator: string, amount: number) => {
+      stakeTx: async (
+        validator: string,
+        netuid: number = 0,
+        amount: number
+      ) => {
         const {
           walletAddress,
           api,
@@ -286,7 +298,11 @@ export const useWalletStore = create<WalletState>()(
 
           if (!account) throw new Error("Account not found");
 
-          const stakeTx = api.tx.subtensorModule.addStake(validator, 0, amount);
+          const stakeTx = api.tx.subtensorModule.addStake(
+            validator,
+            netuid,
+            amount
+          );
 
           return new Promise((resolve, reject) => {
             let unsub: any;
@@ -353,7 +369,11 @@ export const useWalletStore = create<WalletState>()(
         }
       },
 
-      unstakeTx: async (validator: string, amount: number) => {
+      unstakeTx: async (
+        validator: string,
+        netuid: number = 0,
+        amount: number
+      ) => {
         const {
           walletAddress,
           api,
@@ -382,7 +402,7 @@ export const useWalletStore = create<WalletState>()(
 
           const unstakeTx = currentApi.tx.subtensorModule.removeStake(
             validator,
-            0,
+            netuid,
             amount
           );
 
