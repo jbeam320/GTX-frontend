@@ -223,16 +223,42 @@ export const useWalletStore = create<WalletState>()(
             await api.call.stakeInfoRuntimeApi.getStakeInfoForColdkey(
               userAddress
             );
+
           const stakes =
             infos?.filter((info) => info.netuid.toString() === "0") ?? [];
+
           const totalStaked = stakes?.reduce((total: number, curr: any) => {
             return total + Number(curr.stake.toString().replace(/,/g, ""));
           }, 0);
+
           const formattedBalance = (totalStaked / PLANCK_PER_TAO).toFixed(2);
           setStakedBalance(formattedBalance);
         } catch (error) {
           console.error("Error fetching total staked balance:", error);
           setStakedBalance("0");
+        }
+      },
+
+      getStakedBalanceForSubnet: async (netuid: number) => {
+        const { walletAddress, api, setStakedBalance } = get();
+        if (!api || !walletAddress) return "0";
+
+        try {
+          const infos: any[] =
+            await api.call.stakeInfoRuntimeApi.getStakeInfoForColdkey(
+              walletAddress
+            );
+
+          const stakes = infos?.filter((info) => info.netuid === netuid) ?? [];
+          const totalStaked = stakes?.reduce((total: number, curr: any) => {
+            return total + Number(curr.stake.toString().replace(/,/g, ""));
+          }, 0);
+
+          const formattedBalance = (totalStaked / PLANCK_PER_TAO).toFixed(2);
+          return formattedBalance;
+        } catch (error) {
+          console.error("Error fetching staked balance for subnet:", error);
+          return "0";
         }
       },
 
