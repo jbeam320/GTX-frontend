@@ -8,6 +8,8 @@ import { ConfirmButton } from "../components/base/ConfirmButton";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
+  subnetName: "ROOT",
+  netuid: 0,
   balance: "0",
 };
 

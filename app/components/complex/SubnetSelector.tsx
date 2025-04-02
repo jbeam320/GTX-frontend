@@ -1,16 +1,12 @@
 import React, { useRef, useEffect } from "react";
-import { SUBNETS } from "../../utils/data";
+import { subnets } from "../../utils/data";
 import { Token } from "../../utils/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { SearchableList } from "./SearchableList";
 
 interface SubnetSelectorProps {
-  onSelect: (subnet: Token) => void;
+  onSelect: (token: Token) => void;
   onClose: () => void;
-}
-
-interface ExtendedToken extends Token {
-  netuid: number;
 }
 
 const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
@@ -31,27 +27,37 @@ const SubnetSelector = ({ onSelect, onClose }: SubnetSelectorProps) => {
   }, [onClose]);
 
   // Only show non-TAO subnets
-  const availableSubnets = SUBNETS.map((subnet) => ({
-    symbol: subnet.symbol,
+  const availableSubnets = subnets.map((subnet) => ({
+    symbol: subnet.name.toUpperCase(),
     balance: "0",
     netuid: Number(subnet.netuid),
+    subnetName: subnet.name,
   }));
 
-  const renderSubnet = (subnet: ExtendedToken) => (
+  const renderSubnet = (token: Token) => (
     <button
       onClick={() =>
-        onSelect({ symbol: subnet.symbol, balance: subnet.balance })
+        onSelect({
+          symbol: token.symbol.toUpperCase(),
+          netuid: token.netuid,
+          balance: "0",
+          subnetName: token.subnetName,
+        })
       }
       className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#2C2C2C] transition-colors"
     >
       <div className="flex items-center gap-3">
         <div className="w-5 h-5 rounded-full bg-gray-600" />
         <div className="text-left">
-          <div className="text-white font-medium">{subnet.symbol}</div>
-          <div className="text-xs text-gray-500 uppercase">SUBNET TOKEN</div>
+          <div className="text-white font-medium">
+            {token.symbol.toUpperCase()}
+          </div>
+          <div className="text-xs text-gray-500 uppercase">
+            {token.subnetName}
+          </div>
         </div>
       </div>
-      <div className="text-sm text-gray-400 font-mono">SN{subnet.netuid}</div>
+      <div className="text-sm text-gray-400 font-mono">{token.netuid}</div>
     </button>
   );
 

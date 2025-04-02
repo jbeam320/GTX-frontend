@@ -1,6 +1,7 @@
 export interface Subnet {
     name: string;
     netuid: number;
+    symbol: string;
     emission: number;
     price: number;
     price_change_1h: number;
@@ -27,4 +28,6 @@ export interface Subnet {
   export interface Token {
     symbol: string;
     balance: string;
+    subnetName: string;
+    netuid: number;
   }
