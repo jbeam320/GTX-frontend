@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useWalletStore } from "../store";
+import { useWalletStore } from "../stores/store";
 
 const PrivateGuard = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();

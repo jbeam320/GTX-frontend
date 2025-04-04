@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StakePanel from "./StakePanel";
-import ValidatorDashboard from "./ValidatorDashboard";
+import StakePanel from "../components/shared/panels/StakePanel";
+import ValidatorDashboard from "../components/shared/dashboards/ValidatorDashboard";
 
 export default function StakeModalContainer() {
   const [showValidators, setShowValidators] = useState(false);
@@ -30,14 +30,14 @@ export default function StakeModalContainer() {
       <motion.div
         layout
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="w-[420px] min-w-[420px]" // 👈 fixed width!
+        className="w-[420px] min-w-[420px]"
         style={{
-          marginLeft: showValidators ? "0px" : "auto", // 👈 pushes to center or right
-          marginRight: showValidators ? "0px" : "auto", // 👈 works with flex-center
+          marginLeft: showValidators ? "0px" : "auto",
+          marginRight: showValidators ? "0px" : "auto",
         }}
       >
         <StakePanel
-          onToggle={() => setShowValidators(!showValidators)}
+          handleViewValidators={() => setShowValidators(!showValidators)}
           showValidators={showValidators}
         />
       </motion.div>

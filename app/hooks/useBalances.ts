@@ -1,6 +1,6 @@
 import { ApiPromise } from "@polkadot/api";
-import { PLANCK_PER_TAO } from "../utils/constants";
-import { useWalletStore } from "../store";
+import { PLANCK_PER_TAO } from "../lib/utils/constants";
+import { useWalletStore } from "../stores/store";
 import { useEffect, useState } from "react";
 
 export const useBalances = () => {

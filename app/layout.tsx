@@ -7,7 +7,7 @@ import { PrivateGuard } from "./guards";
 import Layout from "./components/layout";
 
 //styles
-import "./globals.css";
+import ".styles/globals.css";
 import "@mantine/core/styles.css"; // Make sure this comes after globals.css
 import "@mantine/charts/styles.css";
 

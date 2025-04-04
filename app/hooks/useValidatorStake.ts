@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWalletStore } from "../store";
+import { useWalletStore } from "../stores/store";
 
 
 export const useValidatorStake = () => {

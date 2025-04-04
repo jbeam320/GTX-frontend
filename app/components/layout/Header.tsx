@@ -14,14 +14,14 @@ import {
 import { MoonStars, Settings } from "tabler-icons-react";
 
 //hooks
-import { useWalletStore } from "../../store";
+import { useWalletStore } from "../../stores/store";
 import { useBalances } from "../../hooks";
 
 //components
-import WalletConnectModal from "../modals/WalletConnectModal";
+import WalletConnectModal from "../ui/modals/WalletConnectModal";
 
 //constants
-import { TAO } from "../../utils/constants";
+import { TAO } from "../../lib/constants";
 
 const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
 
