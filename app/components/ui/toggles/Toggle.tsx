@@ -24,7 +24,7 @@ export default function Toggle({
 
   return (
     <div
-      className="rounded-full overflow-hidden flex shadow max-w-fit"
+      className="rounded-full overflow-hidden flex shadow max-w-fit outline-none"
       style={{ border: "1px solid var(--border-dark)" }}
       {...restProps}
     >

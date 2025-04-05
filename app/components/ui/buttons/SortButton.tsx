@@ -1,6 +1,6 @@
 import ChevronDownIcon from "/public/icons/chevron-down.svg";
-import ChevronUpIcon from "/public/icons/chevron-up.svg";
 import ChevronLeftIcon from "/public/icons/chevron-left.svg";
+import ChevronUpIcon from "/public/icons/chevron-up.svg";
 
 export default function SortButton({
   label,

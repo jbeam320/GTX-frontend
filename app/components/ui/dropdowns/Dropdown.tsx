@@ -11,8 +11,8 @@ interface Option {
 
 interface DropdownMenuProps {
   options: Option[];
-  selectedOption: string;
-  setValue?: (value: string) => void;
+  selectedOption: Option;
+  setOption?: (value: Option) => void;
   [key: string]: any;
 }
 
@@ -35,12 +35,13 @@ const dropdownStyle = {
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
   options,
-  setValue,
+  setOption,
   selectedOption,
   ...restProps
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+
+  console.log(selectedOption);
 
   //dropdown open/close
   const handleDropdownClick = () => {
@@ -49,8 +50,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
   // Handle selecting an option from the dropdown
   const handleSelect = (option: Option) => {
-    setSelected(option.label);
-    setValue?.(option.value);
+    setOption?.(option);
     setIsOpen(false); // Close the dropdown after selection
   };
 
@@ -63,7 +63,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         style={dropdownStyle}
         {...restProps}
       >
-        <span className="text-[12px]">{selected}</span>
+        <span className="text-[12px]">{selectedOption.label}</span>
         <ArrowDownIcon />
       </button>
       {/* Dropdown menu */}

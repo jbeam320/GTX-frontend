@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TaoInput } from "../../ui/inputs/TaoInput";
-import { ConfirmButton } from "../../ui/buttons/ConfirmButton";
+import { ConfirmButton } from "../../ui/buttons";
 import TransactionDetail from "../../ui/cards/TransactionDetail";
 import { useWalletStore } from "../../../stores/store";
 import { useValidatorStake } from "../../../hooks";
@@ -32,10 +32,12 @@ export default function StakePanelContent({
 
     setIsProcessing(true);
     try {
+      const { hotkey } = selectedValidator;
+      console.log(hotkey);
       if (isStake) {
-        await stakeTx(+amount, selectedValidator, 0);
+        await stakeTx(+amount, hotkey, 0);
       } else {
-        await unstakeTx(+amount, selectedValidator, 0);
+        await unstakeTx(+amount, hotkey, 0);
       }
       setSuccess(true);
       setAmount(""); // Clear amount after success

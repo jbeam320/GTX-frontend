@@ -5,10 +5,6 @@ export const getSubnets = async () => {
         return response;
 };
 
-export const getTaoPrice = async () => {
-    const response = await api.get("/tao_price");
-    return response;
-};
 
 
 

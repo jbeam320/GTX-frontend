@@ -7,7 +7,7 @@ export const useValidatorStake = () => {
 
   useEffect(() => {
     if (selectedValidator) {
-      getValidatorStake(selectedValidator).then((stake) => {
+      getValidatorStake(selectedValidator.hotkey, 0).then((stake) => {
         if (stake) {
           setValidatorStake(stake);
         }

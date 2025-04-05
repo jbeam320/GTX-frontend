@@ -6,20 +6,24 @@
     --bg-dark-2: #E1E1E1;
     --bg-dark-3: #25262608;
     --bg-dark-5: #2526260D;
+    --bg-dark-8: #25262614;
     --bg-dark-10: #EBE6C81A;
+    --bg-dark-4: #D9D9D9;
     --bg-light: #FFFFFF;
     --bg-light-1: #EFEFEF;
     --bg-primary: #FFFFFF;
     --bg-secondary: #EBE6C8;
     --bg-dark-15: #2526261A;
     --bg-dark-6: #F2F2F2;
+    --bg-dark-overlay: #000000E5;
 
-    
+    --border-dark-70: #989898B2;
     --border-dark: #CECECE;
     --border-dark-50: #CECECE1A;
     --border-black-15: #25262626;
     
     --color-light: #FFFFFF;
+    --color-gray: #6F7072;
     --color-light-80: #FFFFFF80;
     --color-dark: #666666;
     --color-dark-5: #2526260D;

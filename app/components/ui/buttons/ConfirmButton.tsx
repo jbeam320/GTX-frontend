@@ -11,7 +11,7 @@ interface ConfirmButtonProps {
   disabledText?: string;
 }
 
-export function ConfirmButton({
+export default function ConfirmButton({
   isProcessing,
   isSuccess,
   isDisabled,

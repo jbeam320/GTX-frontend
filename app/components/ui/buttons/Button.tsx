@@ -95,7 +95,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       className={`${buttonClass} ${borderRadius} ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
-      }`}
+      } cursor-pointer`}
       disabled={disabled}
       style={{
         width,

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DrowDownIcon from "/public/icons/arrow-down.svg";
 
 interface Token {
   symbol: string;
@@ -16,6 +17,7 @@ interface TaoInputProps {
   isSelectable?: boolean;
   balance?: string;
   error?: string;
+  isStaked?: boolean;
 }
 
 export function TaoInput({
@@ -28,6 +30,7 @@ export function TaoInput({
   isSelectable = false,
   balance = "0",
   error: externalError,
+  isStaked = false, //wallet balance
 }: TaoInputProps) {
   const [error, setError] = useState<string | null>(null);
 
@@ -72,7 +75,7 @@ export function TaoInput({
             placeholder="0"
             min="0"
             step="any"
-            className={`w-full font-[Haffner-Bold] bg-transparent outline-none`}
+            className={`w-full font-[Haffner-Bold] bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
             readOnly={!token}
             style={{
               fontSize: "34px",
@@ -89,8 +92,9 @@ export function TaoInput({
               <div className="flex items-center gap-[16px]">
                 <div
                   style={{
-                    background:
-                      "linear-gradient(180deg, #000000 0%, #666666 100%)",
+                    background: isStaked
+                      ? "linear-gradient(180deg, #9B9B9B 0%, #C9C9C9 100%)"
+                      : "linear-gradient(180deg, #000000 0%, #666666 100%)",
                   }}
                   className={`w-[24px] h-[24px] rounded-full`}
                 />
@@ -99,17 +103,18 @@ export function TaoInput({
                   <span className="text-[20px] text-[var(--color-black)]">
                     {token.symbol}
                   </span>
-                  <span className="text-[12px] text-[var(--color-black)]">
-                    {token.balance} {token.subnetName}
-                  </span>
+                  {isStaked && (
+                    <span className="text-[12px] text-[var(--color-black)]">
+                      {token.subnetName}
+                    </span>
+                  )}
                 </div>
-                {isSelectable && <span className="text-gray-400">▼</span>}
+                {isSelectable && <DrowDownIcon />}
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-gray-200" />
-                <span className="text-gray-400">SELECT</span>
-                {isSelectable && <span className="text-gray-400">▼</span>}
+                <span className="text-[20px]">SELECT</span>
+                {isSelectable && <DrowDownIcon />}
               </div>
             )}
           </button>

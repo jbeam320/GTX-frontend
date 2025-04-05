@@ -1,16 +1,17 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { PLANCK_PER_TAO } from "../lib/constants";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { PLANCK_PER_TAO, defaultValidator } from "../lib/constants";
 
 // Separate interface for persisted state
 interface PersistedState {
   walletAddress: string;
   walletBalance: string;
   stakedBalance: string;
-  selectedValidator: string;
+  selectedValidator: { hotkey: string; name: string };
   validatorStake: string;
+  shouldReconnect: boolean;
 }
 
 interface WalletState extends PersistedState {
@@ -21,8 +22,6 @@ interface WalletState extends PersistedState {
   // API functions
   setupApiConnection: () => Promise<ApiPromise | null>;
   setupExtension: () => Promise<InjectedExtension | null>;
-  connectWallet: () => Promise<void>;
-  disconnectWallet: () => Promise<void>;
   stakeTx: (
     amount: number,
     validator: string,
@@ -42,11 +41,20 @@ interface WalletState extends PersistedState {
   setWalletAddress: (address: string) => void;
   setWalletBalance: (balance: string) => void;
   setStakedBalance: (balance: string) => void;
-  setSelectedValidator: (validator: string) => void;
+  setSelectedValidator: (validator: { hotkey: string; name: string }) => void;
   setApi: (api: ApiPromise | null) => void;
   setIsInitialized: (isInitialized: boolean) => void;
   setExtension: (extension: InjectedExtension | null) => void;
   setValidatorStake: (stake: string) => void;
+
+  // Modified connectWallet
+  connectWallet: () => Promise<void>;
+
+  // Modified disconnectWallet
+  disconnectWallet: () => Promise<void>;
+
+  // Add new reconnect function
+  reconnectWallet: () => Promise<void>;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -56,8 +64,9 @@ export const useWalletStore = create<WalletState>()(
       walletAddress: "",
       walletBalance: "0",
       stakedBalance: "0",
-      selectedValidator: "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT",
+      selectedValidator: defaultValidator,
       validatorStake: "0",
+      shouldReconnect: false,
 
       // Non-persisted state
       api: null,
@@ -160,6 +169,7 @@ export const useWalletStore = create<WalletState>()(
           setupExtension,
           setWalletAddress,
           setupApiConnection,
+          setSelectedValidator,
         } = get();
         try {
           let currentExtension = extension;
@@ -179,7 +189,8 @@ export const useWalletStore = create<WalletState>()(
           }
 
           setWalletAddress(accounts[0].address);
-          // Initialize API right after setting wallet address
+          setSelectedValidator(defaultValidator);
+          set({ shouldReconnect: true });
           await setupApiConnection();
         } catch (error) {
           console.error("Error connecting to wallet:", error);
@@ -199,9 +210,8 @@ export const useWalletStore = create<WalletState>()(
           setWalletAddress("");
           setWalletBalance("0");
           setStakedBalance("0");
-          setSelectedValidator(
-            "5FCPTnjevGqAuTttetBy4a24Ej3pH9fiQ8fmvP1ZkrVsLUoT"
-          );
+          setSelectedValidator(defaultValidator);
+          set({ shouldReconnect: false });
           if (api) {
             api.disconnect();
             setApi(null);
@@ -481,6 +491,28 @@ export const useWalletStore = create<WalletState>()(
           return "0";
         }
       },
+
+      // Add new reconnect function
+      reconnectWallet: async () => {
+        const { shouldReconnect, walletAddress, setupExtension, setupApiConnection } = get();
+        
+        if (!shouldReconnect || !walletAddress) return;
+
+        try {
+          const extension = await setupExtension();
+          if (!extension) return;
+
+          const accounts = await extension.accounts.get();
+          if (!accounts.some(acc => acc.address === walletAddress)) {
+            await get().disconnectWallet();
+            return;
+          }
+
+          await setupApiConnection();
+        } catch (error) {
+          console.error("Error reconnecting:", error);
+        }
+      },
     }),
 
     {
@@ -492,6 +524,7 @@ export const useWalletStore = create<WalletState>()(
         stakedBalance: state.stakedBalance,
         selectedValidator: state.selectedValidator,
         validatorStake: state.validatorStake,
+        shouldReconnect: state.shouldReconnect,
       }),
     }
   )

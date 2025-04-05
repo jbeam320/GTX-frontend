@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import AnimatedContainer from "../animations/AnimatedContainer";
 import ArrowDown from "/public/icons/arrow-down.svg";
 import ArrowUp from "/public/icons/arrow-up.svg";
-import AnimatedContainer from "../animations/AnimatedContainer";
 
 interface TransactionDetailProps {
   tokenAmount: string;
@@ -40,7 +40,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
       {...restProps}
     >
       {/* Main details (Token + Percentage) */}
-      <div>
+      <div className={`${isShow ? "visible" : "invisible"}`}>
         <div className="text-[var(--color-dark)] text-[14px] mb-[8px] text-center">
           TRANSACTION DETAILS
         </div>

@@ -1,22 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SubnetSelector from "../../ui/modals/SubnetSelector";
-import { Token } from "../../../lib/types";
-import { TaoInput } from "../../ui/inputs/TaoInput";
-import { ConfirmButton } from "../../ui/buttons/ConfirmButton";
-import { useWalletStore } from "../../../stores/store";
-import { useSubnet } from "../../../hooks";
-import { subnets } from "../../../lib/data";
 import { PLANCK_PER_TAO } from "../../../lib/constants";
-import TransactionPanel from "./TransactionPanel";
+import { subnets } from "../../../lib/data";
+import { Token } from "../../../lib/types";
+import { useWalletStore } from "../../../stores/store";
+import { ConfirmButton } from "../../ui/buttons";
 import Button from "../../ui/buttons/Button";
+import { TaoInput } from "../../ui/inputs/TaoInput";
+import SubnetSelector from "../../ui/modals/SubnetSelector";
+import TransactionPanel from "./TransactionPanel";
 import ChartIcon from "/public/icons/chart.svg";
 import CloseIcon from "/public/icons/close-small.svg";
+import SwapButton from "../../ui/buttons/SwapButton";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
-  subnetName: "ROOT",
+  subnetName: "root",
   netuid: 0,
   balance: "0",
   isStaked: false, // wallet balance
@@ -50,7 +50,7 @@ const SwapPanel = () => {
         const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
         const balance = isStaked
-          ? await getValidatorStake(selectedValidator, netuid)
+          ? await getValidatorStake(selectedValidator.hotkey, netuid)
           : walletBalance;
         const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
@@ -68,7 +68,7 @@ const SwapPanel = () => {
         const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
         const balance = isStaked
-          ? await getValidatorStake(selectedValidator, netuid)
+          ? await getValidatorStake(selectedValidator.hotkey, netuid)
           : walletBalance;
         const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
@@ -87,12 +87,12 @@ const SwapPanel = () => {
   const handleSelect = (token: Token) => {
     if (isSelectingFrom) {
       // If selecting FROM token, set selected token as FROM and TAO as TO
-      setFromToken(token);
+      setFromToken({ ...token, isStaked: true });
       setToToken({ ...ROOT_TOKEN, balance: walletBalance });
     } else {
       // If selecting TO token, set TAO as FROM and selected token as TO
       setFromToken({ ...ROOT_TOKEN, balance: walletBalance });
-      setToToken(token);
+      setToToken({ ...token, isStaked: true });
     }
     setSelectorOpen(false);
   };
@@ -123,11 +123,12 @@ const SwapPanel = () => {
     setIsProcessing(true);
 
     try {
+      const { hotkey } = selectedValidator;
       if (!fromToken.isStaked) {
         // stake
-        await stakeTx(taoAmount, selectedValidator, toToken.netuid);
+        await stakeTx(taoAmount, hotkey, toToken.netuid);
       } else {
-        await unstakeTx(taoAmount, selectedValidator, fromToken.netuid);
+        await unstakeTx(taoAmount, hotkey, fromToken.netuid);
       }
 
       setIsSuccess(true);
@@ -154,6 +155,8 @@ const SwapPanel = () => {
     +amount <= 0 ||
     +amount > +fromToken.balance;
 
+  console.log(fromToken?.isStaked, toToken?.isStaked);
+
   return (
     <div>
       <TransactionPanel
@@ -170,7 +173,7 @@ const SwapPanel = () => {
           />
         }
         childrens={
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-[33px]">
             <TaoInput
               label="FROM"
               token={fromToken}
@@ -180,47 +183,25 @@ const SwapPanel = () => {
               onChange={handleToTokenChange}
               subLabel={fromToken?.symbol && "BALANCE"}
               balance={fromToken?.balance}
+              isStaked={fromToken?.isStaked}
             />
 
             <div className="flex items-center justify-between">
-              <button
+              <SwapButton
+                isFromStaked={fromToken?.isStaked}
                 onClick={handleSwapToggle}
-                className="w-[120px] h-[48px] bg-gray-100 rounded-2xl relative flex items-center justify-between px-4"
-              >
-                <div
-                  className={`w-6 h-6 rounded-full ${
-                    fromToken?.symbol === "TAO" ? "bg-black" : "bg-gray-300"
-                  }`}
-                />
-                <div className="absolute left-1/2 -translate-x-1/2 text-gray-500 text-sm">
-                  ⟷
-                </div>
-                <div
-                  className={`w-6 h-6 rounded-full ${
-                    toToken?.symbol === "TAO" ? "bg-black" : "bg-gray-300"
-                  }`}
-                />
-              </button>
+              />
 
               <div className="flex gap-2">
-                <button
-                  onClick={() => handlePercentageClick(25)}
-                  className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
-                >
-                  25%
-                </button>
-                <button
-                  onClick={() => handlePercentageClick(50)}
-                  className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
-                >
-                  50%
-                </button>
-                <button
-                  onClick={() => handlePercentageClick(100)}
-                  className="px-2 py-1 rounded-full hover:bg-gray-200 text-sm"
-                >
-                  MAX
-                </button>
+                {[25, 50, 100].map((percentage) => (
+                  <button
+                    key={percentage}
+                    onClick={() => handlePercentageClick(percentage)}
+                    className="p-[12px] rounded-[16px] cursor-pointer hover:bg-gray-200 text-[16px] font-mono"
+                  >
+                    {percentage === 100 ? "MAX" : `${percentage}%`}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -233,6 +214,7 @@ const SwapPanel = () => {
               onChange={handleToTokenChange}
               subLabel={toToken?.symbol && "BALANCE"}
               balance={toToken?.balance}
+              isStaked={toToken?.isStaked}
             />
 
             <ConfirmButton
