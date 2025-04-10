@@ -1872,7 +1872,12 @@
   dependencies:
     undici-types "~6.20.0"
 
-"@types/react@*", "@types/react@>=18.0.0", "@types/react@19.0.12":
+"@types/react-dom@^19.1.2":
+  version "19.1.2"
+  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.1.2.tgz"
+  integrity sha512-XGJkWF41Qq305SKWEILa1O8vzhb3aOo3ogBlSmiqNko/WmRb6QIaweuZCXjKygVDXpzXb5wyxKTSOsmkuqj+Qw==
+
+"@types/react@*", "@types/react@^19.0.0", "@types/react@>=18.0.0", "@types/react@19.0.12":
   version "19.0.12"
   resolved "https://registry.npmjs.org/@types/react/-/react-19.0.12.tgz"
   integrity sha512-V6Ar115dBDrjbtXSrS+/Oruobc+qVbbUxDFC1RSbRqLt5SYvxxyIDrSC85RWml54g+jfNeEMZhEj7wW07ONQhA==

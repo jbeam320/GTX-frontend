@@ -46,6 +46,7 @@
     "@types/d3-time-format": "^4.0.3",
     "@types/node": "22.13.13",
     "@types/react": "19.0.12",
+    "@types/react-dom": "^19.1.2",
     "msw": "^2.7.3",
     "typescript": "^5.0.0"
   }

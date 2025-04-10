@@ -1,9 +1,12 @@
+"use client";
+
 import { SearchableList } from "../../shared/lists";
 import SubnetListItem from "../../shared/items/SubnetModalItem";
 import { Token, Subnet } from "../../../lib/types";
 import { useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "/public/icons/close.svg";
+import { createPortal } from "react-dom";
 
 interface SubnetSelectorProps {
   subnets: Subnet[];
@@ -59,7 +62,7 @@ const SubnetSelector = ({
     }));
   }, [subnets]);
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
@@ -92,7 +95,7 @@ const SubnetSelector = ({
             searchConfig={{
               fields: ["symbol", "netuid"],
             }}
-            renderItem={renderSubnet} //SubnetListItem
+            renderItem={renderSubnet}
             searchPlaceholder="Search by Subnet name or number"
             style={{
               backgroundColor: "var(--bg-dark-10)",
@@ -103,6 +106,10 @@ const SubnetSelector = ({
       </motion.div>
     </AnimatePresence>
   );
+
+  if (typeof window === "undefined") return null;
+
+  return createPortal(modalContent, document.body);
 };
 
 export default SubnetSelector;
