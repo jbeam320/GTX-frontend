@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Container, Flex, Loader, Text } from "@mantine/core";
+import { Box, Container, Flex, Loader } from "@mantine/core";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useBalances } from "../../hooks";
@@ -33,12 +33,10 @@ export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Try to reconnect on page load if we should
     reconnectWallet();
   }, []);
 
   useEffect(() => {
-    // Only disconnect if we're not in the process of reconnecting
     if (!api && !extension && walletAddress) {
       disconnectWallet();
     }
@@ -47,18 +45,14 @@ export default function Header() {
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
 
   const handleTabClick = (tab: string) => {
-    router.push(`/${tab.toLowerCase()}`);
+    const url = tab !== "SUBNET" ? `/${tab.toLowerCase()}` : "/subnets";
+    router.push(url);
   };
 
   return (
     <Box bg="var(--bg-light)">
-      <Container size="xl" className="mt-[20px]">
-        <Flex
-          justify="space-between"
-          align="center"
-          py="sm"
-          style={{ width: "100%" }}
-        >
+      <Container size="1200px" className="mt-[60px]" px={0}>
+        <Flex justify="space-between" align="center" style={{ width: "100%" }}>
           {/* LEFT SECTION */}
           <div className="flex items-center gap-6">
             <label className="text-[36px] font-sans font-bold w-[102px] mr-[54px]">

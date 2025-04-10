@@ -16,7 +16,7 @@ interface TaoInputProps {
   subLabel?: string;
   isSelectable?: boolean;
   balance?: string;
-  error?: string;
+  errorIgnore?: boolean;
   isStaked?: boolean;
 }
 
@@ -29,7 +29,7 @@ export function TaoInput({
   subLabel,
   isSelectable = false,
   balance = "0",
-  error: externalError,
+  errorIgnore = false,
   isStaked = false, //wallet balance
 }: TaoInputProps) {
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function TaoInput({
     if (value === "" || !isNaN(+value)) {
       onChange(value);
 
-      if (balance && value !== "" && +value > +balance) {
+      if (balance && value !== "" && +value > +balance && !errorIgnore) {
         setError("Insufficient balance");
       }
     }
@@ -129,10 +129,8 @@ export function TaoInput({
         )}
       </div>
 
-      {(error || externalError) && (
-        <div className="text-xs text-red-500 mt-[10px] font-mono">
-          {error || externalError}
-        </div>
+      {error && (
+        <div className="text-xs text-red-500 mt-[10px] font-mono">{error}</div>
       )}
     </div>
   );

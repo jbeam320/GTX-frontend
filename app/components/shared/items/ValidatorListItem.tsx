@@ -1,6 +1,6 @@
-import { Validator } from "../../../lib/types/validator-type";
 import { taoPrice } from "../../../lib/data";
-import { formatPercent, formatCompactSimple } from "../../../lib/utils/format";
+import { Validator } from "../../../lib/types/validator-type";
+import { formatCompactSimple, formatPercent } from "../../../lib/utils/format";
 
 export default function ValidatorListItem({
   validator,
@@ -10,8 +10,8 @@ export default function ValidatorListItem({
   };
 }) {
   return (
-    <div className="flex items-center justify-between w-[776px] h-[64px] bg-[var(--bg-dark-3)] rounded-[4px] text-[14px] hover:bg-[var(--bg-dark-15)] mb-[2px] px-[18px]">
-      <div className="flex items-center gap-[16px]">
+    <div className="flex items-center h-[64px] bg-[var(--bg-dark-3)] rounded-[4px] text-[14px] hover:bg-[var(--bg-dark-15)] mb-[2px] px-[18px]">
+      <div className="flex items-center gap-[16px] min-w-[152px] mr-[30px] ">
         <div
           className="w-[24px] h-[24px] rounded-full"
           style={{
@@ -21,11 +21,15 @@ export default function ValidatorListItem({
         <div>{validator.name}</div>
       </div>
 
-      <div>{formatPercent(validator.infra_rating)}</div>
+      <div className="mr-[44px] w-[55px] text-center">
+        {formatPercent(validator.infra_rating)}
+      </div>
 
-      <div>{formatPercent(validator.tao_7d_apy)}</div>
+      <div className="mr-[45px] w-[60px] text-center">
+        {formatPercent(validator.tao_7d_apy)}
+      </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mr-[45px]">
         <div className="text-right">
           {formatCompactSimple(validator.stake)}τ
         </div>
@@ -34,7 +38,7 @@ export default function ValidatorListItem({
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mr-[45px]">
         <div className="text-right">
           {formatCompactSimple(validator.yield_7d)}τ
         </div>
@@ -43,14 +47,14 @@ export default function ValidatorListItem({
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mr-[45px]">
         <div className="text-right">{validator.balance}τ</div>
         <div className="text-right">
           {formatCompactSimple(+validator.balance, taoPrice.price)}$
         </div>
       </div>
 
-      <div>{formatPercent(validator.fee)}</div>
+      <div className="w-[60px] text-center">{formatPercent(validator.fee)}</div>
     </div>
   );
 }

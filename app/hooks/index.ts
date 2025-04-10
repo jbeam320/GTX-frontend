@@ -1,4 +1,4 @@
 export * from "./useBalances";
-export * from "./useSubnet";
+export * from "./useSubnets";
 export * from "./useTaoPrice";
 export * from "./useValidatorStake";

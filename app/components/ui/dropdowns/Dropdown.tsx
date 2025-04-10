@@ -41,17 +41,13 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(selectedOption);
-
-  //dropdown open/close
   const handleDropdownClick = () => {
     setIsOpen(!isOpen);
   };
 
-  // Handle selecting an option from the dropdown
   const handleSelect = (option: Option) => {
     setOption?.(option);
-    setIsOpen(false); // Close the dropdown after selection
+    setIsOpen(false);
   };
 
   return (

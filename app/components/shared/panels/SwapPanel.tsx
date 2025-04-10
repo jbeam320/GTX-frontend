@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { PLANCK_PER_TAO } from "../../../lib/constants";
-import { subnets } from "../../../lib/data";
+import { subnets, taoPrice } from "../../../lib/data";
 import { Token } from "../../../lib/types";
 import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
 import Button from "../../ui/buttons/Button";
+import SwapButton from "../../ui/buttons/SwapButton";
 import { TaoInput } from "../../ui/inputs/TaoInput";
 import SubnetSelector from "../../ui/modals/SubnetSelector";
 import TransactionPanel from "./TransactionPanel";
 import ChartIcon from "/public/icons/chart.svg";
 import CloseIcon from "/public/icons/close-small.svg";
-import SwapButton from "../../ui/buttons/SwapButton";
+import { TransactionDetail } from "../../ui/cards";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -23,7 +24,12 @@ const ROOT_TOKEN: Token = {
   price: 1,
 };
 
-const SwapPanel = () => {
+interface SwapPanelProps {
+  onToggleChart: () => void;
+  isChartVisible: boolean;
+}
+
+const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   const {
     getValidatorStake,
     walletBalance,
@@ -39,7 +45,6 @@ const SwapPanel = () => {
   const [amount, setAmount] = useState("0");
   const [isSelectorOpen, setSelectorOpen] = useState(false);
   const [isSelectingFrom, setSelectingFrom] = useState(true);
-  const [isChartVisible, setChartVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -116,10 +121,17 @@ const SwapPanel = () => {
     setAmount(amount.toFixed(2));
   };
 
+  const handleFromTokenChange = (value: string) => {
+    // const amount = (+value * (fromToken?.price ?? 0)) / (toToken?.price ?? 0);
+    // setAmount(amount.toFixed(2));
+    setAmount(value);
+  };
+
   const handleConfirm = async () => {
     if (!amount || !fromToken || !toToken) return;
 
-    const taoAmount = +amount * fromToken.price;
+    const taoAmount = +amount;
+    console.log(fromToken, toToken);
     setIsProcessing(true);
 
     try {
@@ -155,7 +167,10 @@ const SwapPanel = () => {
     +amount <= 0 ||
     +amount > +fromToken.balance;
 
-  console.log(fromToken?.isStaked, toToken?.isStaked);
+  const toTokenAmount = (
+    (+amount * (fromToken?.price ?? 0)) /
+    (toToken?.price ?? 0)
+  ).toFixed(2);
 
   return (
     <div>
@@ -167,7 +182,7 @@ const SwapPanel = () => {
           <Button
             label="VIEW CHART"
             variant="primary"
-            onClick={() => setChartVisible(!isChartVisible)}
+            onClick={onToggleChart}
             icon={isChartVisible ? <CloseIcon /> : <ChartIcon />}
             isRounded={true}
           />
@@ -180,7 +195,7 @@ const SwapPanel = () => {
               value={amount}
               isSelectable
               onClick={() => handleSubnetClick(true)}
-              onChange={handleToTokenChange}
+              onChange={handleFromTokenChange}
               subLabel={fromToken?.symbol && "BALANCE"}
               balance={fromToken?.balance}
               isStaked={fromToken?.isStaked}
@@ -208,13 +223,25 @@ const SwapPanel = () => {
             <TaoInput
               label="TO"
               token={toToken}
-              value={amount}
+              value={toTokenAmount}
               isSelectable
               onClick={() => handleSubnetClick(false)}
               onChange={handleToTokenChange}
               subLabel={toToken?.symbol && "BALANCE"}
               balance={toToken?.balance}
+              errorIgnore={true}
               isStaked={toToken?.isStaked}
+            />
+
+            <TransactionDetail
+              tokenAmount={toToken?.isStaked ? amount : toTokenAmount}
+              alphaAmount={toToken?.isStaked ? toTokenAmount : amount}
+              usdAmount={
+                toToken?.isStaked
+                  ? (+amount * taoPrice.price).toFixed(2)
+                  : (+toTokenAmount * taoPrice.price).toFixed(2)
+              }
+              isShow={!isDisabled}
             />
 
             <ConfirmButton

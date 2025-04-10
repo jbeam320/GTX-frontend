@@ -309,6 +309,7 @@ export const useWalletStore = create<WalletState>()(
           const account = await web3FromAddress(walletAddress);
 
           if (!account) throw new Error("Account not found");
+          console.log(netuid, amount);
 
           const stakeTx = api.tx.subtensorModule.addStake(
             validator,
@@ -395,7 +396,7 @@ export const useWalletStore = create<WalletState>()(
           fetchWalletBalance,
           fetchStakedBalance,
         } = get();
-        console.log(netuid, amount);
+        console.log(netuid, amount, validator);
 
         if (!walletAddress) throw new Error("wallet address not found");
         if (!extension) throw new Error("Extension not connected");
@@ -494,8 +495,13 @@ export const useWalletStore = create<WalletState>()(
 
       // Add new reconnect function
       reconnectWallet: async () => {
-        const { shouldReconnect, walletAddress, setupExtension, setupApiConnection } = get();
-        
+        const {
+          shouldReconnect,
+          walletAddress,
+          setupExtension,
+          setupApiConnection,
+        } = get();
+
         if (!shouldReconnect || !walletAddress) return;
 
         try {
@@ -503,7 +509,7 @@ export const useWalletStore = create<WalletState>()(
           if (!extension) return;
 
           const accounts = await extension.accounts.get();
-          if (!accounts.some(acc => acc.address === walletAddress)) {
+          if (!accounts.some((acc) => acc.address === walletAddress)) {
             await get().disconnectWallet();
             return;
           }

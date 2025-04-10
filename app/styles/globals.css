@@ -16,12 +16,14 @@
     --bg-dark-15: #2526261A;
     --bg-dark-6: #F2F2F2;
     --bg-dark-overlay: #000000E5;
-
+    
+    --border-black: #1C1D22;
     --border-dark-70: #989898B2;
     --border-dark: #CECECE;
     --border-dark-50: #CECECE1A;
     --border-black-15: #25262626;
     
+    --color-dark-100: #686A76;
     --color-light: #FFFFFF;
     --color-gray: #6F7072;
     --color-light-80: #FFFFFF80;
@@ -33,6 +35,7 @@
     --color-primary: #897D4E;
     --color-disabled: #2526264D;
     --color-success: #B1A459;
+    --color-red: #D25E77;
 
     --green-stroke: #22c55e;
     --red-stroke: #ef4444;
@@ -40,6 +43,9 @@
     --red-fill: #ef444420;
 
     --gradient-primary: linear-gradient(90deg, #666666 0%, #000000 100%);
+    --gradient-secondary: linear-gradient(180deg, #9B9B9B 0%, #C9C9C9 100%);
+    --gradient-primary-reverse: linear-gradient(180deg, #000000 0%, #666666 100%);
+
 }   
 
 html,

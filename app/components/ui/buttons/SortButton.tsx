@@ -16,11 +16,12 @@ export default function SortButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center text-center text-[12px] p-[10px] space-x-[10px] bg-[var(--bg-light)] ${
+      className={`flex items-center justify-center text-center p-[10px] space-x-[10px] bg-[var(--bg-light)] ${
         isAscending === null
           ? "text-[var(--color-dark-70)]"
           : "text-[var(--bg-dark)]"
       }`}
+      style={{ fontSize: "12px" }}
     >
       <div className="flex items-center gap-[8px]">
         {label}

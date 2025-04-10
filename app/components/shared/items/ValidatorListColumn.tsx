@@ -21,7 +21,7 @@ export default function ValidatorListColumn({
   onSort: (column: string) => void;
 }) {
   return (
-    <div className="flex justify-between w-[732px] h-full  my-[8px] ml-[30px]">
+    <div className="flex justify-between w-[732px] h-full ml-[40px]">
       {columns.map((column, index) => (
         <SortButton
           key={index}

@@ -31,18 +31,22 @@ export default function Toggle({
       <Button
         label={firstLabel}
         variant={toggleState === 1 ? "dark" : "disabled"}
-        fontFamily="dm-mono"
+        fontSize="18px"
         isRounded={true}
-        size="medium"
+        border={toggleState === 1 ? "1px solid var(--border-dark)" : "none"}
         onClick={() => setToggleState(1)}
+        width="154px"
+        height="43px"
       />
       <Button
         label={secondLabel}
         variant={toggleState === 2 ? "dark" : "disabled"}
-        fontFamily="dm-mono"
+        fontSize="18px"
         isRounded={true}
-        size="medium"
+        border={toggleState === 2 ? "1px solid var(--border-dark)" : "none"}
         onClick={() => setToggleState(2)}
+        width="154px"
+        height="43px"
       />
     </div>
   );

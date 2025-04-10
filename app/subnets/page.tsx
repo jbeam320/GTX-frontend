@@ -1,16 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Subnet } from "../lib/types";
-import { Button, Group } from "@mantine/core";
 
-import {
-  subnets,
-  taoPrice,
-  loading_subnets,
-  loading_taoPrice,
-} from "../lib/data";
 import SubnetList from "../components/shared/lists/SubnetList";
 import SearchInput from "../components/ui/inputs/SearchInput";
+import TokenToggle from "../components/ui/toggles/TokenToggle";
+import { subnets } from "../lib/data";
 
 export default function SubnetPage() {
   // const { subnets, loading_subnets } = useSubnet();
@@ -39,26 +34,11 @@ export default function SubnetPage() {
         <div className="mb-[14px] flex gap-[14px]">
           <SearchInput onChange={(value) => setSearch(value)} />
 
-          <Group>
-            <Button.Group>
-              <Button
-                variant={!isUSD ? "filled" : "default"}
-                onClick={() => setIsUSD(false)}
-                radius="xl"
-                style={{ backgroundColor: !isUSD ? "#000" : "transparent" }}
-              >
-                TAO
-              </Button>
-              <Button
-                variant={isUSD ? "filled" : "default"}
-                onClick={() => setIsUSD(true)}
-                radius="xl"
-                style={{ backgroundColor: isUSD ? "#000" : "transparent" }}
-              >
-                USD
-              </Button>
-            </Button.Group>
-          </Group>
+          <TokenToggle
+            firstLabel="TAO"
+            secondLabel="USD"
+            setMode={(modeNumber) => setIsUSD(modeNumber === 2)}
+          />
         </div>
 
         <SubnetList subnets={filtered} isUSD={isUSD} />

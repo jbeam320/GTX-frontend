@@ -10,7 +10,7 @@ export default function StakeModalContainer() {
   const [showValidators, setShowValidators] = useState(false);
 
   return (
-    <Container size="xl" className="py-[100px]">
+    <Container size="1200px" px={0} mt={116}>
       <div className="w-full flex justify-between">
         {/* Validators Dashboard */}
         <AnimatePresence>
@@ -21,7 +21,6 @@ export default function StakeModalContainer() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="w-[60%] mr-[20px]"
             >
               <ValidatorDashboard />
             </motion.div>

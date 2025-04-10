@@ -1507,3 +1507,17 @@ export const subnets = [
     ],
   },
 ];
+
+export const subnetData = {
+  marketCap: "2.18B",
+  alphaInPool: "38.69K",
+  taoInPool: "6.01M",
+  volume24h: "53.79M",
+  fdvUSD: "1.19B",
+  liquidityA: "97.85k",
+  liquidityT: "18.35k",
+  circulatingSupply: "244.24k",
+  tokenPriceUSD: "687.24326",
+  priceChange: "-0.0087",
+  priceChangePercent: "-4.94618%",
+}; 
