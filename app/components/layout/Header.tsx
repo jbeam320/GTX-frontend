@@ -1,115 +1,134 @@
 "use client";
 
-//third party
+import { Box, Container, Flex, Loader } from "@mantine/core";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Button,
-  Text,
-  Flex,
-  ActionIcon,
-  Box,
-  Container,
-  Loader,
-} from "@mantine/core";
-import { MoonStars, Settings } from "tabler-icons-react";
-
-//hooks
-import { useWalletStore } from "../../store";
+import { useEffect, useState } from "react";
 import { useBalances } from "../../hooks";
+import { validators } from "../../lib/data";
+import { useWalletStore } from "../../stores/store";
+import { Button } from "../ui/buttons";
+import DropdownMenu from "../ui/dropdowns/Dropdown";
+import WalletConnectModal from "../ui/modals/WalletConnectModal";
+import SettingIcon from "/public/icons/setting.svg";
+import WalletInfo from "../ui/cards/WalletInfo";
 
-//components
-import WalletConnectModal from "../modals/WalletConnectModal";
-
-//constants
-import { TAO } from "../../utils/constants";
-
-const tabs = ["Swap", "Subnet", "Bulk", "Stake"];
+const tabs = ["SWAP", "SUBNET", "BULK", "STAKE"];
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { disconnectWallet, walletAddress } = useWalletStore();
+  const {
+    disconnectWallet,
+    walletAddress,
+    api,
+    extension,
+    selectedValidator,
+    setSelectedValidator,
+    reconnectWallet,
+  } = useWalletStore();
   const { walletBalance, stakedBalance, loading_balances } = useBalances();
+
+  console.log(walletAddress);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    reconnectWallet();
+  }, []);
+
+  useEffect(() => {
+    if (!api && !extension && walletAddress) {
+      disconnectWallet();
+    }
+  }, [api, extension, walletAddress]);
 
   const isActive = (tab: string) => pathname === `/${tab.toLowerCase()}`;
 
   const handleTabClick = (tab: string) => {
-    router.push(`/${tab.toLowerCase()}`);
+    const url = tab !== "SUBNET" ? `/${tab.toLowerCase()}` : "/subnets";
+    router.push(url);
   };
 
   return (
-    <Box bg="white" style={{ borderBottom: "1px solid #eee" }}>
-      <Container size="xl">
-        <Flex
-          justify="space-between"
-          align="center"
-          py="sm"
-          style={{ width: "100%" }}
-        >
+    <Box bg="var(--bg-light)">
+      <Container size="1200px" className="mt-[60px]" px={0}>
+        <Flex justify="space-between" align="center" style={{ width: "100%" }}>
           {/* LEFT SECTION */}
-          <Flex align="center" gap="lg" style={{ flex: 1 }}>
-            <Text fw={700} fz="xl">
+          <div className="flex items-center gap-6">
+            <label className="text-[36px] font-sans font-bold w-[102px] mr-[54px]">
               GTX
-            </Text>
+            </label>
 
-            <Flex gap="xs">
-              {walletAddress &&
-                tabs.map((tab, i) => (
-                  <Button
-                    key={tab}
-                    variant={isActive(tab) ? "filled" : "light"}
-                    color={isActive(tab) ? "dark" : "gray"}
-                    radius="xl"
-                    size="xs"
-                    px="md"
-                    onClick={() => handleTabClick(tab)}
-                  >
-                    {tab}
-                  </Button>
-                ))}
-            </Flex>
-          </Flex>
+            <div className="flex gap-[60px]">
+              {tabs.map((tab, i) => (
+                <label
+                  key={i}
+                  className={`text-[14px] font-[DM Mono] cursor-pointer ${
+                    isActive(tab)
+                      ? "text-black  underline"
+                      : "text-[var(--color-gray)]"
+                  }`}
+                  onClick={() => handleTabClick(tab)}
+                >
+                  {tab}
+                </label>
+              ))}
+            </div>
+          </div>
 
           {/* RIGHT SECTION */}
-          <Flex align="center" gap="xs" style={{ flexShrink: 0 }}>
+          <Flex align="center" gap="32px" style={{ flexShrink: 0 }}>
             {walletAddress ? (
-              <Flex align="center" gap="xs">
-                <Text size="sm">
-                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                </Text>
+              <Flex align="center" gap="32px">
+                <DropdownMenu
+                  options={validators.map((validator) => ({
+                    label: validator.name,
+                    value: validator.hotkey,
+                  }))}
+                  selectedOption={{
+                    value: selectedValidator.hotkey,
+                    label: selectedValidator.name,
+                  }}
+                  setOption={(option) =>
+                    setSelectedValidator({
+                      hotkey: option.value,
+                      name: option.label,
+                    })
+                  }
+                />
 
                 {loading_balances ? (
-                  <Loader color="blue" />
+                  <Loader color="var(--color-primary)" size="sm" />
                 ) : (
-                  <Text size="sm">
-                    Staked: {stakedBalance?.toString()}
-                    {TAO} | Wallet: {walletBalance?.toString()}
-                    {TAO}
-                  </Text>
+                  <WalletInfo
+                    walletAddress={walletAddress}
+                    walletBalance={walletBalance}
+                    stakedBalance={stakedBalance}
+                  />
                 )}
-
-                <Button
-                  size="xs"
-                  variant="outline"
-                  color="gray"
-                  radius="xl"
-                  onClick={disconnectWallet}
-                >
-                  Disconnect
-                </Button>
               </Flex>
             ) : (
-              <WalletConnectModal />
+              <Button
+                label="Connect Wallet"
+                fontSize="14px"
+                color="var(--color-light)"
+                backgroundColor="var(--bg-dark)"
+                borderRadius="8px"
+                border="1px solid var(--border-dark)"
+                width="167px"
+                height="40px"
+                onClick={() => setIsModalOpen(true)}
+              />
             )}
 
-            <ActionIcon size="lg" variant="light" radius="xl">
-              <MoonStars size={18} />
-            </ActionIcon>
-            <ActionIcon size="lg" variant="light" radius="xl">
-              <Settings size={18} />
-            </ActionIcon>
+            <SettingIcon className="cursor-pointer" />
           </Flex>
         </Flex>
+
+        <WalletConnectModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </Container>
     </Box>
   );

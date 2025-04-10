@@ -9,8 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "bg-dark": "var(--bg-dark)",
+        "bg-light": "var(--bg-light)",
+        "bg-primary": "var(--bg-primary)",
+        "bg-secondary": "var(--bg-secondary)",
+
+        "border-dark": "var(--border-dark)",
+
+        "color-light": "var(--color-light)",
+        "color-black": "var(--color-black)",
+        "color-primary": "var(--color-primary)",
+        "color-disabled": "var(--color-disabled)",
+        "color-success": "var(--color-success)",
+
         "green-stroke": "var(--green-stroke)",
         "red-stroke": "var(--red-stroke)",
         "green-fill": "var(--green-fill)",
