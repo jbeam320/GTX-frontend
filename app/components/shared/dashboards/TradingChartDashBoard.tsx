@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { subnetData, chartDatas } from "../../../lib/data";
+import { subnetData } from "../../../lib/data";
 import ButtonGroup from "../../ui/buttons/ButtonGroup";
 import TradingChart from "../../ui/charts/TradingChart";
 import ExpandIcon from "/public/icons/expand.svg";
@@ -42,42 +42,12 @@ interface ChartValues {
 const DEFAULT_WIDTH = 760;
 const DEFAULT_HEIGHT = 306;
 
-// Time intervals in milliseconds
-const INTERVALS = {
-  "5M": 5 * 60 * 1000,
-  "1H": 60 * 60 * 1000,
-  "1D": 24 * 60 * 60 * 1000,
-} as const;
+type IntervalType = "5M" | "1H" | "1D";
 
-type IntervalType = keyof typeof INTERVALS;
-
-const aggregateDataByInterval = (data: ChartData[], interval: IntervalType) => {
-  const intervalMs = INTERVALS[interval];
-  const aggregatedData = new Map<number, ChartData>();
-
-  data.forEach((candle) => {
-    // Round down to the nearest interval
-    const intervalStart = Math.floor(candle.time / intervalMs) * intervalMs;
-
-    if (!aggregatedData.has(intervalStart)) {
-      aggregatedData.set(intervalStart, {
-        time: intervalStart,
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-        volume: candle.volume,
-      });
-    } else {
-      const existing = aggregatedData.get(intervalStart)!;
-      existing.high = Math.max(existing.high, candle.high);
-      existing.low = Math.min(existing.low, candle.low);
-      existing.close = candle.close;
-      existing.volume += candle.volume;
-    }
-  });
-
-  return Array.from(aggregatedData.values()).sort((a, b) => a.time - b.time);
+const INTERVALS: Record<IntervalType, 5 | 60 | 1440> = {
+  "5M": 5,
+  "1H": 60,
+  "1D": 1440,
 };
 
 export default function TradingChartContainer({
@@ -87,25 +57,8 @@ export default function TradingChartContainer({
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [height, setHeight] = useState(DEFAULT_HEIGHT);
-  const [chartData, setChartData] = useState<ChartData[]>([]);
   const [chartValues, setChartValues] = useState<ChartValues | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const now = Math.floor(Date.now());
-    const endTime = now;
-    const startTime = now - INTERVALS[interval] * 100; // Get 100 intervals worth of data
-
-    // First filter the data by time range
-    const filteredData = chartDatas.filter(
-      (d) => d.time >= startTime && d.time <= endTime
-    );
-
-    // Then aggregate based on the selected interval
-    const aggregatedData = aggregateDataByInterval(filteredData, interval);
-    setChartData(aggregatedData);
-  }, [interval]);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -335,11 +288,9 @@ export default function TradingChartContainer({
       </div>
 
       <TradingChart
-        data={chartData}
         width={width}
         height={height}
-        interval={interval}
-        isLoading={isLoading}
+        interval={INTERVALS[interval]}
         onCrosshairMove={setChartValues}
       />
 
@@ -368,33 +319,4 @@ export default function TradingChartContainer({
       </div>
     </div>
   );
-}
-
-// Mock data generation function
-function generateMockChartData(count: number) {
-  const data = [];
-  const now = Date.now();
-  let price = 100;
-
-  for (let i = 0; i < count; i++) {
-    const time = now - (count - i) * 60000;
-    const open = price;
-    const close = open + (Math.random() - 0.5) * 10;
-    const high = Math.max(open, close) + Math.random() * 5;
-    const low = Math.min(open, close) - Math.random() * 5;
-    const volume = Math.floor(Math.random() * 1000) + 100;
-
-    data.push({
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    });
-
-    price = close;
-  }
-
-  return data;
 }
