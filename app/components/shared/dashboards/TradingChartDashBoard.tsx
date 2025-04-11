@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { subnetData } from "../../../lib/data";
+import { subnetData, chartDatas } from "../../../lib/data";
 import ButtonGroup from "../../ui/buttons/ButtonGroup";
 import TradingChart from "../../ui/charts/TradingChart";
 import ExpandIcon from "/public/icons/expand.svg";
@@ -21,6 +21,15 @@ interface TradingChartContainerProps {
   tokenInfo: TokenInfo;
 }
 
+interface ChartData {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 interface ChartValues {
   time: string;
   open: number;
@@ -33,16 +42,70 @@ interface ChartValues {
 const DEFAULT_WIDTH = 760;
 const DEFAULT_HEIGHT = 306;
 
+// Time intervals in milliseconds
+const INTERVALS = {
+  "5M": 5 * 60 * 1000,
+  "1H": 60 * 60 * 1000,
+  "1D": 24 * 60 * 60 * 1000,
+} as const;
+
+type IntervalType = keyof typeof INTERVALS;
+
+const aggregateDataByInterval = (data: ChartData[], interval: IntervalType) => {
+  const intervalMs = INTERVALS[interval];
+  const aggregatedData = new Map<number, ChartData>();
+
+  data.forEach((candle) => {
+    // Round down to the nearest interval
+    const intervalStart = Math.floor(candle.time / intervalMs) * intervalMs;
+
+    if (!aggregatedData.has(intervalStart)) {
+      aggregatedData.set(intervalStart, {
+        time: intervalStart,
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+        volume: candle.volume,
+      });
+    } else {
+      const existing = aggregatedData.get(intervalStart)!;
+      existing.high = Math.max(existing.high, candle.high);
+      existing.low = Math.min(existing.low, candle.low);
+      existing.close = candle.close;
+      existing.volume += candle.volume;
+    }
+  });
+
+  return Array.from(aggregatedData.values()).sort((a, b) => a.time - b.time);
+};
+
 export default function TradingChartContainer({
   tokenInfo,
 }: TradingChartContainerProps) {
-  const [period, setPeriod] = useState<"5M" | "1H" | "1D">("1H");
+  const [interval, setInterval] = useState<IntervalType>("1H");
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [height, setHeight] = useState(DEFAULT_HEIGHT);
-  const [chartData, setChartData] = useState(generateMockChartData(100));
+  const [chartData, setChartData] = useState<ChartData[]>([]);
   const [chartValues, setChartValues] = useState<ChartValues | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const now = Math.floor(Date.now());
+    const endTime = now;
+    const startTime = now - INTERVALS[interval] * 100; // Get 100 intervals worth of data
+
+    // First filter the data by time range
+    const filteredData = chartDatas.filter(
+      (d) => d.time >= startTime && d.time <= endTime
+    );
+
+    // Then aggregate based on the selected interval
+    const aggregatedData = aggregateDataByInterval(filteredData, interval);
+    setChartData(aggregatedData);
+  }, [interval]);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -61,11 +124,6 @@ export default function TradingChartContainer({
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, [isFullScreen]);
-
-  useEffect(() => {
-    const dataPoints = period === "5M" ? 100 : period === "1H" ? 24 : 30;
-    setChartData(generateMockChartData(dataPoints));
-  }, [period]);
 
   const handleFullScreen = async () => {
     if (!containerRef.current) return;
@@ -158,10 +216,8 @@ export default function TradingChartContainer({
           <div className="flex flex-row gap-[8px] h-[38px]">
             <ButtonGroup
               labels={["5M", "1H", "1D"]}
-              activeButton={period}
-              setActiveButton={(period) =>
-                setPeriod(period as "5M" | "1H" | "1D")
-              }
+              activeButton={interval}
+              setActiveButton={(value) => setInterval(value as IntervalType)}
             />
             <button
               className="cursor-pointer rounded-[4px] bg-[var(--border-black)] w-[38px] h-[38px] flex items-center justify-center"
@@ -282,7 +338,8 @@ export default function TradingChartContainer({
         data={chartData}
         width={width}
         height={height}
-        period={period}
+        interval={interval}
+        isLoading={isLoading}
         onCrosshairMove={setChartValues}
       />
 

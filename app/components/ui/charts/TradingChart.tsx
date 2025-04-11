@@ -18,8 +18,9 @@ interface ChartData {
 interface TradingChartProps {
   data: ChartData[];
   height?: number;
-  period?: "5M" | "1H" | "1D";
+  interval?: "5M" | "1H" | "1D";
   width: number;
+  isLoading?: boolean;
   onCrosshairMove?: (param: {
     time: string;
     open: number;
@@ -30,20 +31,31 @@ interface TradingChartProps {
   }) => void;
 }
 
-const formatDate = (timestamp: number): string => {
+const formatDate = (
+  timestamp: number,
+  interval?: "5M" | "1H" | "1D"
+): string => {
   const date = new Date(timestamp);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  // For daily interval, show only date
+  if (interval === "1D") {
+    return `${year}-${month}-${day}`;
+  }
+  // For other intervals, show date and time
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 const TradingChart: React.FC<TradingChartProps> = ({
   data,
   height = 306,
+  interval = "1H",
   width = 760,
+  isLoading = false,
   onCrosshairMove,
 }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -167,7 +179,7 @@ const TradingChart: React.FC<TradingChartProps> = ({
 
         if (candleData) {
           onCrosshairMove({
-            time: formatDate(Number(param.time) * 1000),
+            time: formatDate(Number(param.time) * 1000, interval),
             open: candleData.open,
             high: candleData.high,
             low: candleData.low,
@@ -186,7 +198,7 @@ const TradingChart: React.FC<TradingChartProps> = ({
         chartRef.current = null;
       }
     };
-  }, [data, height, width, onCrosshairMove]);
+  }, [data, height, width, interval, onCrosshairMove]);
 
   // Update chart size when dimensions change
   useEffect(() => {
