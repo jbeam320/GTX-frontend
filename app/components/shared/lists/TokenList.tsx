@@ -11,11 +11,17 @@ interface Token extends Subnet {
 
 interface TokenListProps {
   tokens: Token[];
+  isClear?: boolean;
   onBuy?: (token: Token, mode: "add" | "delete") => void;
   onSell?: (token: Token, mode: "add" | "delete") => void;
 }
 
-export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
+export default function TokenList({
+  tokens,
+  isClear = true,
+  onBuy,
+  onSell,
+}: TokenListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTokens = useMemo(
@@ -59,6 +65,7 @@ export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
           <TokenListItem
             key={`${token.symbol}-${token.netuid}`}
             token={token}
+            isClear={isClear}
             onBuy={(mode) => onBuy?.(token, mode)}
             onSell={(mode) => onSell?.(token, mode)}
             style={{

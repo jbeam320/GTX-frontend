@@ -18,6 +18,7 @@ export default function Bulk() {
   const [buys, setBuys] = useState<Token[]>([]);
   const [sells, setSells] = useState<Token[]>([]);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [isClear, setIsClear] = useState(true);
 
   useEffect(() => {
     if (subnets.length) {
@@ -56,6 +57,7 @@ export default function Bulk() {
     }
 
     setSelectedToken(token);
+    setIsClear(false);
     setBuys((prev) => [...prev, token]);
   };
 
@@ -70,6 +72,7 @@ export default function Bulk() {
     }
 
     setSelectedToken(token);
+    setIsClear(false);
     setSells((prev) => [...prev, token]);
   };
 
@@ -77,11 +80,17 @@ export default function Bulk() {
     setBuys([]);
     setSells([]);
     setSelectedToken(null);
+    setIsClear(true);
   };
 
   return (
     <div className="flex justify-center gap-[4px] mt-[70px]">
-      <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
+      <TokenList
+        tokens={tokens}
+        isClear={isClear}
+        onBuy={onBuy}
+        onSell={onSell}
+      />
       <QuotePanel buys={buys} sells={sells} onClear={onClear} />
     </div>
   );

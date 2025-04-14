@@ -13,6 +13,7 @@ interface Token extends Subnet {
 
 interface TokenListItemProps {
   token: Token;
+  isClear?: boolean;
   onBuy?: (mode: "add" | "delete") => void;
   onSell?: (mode: "add" | "delete") => void;
   [key: string]: any;
@@ -20,12 +21,18 @@ interface TokenListItemProps {
 
 const TokenListItem = ({
   token,
+  isClear = true,
   onBuy,
   onSell,
   ...restProps
 }: TokenListItemProps) => {
-
   const [status, setStatus] = useState<string>("");
+
+  useEffect(() => {
+    if (isClear) {
+      setStatus("");
+    }
+  }, [isClear]);
 
   const handleBuy = () => {
     if (status === "buy") {
@@ -36,7 +43,7 @@ const TokenListItem = ({
 
     setStatus("buy");
     onBuy?.("add");
-  }
+  };
 
   const handleSell = () => {
     if (status === "sell") {
@@ -47,7 +54,7 @@ const TokenListItem = ({
 
     setStatus("sell");
     onSell?.("add");
-  }
+  };
 
   return (
     <div
@@ -60,12 +67,8 @@ const TokenListItem = ({
       />
 
       <div className="flex flex-col gap-[10px] w-[130px]">
-        <span className="text-[15px] font-semibold">
-          {token.symbol}
-        </span>
-        <span className="text-[12px] font-medium">
-          {token.symbol}
-        </span>
+        <span className="text-[15px] font-semibold">{token.symbol}</span>
+        <span className="text-[12px] font-medium">{token.symbol}</span>
       </div>
 
       <div
@@ -92,18 +95,22 @@ const TokenListItem = ({
       <div className="flex gap-[19px]">
         <button
           onClick={handleBuy}
-          className={`h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${status === "buy" ? "w-[185px]" : "w-[83px]"} ${status === "sell" && "hidden"}`}
+          className={`h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
+            status === "buy" ? "w-[185px]" : "w-[83px]"
+          } ${status === "sell" && "hidden"}`}
         >
           Buy
         </button>
         <button
           onClick={handleSell}
-          className={`h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${status === "sell" ? "w-[185px]" : "w-[83px]"} ${status === "buy" && "hidden"}`}
+          className={`h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
+            status === "sell" ? "w-[185px]" : "w-[83px]"
+          } ${status === "buy" && "hidden"}`}
         >
           Sell
         </button>
       </div>
-    </div >
+    </div>
   );
 };
 
