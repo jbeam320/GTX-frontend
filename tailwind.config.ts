@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
+        montserrat: ["Montserrat", "cursive"],
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-in-out",

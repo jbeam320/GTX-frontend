@@ -29,6 +29,7 @@
     --color-gray: #6F7072;
     --color-light-80: #FFFFFF80;
     --color-dark: #666666;
+    --color-dark-1: #6A6A6A;
     --color-dark-5: #2526260D;
     --color-dark-70: #252626B2;
     --color-black: #000000;
@@ -51,11 +52,11 @@
 
 html,
 body {
-  font-family: 'DM Mono';
+  font-family: 'mono', sans-serif;
 }
 
 @font-face {
-  font-family: 'custom';
+  font-family: 'Montserrat';
   src: url('/fonts/Montserrat-Regular.ttf') format('truetype');
 }
 
