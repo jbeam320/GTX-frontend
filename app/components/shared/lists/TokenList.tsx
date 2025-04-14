@@ -18,7 +18,7 @@ export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
   );
 
   return (
-    <div className="w-[833px] h-[1025px] overflow-y-auto bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
+    <div className="w-[833px] h-[1025px] overflow-hidden bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
       <div className="relative">
         <input
           type="text"
@@ -31,13 +31,17 @@ export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
         />
       </div>
 
-      <div className="space-y-2">
-        {filteredTokens.map((token) => (
+      <div className="space-y-[1px]">
+        {filteredTokens.map((token, index) => (
           <TokenListItem
             key={`${token.symbol}-${token.netuid}`}
             token={token}
             onBuy={() => onBuy?.(token)}
             onSell={() => onSell?.(token)}
+            style={{
+              background:
+                index % 2 === 0 ? "var(--bg-dark-4)" : "var(--bg-light-2)",
+            }}
           />
         ))}
       </div>

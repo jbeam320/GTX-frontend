@@ -11,6 +11,7 @@
     --bg-dark-4: #D9D9D9;
     --bg-light: #FFFFFF;
     --bg-light-1: #EFEFEF;
+    --bg-light-2: #F4F4F4;
     --bg-primary: #FFFFFF;
     --bg-secondary: #EBE6C8;
     --bg-dark-15: #2526261A;
@@ -53,15 +54,11 @@ body {
   font-family: 'DM Mono';
 }
 
-/* * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+@font-face {
+  font-family: 'custom';
+  src: url('/fonts/Montserrat-Regular.ttf') format('truetype');
+}
 
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px;
-  } */
+
+

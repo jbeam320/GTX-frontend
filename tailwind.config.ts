@@ -8,24 +8,8 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        "bg-dark": "var(--bg-dark)",
-        "bg-light": "var(--bg-light)",
-        "bg-primary": "var(--bg-primary)",
-        "bg-secondary": "var(--bg-secondary)",
-
-        "border-dark": "var(--border-dark)",
-
-        "color-light": "var(--color-light)",
-        "color-black": "var(--color-black)",
-        "color-primary": "var(--color-primary)",
-        "color-disabled": "var(--color-disabled)",
-        "color-success": "var(--color-success)",
-
-        "green-stroke": "var(--green-stroke)",
-        "red-stroke": "var(--red-stroke)",
-        "green-fill": "var(--green-fill)",
-        "red-fill": "var(--red-fill)",
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-in-out",

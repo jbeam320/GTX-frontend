@@ -14,8 +14,8 @@ export const formatCompactSimple = (num: number, usdPrice: number | null = null)
 
 export const formatPercent = (value: number) => `${(value * 100).toFixed(2)}%`;
 
-export const formatPrice = (price: number, usdPrice: number | null = null) => {
+export const formatPrice = (price: number, usdPrice: number | null = null, decimals: number = 6) => {
   return usdPrice
-    ? `$${((price * usdPrice) / 1e9).toFixed(6)}`
-    : `T${(price / 1e9).toFixed(6)}`;
+    ? `${((price * usdPrice) / 1e9).toFixed(decimals)}`
+    : `T${(price / 1e9).toFixed(decimals)}`;
 };

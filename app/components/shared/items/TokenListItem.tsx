@@ -1,56 +1,88 @@
 import Image from "next/image";
 import { Subnet } from "../../../lib/types";
+import { formatCompact, formatPrice } from "../../../lib/utils/format";
+import { taoPrice } from "../../../lib/data";
+import * as service from "../../../services";
+import { useWalletStore } from "../../../stores/store";
+import { useEffect } from "react";
+import { useState } from "react";
 
 interface TokenListItemProps {
   token: Subnet;
   onBuy?: () => void;
   onSell?: () => void;
+  [key: string]: any;
 }
 
-const TokenListItem = ({ token, onBuy, onSell }: TokenListItemProps) => {
+const TokenListItem = ({
+  token,
+  onBuy,
+  onSell,
+  ...restProps
+}: TokenListItemProps) => {
+  const { getValidatorStake, selectedValidator } = useWalletStore();
+
+  const [balance, setBalance] = useState<string>("");
+
+  useEffect(() => {
+    getValidatorStake(selectedValidator.hotkey, token.netuid).then((stake) =>
+      setBalance(stake)
+    );
+  }, [token.netuid]);
+
   return (
-    <div className="flex items-center px-4 py-3 hover:bg-gray-100/5">
-      <div className="w-8 h-8 mr-3">
-        <Image
-          src={`/icons/tokens/${token.symbol.toLowerCase()}.svg`}
-          alt={token.symbol}
-          width={32}
-          height={32}
-        />
+    <div
+      className="flex justify-between items-center px-4 py-3 w-[824px] h-[73px] px-[15px]"
+      {...restProps}
+    >
+      <div
+        className="w-[34px] h-[34px] mr-[14px] rounded-full"
+        style={{ background: "var(--gradient-primary-reverse)" }}
+      />
+
+      <div className="flex flex-col gap-[10px] w-[130px]">
+        <span className="text-[15px] font-semibold font-mono">
+          {token.symbol}
+        </span>
+        <span className="text-[12px] font-mono font-medium">
+          {token.symbol}
+        </span>
       </div>
 
-      <div className="flex-1 grid grid-cols-5 items-center">
-        <div className="flex flex-col">
-          <span className="text-white text-sm font-medium">{token.symbol}</span>
-          <span className="text-gray-400 text-xs">{token.symbol}</span>
-        </div>
+      <div
+        className="basis-[100px] text-[15px] font-semibold font-monstrrat"
+        style={{ fontFamily: "Montserrat" }}
+      >
+        {formatPrice(token.price, taoPrice.price, 3)}
+      </div>
 
-        <div className="text-white">{token.price.toFixed(3)} USDC</div>
+      <div className="flex flex-col basis-[200px] gap-[10px]">
+        <span className="text-[15px] font-semibold font-mono">
+          {formatCompact(token.market_cap, taoPrice.price)} USDC
+        </span>
+        <span className="text-[12px] font-mono font-medium">
+          {formatCompact(token.market_cap)} TAO
+        </span>
+      </div>
 
-        <div className="flex flex-col">
-          <span className="text-white">{token.market_cap} USDC</span>
-          <span className="text-gray-400 text-xs">{token.market_cap}</span>
-        </div>
+      <div className="flex flex-col basis-[100px] gap-[10px]">
+        <span className="text-[15px] font-semibold font-mono">{balance}</span>
+        <span className="text-[12px] font-mono font-medium">0.000 B</span>
+      </div>
 
-        <div className="flex flex-col">
-          <span className="text-white">""</span>
-          <span className="text-gray-400 text-xs">""</span>
-        </div>
-
-        <div className="flex gap-2 justify-end">
-          <button
-            onClick={onBuy}
-            className="px-4 py-1 rounded-full bg-transparent border border-white text-white hover:bg-white/10"
-          >
-            Buy
-          </button>
-          <button
-            onClick={onSell}
-            className="px-4 py-1 rounded-full bg-transparent border border-white text-white hover:bg-white/10"
-          >
-            Sell
-          </button>
-        </div>
+      <div className="flex gap-[19px]">
+        <button
+          onClick={onBuy}
+          className="w-[83px] h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-mono font-medium"
+        >
+          Buy
+        </button>
+        <button
+          onClick={onSell}
+          className="w-[83px] h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-mono font-medium"
+        >
+          Sell
+        </button>
       </div>
     </div>
   );
