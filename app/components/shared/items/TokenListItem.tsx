@@ -3,14 +3,18 @@ import { Subnet } from "../../../lib/types";
 import { formatCompact, formatPrice } from "../../../lib/utils/format";
 import { taoPrice } from "../../../lib/data";
 import * as service from "../../../services";
-import { useWalletStore } from "../../../stores/store";
 import { useEffect } from "react";
 import { useState } from "react";
+import { on } from "events";
+
+interface Token extends Subnet {
+  balance: string;
+}
 
 interface TokenListItemProps {
-  token: Subnet;
-  onBuy?: () => void;
-  onSell?: () => void;
+  token: Token;
+  onBuy?: (mode: "add" | "delete") => void;
+  onSell?: (mode: "add" | "delete") => void;
   [key: string]: any;
 }
 
@@ -20,37 +24,29 @@ const TokenListItem = ({
   onSell,
   ...restProps
 }: TokenListItemProps) => {
-  const { getValidatorStake, selectedValidator } = useWalletStore();
 
-  const [balance, setBalance] = useState<string>("");
   const [status, setStatus] = useState<string>("");
 
-  useEffect(() => {
-    getValidatorStake(selectedValidator.hotkey, token.netuid).then((stake) =>
-      setBalance(stake)
-    );
-  }, [token.netuid]);
-
   const handleBuy = () => {
-    setStatus(status => {
-      if (status === "buy") {
-        return "";
-      }
-      return "buy";
-    });
+    if (status === "buy") {
+      setStatus("");
+      onBuy?.("delete");
+      return;
+    }
 
-    onBuy?.();
+    setStatus("buy");
+    onBuy?.("add");
   }
 
   const handleSell = () => {
-    setStatus(status => {
-      if (status === "sell") {
-        return "";
-      }
-      return "sell";
-    });
+    if (status === "sell") {
+      setStatus("");
+      onSell?.("delete");
+      return;
+    }
 
-    onSell?.();
+    setStatus("sell");
+    onSell?.("add");
   }
 
   return (
@@ -89,7 +85,7 @@ const TokenListItem = ({
       </div>
 
       <div className="flex flex-col basis-[100px] gap-[10px]">
-        <span className="text-[15px] font-semibold">{balance}</span>
+        <span className="text-[15px] font-semibold">{token.balance}</span>
         <span className="text-[12px] font-medium">0.000 B</span>
       </div>
 
