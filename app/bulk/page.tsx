@@ -4,6 +4,7 @@ import TokenList from "../components/shared/lists/TokenList";
 import { subnets } from "../lib/data";
 import { useState, useEffect } from "react";
 import { Subnet } from "../lib/types";
+import { QuotePanel } from "../components/shared/panels";
 import { useWalletStore } from "../stores/store";
 
 interface Token extends Subnet {
@@ -72,12 +73,16 @@ export default function Bulk() {
     setSells((prev) => [...prev, token]);
   };
 
-  console.log(selectedToken, buys, sells);
+  const onClear = () => {
+    setBuys([]);
+    setSells([]);
+    setSelectedToken(null);
+  };
 
   return (
-    <div className="flex items-center justify-center gap-[4px] mt-[70px]">
+    <div className="flex justify-center gap-[4px] mt-[70px]">
       <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
-      <div>ss</div>
+      <QuotePanel buys={buys} sells={sells} onClear={onClear} />
     </div>
   );
 }
