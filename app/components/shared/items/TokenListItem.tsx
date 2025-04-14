@@ -23,12 +23,35 @@ const TokenListItem = ({
   const { getValidatorStake, selectedValidator } = useWalletStore();
 
   const [balance, setBalance] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
 
   useEffect(() => {
     getValidatorStake(selectedValidator.hotkey, token.netuid).then((stake) =>
       setBalance(stake)
     );
   }, [token.netuid]);
+
+  const handleBuy = () => {
+    setStatus(status => {
+      if (status === "buy") {
+        return "";
+      }
+      return "buy";
+    });
+
+    onBuy?.();
+  }
+
+  const handleSell = () => {
+    setStatus(status => {
+      if (status === "sell") {
+        return "";
+      }
+      return "sell";
+    });
+
+    onSell?.();
+  }
 
   return (
     <div
@@ -72,19 +95,19 @@ const TokenListItem = ({
 
       <div className="flex gap-[19px]">
         <button
-          onClick={onBuy}
-          className="w-[83px] h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer"
+          onClick={handleBuy}
+          className={`h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${status === "buy" ? "w-[185px]" : "w-[83px]"} ${status === "sell" && "hidden"}`}
         >
           Buy
         </button>
         <button
-          onClick={onSell}
-          className="w-[83px] h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer"
+          onClick={handleSell}
+          className={`h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${status === "sell" ? "w-[185px]" : "w-[83px]"} ${status === "buy" && "hidden"}`}
         >
           Sell
         </button>
       </div>
-    </div>
+    </div >
   );
 };
 
