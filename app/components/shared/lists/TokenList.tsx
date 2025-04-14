@@ -1,80 +1,30 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { Subnet } from "../../../lib/types";
 import TokenListItem from "../items/TokenListItem";
 import SearchIcon from "/public/icons/search-dark.svg";
-import { useWalletStore } from "../../../stores/store";
 
 interface Token extends Subnet {
   balance: string;
 }
 
 interface TokenListProps {
-  tokens: Subnet[];
+  tokens: Token[];
+  onBuy?: (token: Token, mode: "add" | "delete") => void;
+  onSell?: (token: Token, mode: "add" | "delete") => void;
 }
 
-export default function TokenList({ tokens }: TokenListProps) {
-  const { getValidatorStake, selectedValidator } = useWalletStore();
-
+export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [tokenInfos, setTokenInfos] = useState<Token[]>([]);
-  const [buys, setBuys] = useState<Token[]>([]);
-  const [sells, setSells] = useState<Token[]>([]);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
 
-  useEffect(() => {
-    if (tokens.length) {
-      setTokenInfos(tokens.map(token => ({ ...token, balance: '0' })));
-
-      const loadBalances = async () => {
-        try {
-          for (const token of tokens) {
-            const stake = await getValidatorStake(selectedValidator.hotkey, token.netuid);
-            setTokenInfos(prev => prev.map(t =>
-              t.netuid === token.netuid ? { ...t, balance: stake } : t
-            ));
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-      loadBalances();
-    }
-  }, [tokens, selectedValidator]);
-
-  const onBuy = (token: Token, mode: "add" | "delete") => {
-    if (mode === "delete") {
-      setBuys(prev => prev.filter(t => t.netuid !== token.netuid));
-      if (selectedToken?.netuid === token.netuid) {
-        setSelectedToken(null);
-      }
-
-      return;
-    }
-
-    setSelectedToken(token);
-    setBuys(prev => [...prev, token]);
-  }
-
-  const onSell = (token: Token, mode: "add" | "delete") => {
-    if (mode === "delete") {
-      setSells(prev => prev.filter(t => t.netuid !== token.netuid));
-      if (selectedToken?.netuid === token.netuid) {
-        setSelectedToken(null);
-      }
-
-      return;
-    }
-
-    setSelectedToken(token);
-    setSells(prev => [...prev, token]);
-  }
-
-  const filteredTokens = useMemo(() => tokenInfos.filter((token) =>
-    token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-  ), [tokenInfos, searchQuery]);
+  const filteredTokens = useMemo(
+    () =>
+      tokens.filter((token) =>
+        token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [tokens, searchQuery]
+  );
 
   return (
     <div className="w-[833px] h-[1025px] overflow-hidden bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
@@ -83,7 +33,8 @@ export default function TokenList({ tokens }: TokenListProps) {
         <label className="font-montserrat text-[17px] font-[600]">Tokens</label>
         <div className="w-[207px] h-[37px] rounded-[16px] p-[10px] gap-[13px] flex items-center justify-center bg-[var(--bg-dark-4)] rounded-[16px]">
           <SearchIcon />
-          <input type="text"
+          <input
+            type="text"
             placeholder="Search tokens"
             value={searchQuery}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -108,8 +59,8 @@ export default function TokenList({ tokens }: TokenListProps) {
           <TokenListItem
             key={`${token.symbol}-${token.netuid}`}
             token={token}
-            onBuy={(mode) => onBuy(token, mode)}
-            onSell={(mode) => onSell(token, mode)}
+            onBuy={(mode) => onBuy?.(token, mode)}
+            onSell={(mode) => onSell?.(token, mode)}
             style={{
               background:
                 index % 2 === 0 ? "var(--bg-dark-4)" : "var(--bg-light-2)",

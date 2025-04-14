@@ -1,10 +1,82 @@
+"use client";
+
 import TokenList from "../components/shared/lists/TokenList";
 import { subnets } from "../lib/data";
+import { useState, useEffect } from "react";
+import { Subnet } from "../lib/types";
+import { useWalletStore } from "../stores/store";
+
+interface Token extends Subnet {
+  balance: string;
+}
 
 export default function Bulk() {
+  const { getValidatorStake, selectedValidator } = useWalletStore();
+
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [buys, setBuys] = useState<Token[]>([]);
+  const [sells, setSells] = useState<Token[]>([]);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+
+  useEffect(() => {
+    if (subnets.length) {
+      setTokens(subnets.map((subnet) => ({ ...subnet, balance: "0" })));
+
+      const loadBalances = async () => {
+        try {
+          for (const subnet of subnets) {
+            const stake = await getValidatorStake(
+              selectedValidator.hotkey,
+              subnet.netuid
+            );
+            setTokens((prev) =>
+              prev.map((t) =>
+                t.netuid === subnet.netuid ? { ...t, balance: stake } : t
+              )
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      loadBalances();
+    }
+  }, [subnets, selectedValidator]);
+
+  const onBuy = (token: Token, mode: "add" | "delete") => {
+    if (mode === "delete") {
+      setBuys((prev) => prev.filter((t) => t.netuid !== token.netuid));
+      if (selectedToken?.netuid === token.netuid) {
+        setSelectedToken(null);
+      }
+
+      return;
+    }
+
+    setSelectedToken(token);
+    setBuys((prev) => [...prev, token]);
+  };
+
+  const onSell = (token: Token, mode: "add" | "delete") => {
+    if (mode === "delete") {
+      setSells((prev) => prev.filter((t) => t.netuid !== token.netuid));
+      if (selectedToken?.netuid === token.netuid) {
+        setSelectedToken(null);
+      }
+
+      return;
+    }
+
+    setSelectedToken(token);
+    setSells((prev) => [...prev, token]);
+  };
+
+  console.log(selectedToken, buys, sells);
+
   return (
     <div className="flex items-center justify-center gap-[4px] mt-[70px]">
-      <TokenList tokens={subnets} />
+      <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
       <div>ss</div>
     </div>
   );
