@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Button from "../buttons/Button";
 
 export default function Toggle({
   firstLabel,
   secondLabel,
   setMode,
+  firstStyle,
+  secondStyle,
+  firstIcons,
+  secondIcons,
   ...restProps
 }: {
   firstLabel: string;
   secondLabel: string;
+  firstStyle?: {};
+  secondStyle?: {};
+  firstIcons?: ReactNode[];
+  secondIcons?: ReactNode[];
   setMode?: (modeNumber: 1 | 2) => void;
   [key: string]: any;
 }) {
@@ -37,6 +45,9 @@ export default function Toggle({
         onClick={() => setToggleState(1)}
         width="154px"
         height="43px"
+        icon={firstIcons?.[0]}
+        icon2={firstIcons?.[1]}
+        {...firstStyle}
       />
       <Button
         label={secondLabel}
@@ -47,6 +58,9 @@ export default function Toggle({
         onClick={() => setToggleState(2)}
         width="154px"
         height="43px"
+        icon={secondIcons?.[0]}
+        icon2={secondIcons?.[1]}
+        {...secondStyle}
       />
     </div>
   );

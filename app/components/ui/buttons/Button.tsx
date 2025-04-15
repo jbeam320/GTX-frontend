@@ -14,6 +14,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   icon?: React.ReactNode;
+  icon2?: React.ReactNode;
   isRounded?: boolean;
   size?: "small" | "medium" | "large";
   width?: string;
@@ -27,6 +28,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   disabled = false,
   icon,
+  icon2,
   isRounded = false,
   width,
   height,
@@ -107,8 +109,9 @@ const Button: React.FC<ButtonProps> = ({
         ...restProps,
       }}
     >
-      {icon && <span className="mr-2">{icon}</span>} {/* Optional icon */}
+      {icon && <span className="mr-[10px]">{icon}</span>}
       {label}
+      {icon2 && <span className="ml-[10px]">{icon2}</span>}
     </button>
   );
 };
