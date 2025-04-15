@@ -1,25 +1,31 @@
 import { useState } from "react";
 import { Subnet } from "../../../lib/types";
 import Toggle from "../../ui/toggles/Toggle";
-import NukeIcon from "/public/icons/nuke.svg";
-import WhiteNukeIcon from "/public/icons/nuke-white.svg";
+import QuotePanelContent from "./QuotePanelContent";
 import InfoIcon from "/public/icons/info-light.svg";
 import WhiteInfoIcon from "/public/icons/info-white.svg";
+import WhiteNukeIcon from "/public/icons/nuke-white.svg";
+import NukeIcon from "/public/icons/nuke.svg";
 
 interface Token extends Subnet {
   balance: string;
+  amount: number;
 }
 
 interface QuotePanelProps {
   buys: Token[];
   sells: Token[];
+  setSells: (sells: Token[]) => void;
   onClear: () => void;
 }
 
-export default function QuotePanel({ buys, sells, onClear }: QuotePanelProps) {
+export default function QuotePanel({
+  buys,
+  sells,
+  onClear,
+  setSells,
+}: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
-
-  console.log(mode);
 
   return (
     <div className="flex items-center flex-col gap-[28px] w-[383px] min-h-[700px] rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative">
@@ -69,6 +75,14 @@ export default function QuotePanel({ buys, sells, onClear }: QuotePanelProps) {
               : "1px solid var(--bg-dark-1)",
           backgroundColor: "var(--bg-dark-6)",
         }}
+      />
+
+      {/* Content */}
+      <QuotePanelContent
+        mode={mode}
+        buys={buys}
+        sells={sells}
+        setSells={setSells}
       />
     </div>
   );

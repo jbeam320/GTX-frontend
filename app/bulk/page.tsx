@@ -9,6 +9,7 @@ import { useWalletStore } from "../stores/store";
 
 interface Token extends Subnet {
   balance: string;
+  amount: number;
 }
 
 export default function Bulk() {
@@ -22,7 +23,9 @@ export default function Bulk() {
 
   useEffect(() => {
     if (subnets.length) {
-      setTokens(subnets.map((subnet) => ({ ...subnet, balance: "0" })));
+      setTokens(
+        subnets.map((subnet) => ({ ...subnet, balance: "0", amount: 0 }))
+      );
 
       const loadBalances = async () => {
         try {
@@ -91,7 +94,12 @@ export default function Bulk() {
         onBuy={onBuy}
         onSell={onSell}
       />
-      <QuotePanel buys={buys} sells={sells} onClear={onClear} />
+      <QuotePanel
+        buys={buys}
+        sells={sells}
+        onClear={onClear}
+        setSells={setSells}
+      />
     </div>
   );
 }

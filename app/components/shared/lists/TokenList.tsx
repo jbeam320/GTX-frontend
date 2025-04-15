@@ -7,6 +7,7 @@ import SearchIcon from "/public/icons/search-dark.svg";
 
 interface Token extends Subnet {
   balance: string;
+  amount: number;
 }
 
 interface TokenListProps {
