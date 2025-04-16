@@ -28,11 +28,12 @@ export default function QuotePanel({
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
 
   return (
-    <div className="flex items-center flex-col gap-[28px] w-[383px] min-h-[700px] rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative">
+    <div className="flex items-center flex-col gap-[28px] w-[383px] h-full rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative">
       <div className="flex items-center justify-center">
         <label className="text-[18px] font-[500]">Quote</label>
         <button
-          className="cursor-pointer w-[67px] h-[25px] rounded-[16px] text-[12px] absolute right-[15px] border-[1px] p-[10px] text-center flex items-center justify-center"
+          className="cursor-pointer w-[67px] h-[25px] rounded-[16px] absolute right-[15px] border-[1px] p-[10px] text-center flex items-center justify-center"
+          style={{ fontSize: "12px" }}
           onClick={onClear}
         >
           Clear
