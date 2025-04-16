@@ -19,8 +19,8 @@ export default function SubnetListItem({
   isUSD = false,
 }: SubnetListItemProps) {
   return (
-    <div className="w-[1200px] h-[73px] px-[14px] py-[10px] my-[2px] rounded-[8px] bg-[var(--bg-light-1)] font-montserrat flex justify-center items-center text-[14px] hover:bg-[var(--bg-dark-1)]">
-      <div className="flex items-center w-[280px]">
+    <div className="w-[1200px] h-[73px] px-[14px] py-[10px] my-[2px] rounded-[8px] bg-[var(--bg-light-1)] font-montserrat flex space-between items-center text-[14px] hover:bg-[var(--bg-dark-1)]">
+      <div className="flex items-center basis-[250px]">
         <div className="text-[13px]">{subnet.index}</div>
         <div
           className="mx-[15px] rounded-full w-[34px] h-[34px]"
@@ -34,14 +34,14 @@ export default function SubnetListItem({
         </div>
       </div>
 
-      <div className="text-[14px] p-[10px] w-[30px] mr-[60px] text-right">
+      <div className="text-[14px] p-[10px] basis-[100px]">
         {formatPercent(subnet.emission / 1e9)}
       </div>
-      <div className="text-[14px] p-[10px]  w-[30px] mr-[80px]">
+      <div className="text-[14px] p-[10px]  basis-[120px]">
         {formatPrice(subnet.price, isUSD ? taoPrice.price : null)}
       </div>
 
-      <div className="flex gap-[25px] text-[14px] mr-[40px]">
+      <div className="flex gap-[25px] text-[14px] mr-[30px]">
         {["price_change_1h", "price_change_24h", "price_change_1w"].map(
           (key) => (
             <div
@@ -58,13 +58,13 @@ export default function SubnetListItem({
         )}
       </div>
 
-      <div className="min-w-[64px] p-[10px] mr-[36px] text-center">
+      <div className="basis-[100px] p-[10px] text-center">
         {formatCompact(subnet.market_cap, isUSD ? taoPrice.price : null)}
       </div>
-      <div className="min-w-[73px] p-[10px] mr-[23px] text-center">
+      <div className="basis-[96px] p-[10px] text-center">
         {formatCompact(subnet.volume_24h, isUSD ? taoPrice.price : null)}
       </div>
-      <div className="min-w-[64px] p-[10px] mr-[18px] text-center">
+      <div className="basis-[100px] p-[10px] text-center">
         {formatCompact(subnet.liquidity || 0, isUSD ? taoPrice.price : null)}
       </div>
 
