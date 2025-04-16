@@ -16,6 +16,7 @@ interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
   buys: Token[];
   sells: Token[];
+  tokens?: Token[];
   setSells: (sells: Token[]) => void;
   setBuys: (sells: Token[]) => void;
 }
@@ -26,6 +27,7 @@ export default function QuotePanelContent({
   sells,
   setBuys,
   setSells,
+  tokens,
 }: QuotePanelContentProps) {
   const { selectedValidator, batchSell, batchSellAndBuy } = useWalletStore();
 
@@ -33,6 +35,17 @@ export default function QuotePanelContent({
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (mode === "Nuke" && tokens?.length) {
+      const newSells: Token[] = [];
+      for (const token of tokens) {
+        if (+token.balance) newSells.push({ ...token, amount: +token.balance });
+      }
+
+      setSells(newSells);
+    }
+  }, [tokens, mode]);
 
   useEffect(() => {
     let amount = 0;
@@ -76,15 +89,20 @@ export default function QuotePanelContent({
     setIsProcessing(true);
 
     try {
-      if (mode === "Nuke") {
-        await batchSell(
-          sells.map(({ netuid, amount }) => ({
-            netuid,
-            amount,
-            validator: selectedValidator.hotkey,
-          }))
-        );
-      } else if (mode === "Standard") {
+      if (!buys.length || !totalBuyAmount) {
+        const txsInfos = [];
+
+        for (const { netuid, amount } of sells) {
+          if (amount)
+            txsInfos.push({
+              netuid,
+              amount,
+              validator: selectedValidator.hotkey,
+            });
+        }
+
+        await batchSell(txsInfos);
+      } else {
         const txsInfos: {
           netuid: number;
           amount: number;
@@ -93,21 +111,23 @@ export default function QuotePanelContent({
         }[] = [];
 
         for (const { amount, netuid } of sells) {
-          txsInfos.push({
-            netuid,
-            amount,
-            validator: selectedValidator.hotkey,
-            type: "sell",
-          });
+          if (amount)
+            txsInfos.push({
+              netuid,
+              amount,
+              validator: selectedValidator.hotkey,
+              type: "sell",
+            });
         }
 
         for (const { amount, netuid } of buys) {
-          txsInfos.push({
-            netuid,
-            amount: amount,
-            validator: selectedValidator.hotkey,
-            type: "buy",
-          });
+          if (amount)
+            txsInfos.push({
+              netuid,
+              amount: amount,
+              validator: selectedValidator.hotkey,
+              type: "buy",
+            });
         }
 
         await batchSellAndBuy(txsInfos);
@@ -125,8 +145,7 @@ export default function QuotePanelContent({
   const isDisabled =
     isProcessing ||
     sells.length === 0 ||
-    (!buys.length && mode === "Standard") ||
-    (!totalBuyAmount && mode === "Standard") ||
+    taoToken.amount === 0 ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
 
   return (
@@ -141,6 +160,7 @@ export default function QuotePanelContent({
         <div className="flex flex-col gap-[4px]">
           {sells.map((token, index) => (
             <TokenInput
+              disabled={mode === "Nuke"}
               key={token.netuid}
               token={token}
               index={index}
@@ -192,11 +212,7 @@ export default function QuotePanelContent({
         isSuccess={isSuccess}
         isDisabled={isDisabled}
         onClick={handleConfirm}
-        disabledText={
-          !buys.length && mode === "Standard"
-            ? "Select tokens to buy"
-            : "Confirm Transaction"
-        }
+        disabledText={"Confirm Transaction"}
         label="Confirm Transaction"
         style={{
           width: "337px",

@@ -33,17 +33,17 @@ export default function TokenInput({
 
     setError(null);
 
-    const value = e.target.value;
+    const value = parseInt(e.target.value, 10);
     const { balance } = token;
 
-    if (value.startsWith("-")) {
+    if (value < 0) {
       setError("Amount cannot be negative");
       return;
     }
 
-    if (value === "" || !isNaN(+value)) {
+    if (value || !isNaN(value)) {
       onChange(index, +value);
-      if (balance && value !== "" && +value > +balance && !errorIgnore) {
+      if (balance && value !== 0 && value > +balance && !errorIgnore) {
         setError("Insufficient balance");
       }
     }

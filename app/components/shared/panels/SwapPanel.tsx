@@ -241,7 +241,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
                   ? (+amount * taoPrice.price).toFixed(2)
                   : (+toTokenAmount * taoPrice.price).toFixed(2)
               }
-              isShow={!isDisabled}
+              isShow={!isDisabled && !isProcessing}
             />
 
             <ConfirmButton

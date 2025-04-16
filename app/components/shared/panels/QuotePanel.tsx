@@ -16,6 +16,7 @@ interface Token extends Subnet {
 interface QuotePanelProps {
   buys: Token[];
   sells: Token[];
+  tokens?: Token[];
   setSells: (sells: Token[]) => void;
   setBuys: (sells: Token[]) => void;
   onClear: () => void;
@@ -24,11 +25,17 @@ interface QuotePanelProps {
 export default function QuotePanel({
   buys,
   sells,
+  tokens,
   onClear,
   setSells,
   setBuys,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
+
+  const handleToggle = (mode: number) => {
+    onClear();
+    mode === 1 ? setMode("Standard") : setMode("Nuke");
+  };
 
   return (
     <div className="flex items-center flex-col gap-[28px] w-[383px] h-full rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative">
@@ -71,9 +78,7 @@ export default function QuotePanel({
             ? [<NukeIcon />, <InfoIcon />]
             : [<WhiteNukeIcon />, <WhiteInfoIcon />]
         }
-        setMode={(mode) => {
-          mode === 1 ? setMode("Standard") : setMode("Nuke");
-        }}
+        setMode={handleToggle}
         style={{
           fontWeight: "500",
           fontSize: "16px",
@@ -97,6 +102,7 @@ export default function QuotePanel({
             mode={mode}
             buys={buys}
             sells={sells}
+            tokens={tokens}
             setSells={setSells}
             setBuys={setBuys}
           />

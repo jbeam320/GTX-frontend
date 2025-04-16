@@ -88,6 +88,7 @@ export default function Bulk() {
       <QuotePanel
         buys={buys}
         sells={sells}
+        tokens={tokens}
         onClear={onClear}
         setSells={setSells}
         setBuys={setBuys}
