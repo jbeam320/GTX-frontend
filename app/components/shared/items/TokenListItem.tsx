@@ -46,6 +46,7 @@ const TokenListItem = ({
   };
 
   const handleSell = () => {
+    console.log(token);
     if (status === "sell") {
       setStatus("");
       onSell?.("delete");

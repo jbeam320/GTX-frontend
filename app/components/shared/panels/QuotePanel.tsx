@@ -16,6 +16,7 @@ interface QuotePanelProps {
   buys: Token[];
   sells: Token[];
   setSells: (sells: Token[]) => void;
+  setBuys: (sells: Token[]) => void;
   onClear: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function QuotePanel({
   sells,
   onClear,
   setSells,
+  setBuys,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
 
@@ -84,6 +86,7 @@ export default function QuotePanel({
         buys={buys}
         sells={sells}
         setSells={setSells}
+        setBuys={setBuys}
       />
     </div>
   );

@@ -2,6 +2,9 @@ import TokenInput from "../../ui/inputs/TokenInput";
 import { Subnet } from "../../../lib/types";
 import { useEffect, useState } from "react";
 import { formatPrice } from "../../../lib/utils/format";
+import { DEFUALT_TOKEN } from "../../../lib/constants";
+import TransactionDetail from "../../ui/cards/TransactionDetailForBulk";
+import { ConfirmButton } from "../../ui/buttons";
 
 interface Token extends Subnet {
   balance: string;
@@ -13,15 +16,20 @@ interface QuotePanelContentProps {
   buys: Token[];
   sells: Token[];
   setSells: (sells: Token[]) => void;
+  setBuys: (sells: Token[]) => void;
 }
 
 export default function QuotePanelContent({
   mode,
   buys,
   sells,
+  setBuys,
   setSells,
 }: QuotePanelContentProps) {
-  const [taoToken, setTaoToken] = useState<Token | undefined>(undefined);
+  const [taoToken, setTaoToken] = useState<Token>(DEFUALT_TOKEN);
+  const [totalBuyAmount, setTotalBuyAmount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     let amount = 0;
@@ -30,22 +38,56 @@ export default function QuotePanelContent({
         amount += sellAmount * price;
       }
     }
-    amount = +formatPrice(amount, null, 3);
 
+    amount = +formatPrice(amount, null, 3);
     setTaoToken({
-      ...sells[0],
-      netuid: 0,
-      symbol: "TAO",
+      ...taoToken,
       amount: amount,
       balance: amount.toString(),
     });
   }, [sells]);
 
-  const handleChange = (index: number, amount: number) => {
-    const updatedSells = [...sells];
-    updatedSells[index].amount = amount;
-    setSells(updatedSells);
+  useEffect(() => {
+    if (buys.length) {
+      let amount = 0;
+      for (const { amount: buyAmount, price } of buys) {
+        amount += buyAmount * price;
+      }
+
+      amount = +formatPrice(amount, null, 3);
+      setTotalBuyAmount(amount);
+    }
+  }, [buys]);
+
+  const handleChange = (
+    index: number,
+    amount: number,
+    type: "sell" | "buy"
+  ) => {
+    const updated = [...(type === "sell" ? sells : buys)];
+    updated[index].amount = amount;
+    type === "sell" ? setSells(updated) : setBuys(updated);
   };
+
+  const handleConfirm = async () => {
+    if (!totalBuyAmount) return;
+    if (buys.length === 0) return;
+    setIsProcessing(true);
+    try {
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 5000);
+    } catch (error) {
+      console.error("Transaction failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const isDisabled =
+    isProcessing ||
+    !buys.length ||
+    !totalBuyAmount ||
+    totalBuyAmount > taoToken.amount;
 
   return (
     <div className="w-[356px]">
@@ -62,7 +104,7 @@ export default function QuotePanelContent({
               key={token.netuid}
               token={token}
               index={index}
-              onChange={handleChange}
+              onChange={(index, amount) => handleChange(index, amount, "sell")}
             />
           ))}
         </div>
@@ -81,8 +123,52 @@ export default function QuotePanelContent({
           <label>Amount</label>
         </div>
       </div>
-
       <TokenInput token={taoToken} disabled />
+
+      <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
+        <label>You buy</label>
+        <label>Amount</label>
+      </div>
+
+      {/* buys */}
+      {buys.length > 0 && (
+        <div className="flex flex-col gap-[4px]">
+          {buys.map((token, index) => (
+            <TokenInput
+              key={token.netuid}
+              token={token}
+              index={index}
+              errorIgnore={true}
+              onChange={(index, amount) => handleChange(index, amount, "buy")}
+            />
+          ))}
+        </div>
+      )}
+
+      <TransactionDetail />
+
+      <ConfirmButton
+        isProcessing={isProcessing}
+        isSuccess={isSuccess}
+        isDisabled={isDisabled}
+        onClick={handleConfirm}
+        disabledText={
+          !buys.length ? "Select tokens to buy" : "Confirm Transaction"
+        }
+        label="Confirm Transaction"
+        style={{
+          width: "337px",
+          height: "60px",
+          backgroundColor: isDisabled
+            ? "var(--bg-dark-9)"
+            : "var(--color-black)",
+          border: "none",
+          margin: "20px 0px 20px 10px",
+          fontSize: "18px",
+          fontWeight: 500,
+          fontFamily: "Montserrat",
+        }}
+      />
     </div>
   );
 }

@@ -13,6 +13,7 @@ interface TokenInputProps {
   token?: Token;
   index?: number;
   disabled?: boolean;
+  errorIgnore?: boolean;
   onChange?: (index: number, amount: number) => void;
 }
 
@@ -20,6 +21,7 @@ export default function TokenInput({
   token,
   index,
   disabled = false,
+  errorIgnore = false,
   onChange,
 }: TokenInputProps) {
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function TokenInput({
 
     if (value === "" || !isNaN(+value)) {
       onChange(index, +value);
-      if (balance && value !== "" && +value > +balance) {
+      if (balance && value !== "" && +value > +balance && !errorIgnore) {
         setError("Insufficient balance");
       }
     }

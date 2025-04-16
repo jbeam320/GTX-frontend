@@ -18,7 +18,6 @@ export default function Bulk() {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [buys, setBuys] = useState<Token[]>([]);
   const [sells, setSells] = useState<Token[]>([]);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [isClear, setIsClear] = useState(true);
 
   useEffect(() => {
@@ -52,14 +51,10 @@ export default function Bulk() {
   const onBuy = (token: Token, mode: "add" | "delete") => {
     if (mode === "delete") {
       setBuys((prev) => prev.filter((t) => t.netuid !== token.netuid));
-      if (selectedToken?.netuid === token.netuid) {
-        setSelectedToken(null);
-      }
-
+      token.amount = 0;
       return;
     }
 
-    setSelectedToken(token);
     setIsClear(false);
     setBuys((prev) => [...prev, token]);
   };
@@ -67,14 +62,11 @@ export default function Bulk() {
   const onSell = (token: Token, mode: "add" | "delete") => {
     if (mode === "delete") {
       setSells((prev) => prev.filter((t) => t.netuid !== token.netuid));
-      if (selectedToken?.netuid === token.netuid) {
-        setSelectedToken(null);
-      }
+      token.amount = 0;
 
       return;
     }
 
-    setSelectedToken(token);
     setIsClear(false);
     setSells((prev) => [...prev, token]);
   };
@@ -82,7 +74,6 @@ export default function Bulk() {
   const onClear = () => {
     setBuys([]);
     setSells([]);
-    setSelectedToken(null);
     setIsClear(true);
   };
 
@@ -99,6 +90,7 @@ export default function Bulk() {
         sells={sells}
         onClear={onClear}
         setSells={setSells}
+        setBuys={setBuys}
       />
     </div>
   );

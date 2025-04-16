@@ -17,8 +17,6 @@ interface ButtonProps {
   icon2?: React.ReactNode;
   isRounded?: boolean;
   size?: "small" | "medium" | "large";
-  width?: string;
-  height?: string;
   [key: string]: any;
 }
 
@@ -30,8 +28,6 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   icon2,
   isRounded = false,
-  width,
-  height,
   size = "small",
   ...restProps
 }) => {
@@ -41,6 +37,8 @@ const Button: React.FC<ButtonProps> = ({
   let bgColor = "var(--color-light)";
   let border = `1px solid var(--border-dark)`;
   let fontSize = "14px";
+  let width = "auto";
+  let height = "auto";
 
   const borderRadius = isRounded ? "rounded-[16px]" : `rounded-[8px]`;
 
