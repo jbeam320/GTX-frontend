@@ -9,7 +9,7 @@ interface ConfirmButtonProps {
   onClick: () => void;
   disabledText?: string;
   label?: string;
-  style: {};
+  style?: {};
 }
 
 export default function ConfirmButton({

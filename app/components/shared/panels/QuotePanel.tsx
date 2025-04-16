@@ -6,6 +6,7 @@ import InfoIcon from "/public/icons/info-light.svg";
 import WhiteInfoIcon from "/public/icons/info-white.svg";
 import WhiteNukeIcon from "/public/icons/nuke-white.svg";
 import NukeIcon from "/public/icons/nuke.svg";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Token extends Subnet {
   balance: string;
@@ -51,7 +52,11 @@ export default function QuotePanel({
           backgroundColor:
             mode === "Standard" ? "var(--bg-light)" : "var(--bg-dark-6)",
           color: "var(--color-black)",
-          border: mode === "Standard" ? "1px solid var(--color-black)" : "none",
+          border: "none",
+          borderLeft:
+            mode === "Standard" ? "1px solid var(--color-black)" : "none",
+          borderRight:
+            mode === "Standard" ? "1px solid var(--color-black)" : "none",
         }}
         secondStyle={{
           width: "154px",
@@ -80,14 +85,25 @@ export default function QuotePanel({
         }}
       />
 
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode}
+          initial={{ opacity: 0, x: 0 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, x: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <QuotePanelContent
+            mode={mode}
+            buys={buys}
+            sells={sells}
+            setSells={setSells}
+            setBuys={setBuys}
+          />
+        </motion.div>
+      </AnimatePresence>
+
       {/* Content */}
-      <QuotePanelContent
-        mode={mode}
-        buys={buys}
-        sells={sells}
-        setSells={setSells}
-        setBuys={setBuys}
-      />
     </div>
   );
 }
