@@ -1,25 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Subnet } from "../../../lib/types";
+import { TokenForBulk } from "../../../lib/types";
 import ArrowDown from "/public/icons/arrow-down-dark.svg";
 
-interface Token extends Subnet {
-  balance: string;
-  amount: number;
-}
-
 interface TokenInputProps {
-  token?: Token;
-  index?: number;
+  token?: TokenForBulk;
   disabled?: boolean;
   errorIgnore?: boolean;
-  onChange?: (index: number, amount: number) => void;
+  onChange?: (amount: number) => void;
 }
 
 export default function TokenInput({
   token,
-  index,
   disabled = false,
   errorIgnore = false,
   onChange,
@@ -29,7 +22,6 @@ export default function TokenInput({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChange) return;
     if (!token) return;
-    if (index === undefined) return;
 
     setError(null);
 
@@ -42,8 +34,8 @@ export default function TokenInput({
     }
 
     if (value || !isNaN(value)) {
-      onChange(index, +value);
-      if (balance && value !== 0 && value > +balance && !errorIgnore) {
+      onChange(+value);
+      if (value > +balance && !errorIgnore) {
         setError("Insufficient balance");
       }
     }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Subnet } from "../../../lib/types";
+import { TokenForBulk } from "../../../lib/types";
 import Toggle from "../../ui/toggles/Toggle";
 import QuotePanelContent from "./QuotePanelContent";
 import InfoIcon from "/public/icons/info-light.svg";
@@ -8,27 +8,16 @@ import WhiteNukeIcon from "/public/icons/nuke-white.svg";
 import NukeIcon from "/public/icons/nuke.svg";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface Token extends Subnet {
-  balance: string;
-  amount: number;
-}
-
 interface QuotePanelProps {
-  buys: Token[];
-  sells: Token[];
-  tokens?: Token[];
-  setSells: (sells: Token[]) => void;
-  setBuys: (sells: Token[]) => void;
+  tokens: TokenForBulk[];
   onClear: () => void;
+  setTokens(tokens: TokenForBulk[]): void;
 }
 
 export default function QuotePanel({
-  buys,
-  sells,
   tokens,
   onClear,
-  setSells,
-  setBuys,
+  setTokens,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
 
@@ -100,11 +89,8 @@ export default function QuotePanel({
         >
           <QuotePanelContent
             mode={mode}
-            buys={buys}
-            sells={sells}
             tokens={tokens}
-            setSells={setSells}
-            setBuys={setBuys}
+            setTokens={setTokens}
           />
         </motion.div>
       </AnimatePresence>

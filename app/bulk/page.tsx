@@ -69,14 +69,14 @@ export default function Bulk() {
 
   const onClear = () => {
     setTokens((prev) =>
-      prev.map((token) => ({ ...token, type: "none", amount: 0, balance: "" }))
+      prev.map((token) => ({ ...token, type: "none", amount: 0 }))
     );
   };
 
   return (
     <div className="flex justify-center gap-[4px] mt-[70px]">
       <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
-      {/* <QuotePanel tokens={tokens} onClear={onClear} /> */}
+      <QuotePanel tokens={tokens} onClear={onClear} setTokens={setTokens} />
     </div>
   );
 }

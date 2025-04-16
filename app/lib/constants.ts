@@ -1,9 +1,5 @@
-import { Subnet } from "./types";
+import { TokenForBulk } from "./types";
 
-interface Token extends Subnet {
-    balance: string;
-    amount: number;
-}
 
 export const TAO = "τ";
 export const PLANCK_PER_TAO = 1e9;
@@ -13,7 +9,7 @@ export const defaultValidator = {
     name: "Roundtable21"
 }
 
-export const DEFUALT_TOKEN : Token = {
+export const DEFUALT_TOKEN : TokenForBulk = {
     name: "",
     netuid: 0,
     symbol: "TAO",
@@ -28,4 +24,5 @@ export const DEFUALT_TOKEN : Token = {
     last_7days_trends: [],
     balance: "0",
     amount: 0,
+    type: "none",
 }

@@ -1,88 +1,72 @@
-import TokenInput from "../../ui/inputs/TokenInput";
-import { Subnet } from "../../../lib/types";
-import { useEffect, useState } from "react";
-import { formatPrice } from "../../../lib/utils/format";
+import { useEffect, useMemo, useState } from "react";
 import { DEFUALT_TOKEN } from "../../../lib/constants";
-import TransactionDetail from "../../ui/cards/TransactionDetailForBulk";
-import { ConfirmButton } from "../../ui/buttons";
+import { TokenForBulk } from "../../../lib/types";
+import { formatPrice } from "../../../lib/utils/format";
 import { useWalletStore } from "../../../stores/store";
-
-interface Token extends Subnet {
-  balance: string;
-  amount: number;
-}
+import { ConfirmButton } from "../../ui/buttons";
+import TransactionDetail from "../../ui/cards/TransactionDetailForBulk";
+import TokenInput from "../../ui/inputs/TokenInput";
 
 interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
-  buys: Token[];
-  sells: Token[];
-  tokens?: Token[];
-  setSells: (sells: Token[]) => void;
-  setBuys: (sells: Token[]) => void;
+  tokens: TokenForBulk[];
+  setTokens: (tokens: TokenForBulk[]) => void;
 }
 
 export default function QuotePanelContent({
   mode,
-  buys,
-  sells,
-  setBuys,
-  setSells,
   tokens,
+  setTokens,
 }: QuotePanelContentProps) {
   const { selectedValidator, batchSell, batchSellAndBuy } = useWalletStore();
 
-  const [taoToken, setTaoToken] = useState<Token>(DEFUALT_TOKEN);
+  const [taoToken, setTaoToken] = useState<TokenForBulk>(DEFUALT_TOKEN);
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     if (mode === "Nuke" && tokens?.length) {
-      const newSells: Token[] = [];
-      for (const token of tokens) {
-        if (+token.balance) newSells.push({ ...token, amount: +token.balance });
-      }
+      const newTokens = tokens.map((token) =>
+        +token.balance
+          ? { ...token, amount: +token.balance, type: "sell" as const }
+          : { ...token, type: "none" as const }
+      );
 
-      setSells(newSells);
+      setTokens(newTokens);
     }
-  }, [tokens, mode]);
+  }, [mode]);
 
   useEffect(() => {
-    let amount = 0;
-    if (sells.length > 0) {
-      for (const { amount: sellAmount, price } of sells) {
-        amount += sellAmount * price;
-      }
-    }
+    let sellAmount = 0;
+    let buyAmount = 0;
 
-    amount = +formatPrice(amount, null, 3);
-    setTaoToken({
-      ...taoToken,
-      amount: amount,
-      balance: amount.toString(),
-    });
-  }, [sells]);
-
-  useEffect(() => {
-    if (buys.length) {
-      let amount = 0;
-      for (const { amount: buyAmount, price } of buys) {
-        amount += buyAmount * price;
+    if (tokens.length > 0) {
+      for (const { amount, price, type } of tokens) {
+        if (type === "sell") {
+          sellAmount += amount * price;
+        }
+        if (type === "buy") {
+          buyAmount += amount * price;
+        }
       }
 
-      amount = +formatPrice(amount, null, 3);
-      setTotalBuyAmount(amount);
-    }
-  }, [buys]);
+      sellAmount = +formatPrice(sellAmount, null, 3);
+      buyAmount = +formatPrice(buyAmount, null, 3);
 
-  const handleChange = (
-    index: number,
-    amount: number,
-    type: "sell" | "buy"
-  ) => {
-    const updated = [...(type === "sell" ? sells : buys)];
-    updated[index].amount = amount;
-    type === "sell" ? setSells(updated) : setBuys(updated);
+      setTaoToken({
+        ...taoToken,
+        amount: sellAmount,
+        balance: sellAmount.toString(),
+      });
+      setTotalBuyAmount(buyAmount);
+    }
+  }, [tokens]);
+
+  const handleChange = (token: TokenForBulk, amount: number) => {
+    setTokens(
+      tokens.map((t) => (t.netuid === token.netuid ? { ...token, amount } : t))
+    );
   };
 
   const handleConfirm = async () => {
@@ -142,6 +126,16 @@ export default function QuotePanelContent({
     }
   };
 
+  const sells = useMemo(
+    () => tokens.filter(({ type }) => type === "sell"),
+    [tokens]
+  );
+
+  const buys = useMemo(
+    () => tokens.filter(({ type }) => type === "buy"),
+    [tokens]
+  );
+
   const isDisabled =
     isProcessing ||
     sells.length === 0 ||
@@ -163,8 +157,7 @@ export default function QuotePanelContent({
               disabled={mode === "Nuke"}
               key={token.netuid}
               token={token}
-              index={index}
-              onChange={(index, amount) => handleChange(index, amount, "sell")}
+              onChange={(amount) => handleChange(token, amount)}
             />
           ))}
         </div>
@@ -197,9 +190,8 @@ export default function QuotePanelContent({
             <TokenInput
               key={token.netuid}
               token={token}
-              index={index}
               errorIgnore={true}
-              onChange={(index, amount) => handleChange(index, amount, "buy")}
+              onChange={(amount) => handleChange(token, amount)}
             />
           ))}
         </div>
