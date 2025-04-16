@@ -22,6 +22,10 @@ interface WalletState extends PersistedState {
   // API functions
   setupApiConnection: () => Promise<ApiPromise | null>;
   setupExtension: () => Promise<InjectedExtension | null>;
+  fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
+  fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
+  getValidatorStake: (validator: string, netuid: number) => Promise<string>;
+  getStakedBalanceForSubnet: (netuid: string) => Promise<string>;
   stakeTx: (
     amount: number,
     validator: string,
@@ -32,10 +36,7 @@ interface WalletState extends PersistedState {
     validator: string,
     netuid: number
   ) => Promise<string>;
-  fetchWalletBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
-  fetchStakedBalance: (userAddress: string, api: ApiPromise) => Promise<void>;
-  getValidatorStake: (validator: string, netuid: number) => Promise<string>;
-  getStakedBalanceForSubnet: (netuid: string) => Promise<string>;
+  batchSell: (txsInfo: { netuid: number; amount: number; validator: string; }[]) => Promise<void>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -236,7 +237,7 @@ export const useWalletStore = create<WalletState>()(
       },
 
       fetchStakedBalance: async (userAddress: string, api: ApiPromise) => {
-        const { setStakedBalance } = get();
+        const { setStakedBalance, selectedValidator } = get();
         try {
           const infos: any[] =
             await api.call.stakeInfoRuntimeApi.getStakeInfoForColdkey(
@@ -244,7 +245,7 @@ export const useWalletStore = create<WalletState>()(
             );
 
           const stakes =
-            infos?.filter((info) => info.netuid.toString() === "0") ?? [];
+            infos?.filter(({netuid, hotkey}) => netuid.toString() === "0" && hotkey === selectedValidator.hotkey) ?? [];
 
           const totalStaked = stakes?.reduce((total: number, curr: any) => {
             return total + Number(curr.stake.toString().replace(/,/g, ""));
@@ -346,9 +347,9 @@ export const useWalletStore = create<WalletState>()(
                         "Transaction finalized, refreshing balances..."
                       );
                       try {
-                        await new Promise((resolve) =>
-                          setTimeout(resolve, 2000)
-                        );
+                        // await new Promise((resolve) =>
+                        //   setTimeout(resolve, 2000)
+                        // );
                         await fetchWalletBalance(walletAddress, api);
                         await fetchStakedBalance(walletAddress, api);
                         if (unsub) unsub();
@@ -443,7 +444,7 @@ export const useWalletStore = create<WalletState>()(
                 if (isFinalized) {
                   console.log("Transaction finalized, refreshing balances...");
                   try {
-                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    // await new Promise((resolve) => setTimeout(resolve, 1000));
                     await fetchWalletBalance(walletAddress, currentApi);
                     await fetchStakedBalance(walletAddress, currentApi);
                     resolve(result.txHash.toString());
@@ -461,6 +462,50 @@ export const useWalletStore = create<WalletState>()(
             await disconnectWallet();
           }
           throw error;
+        }
+      },
+
+      batchSell: async (txsInfo) => {
+        const { walletAddress, api, extension } = get();
+        if (!walletAddress) throw new Error("wallet address not found");
+        if (!api) throw new Error("API not initialized");
+        if (!extension) throw new Error("Extension not connected");
+
+        try {
+          const { web3FromAddress } = await import("@polkadot/extension-dapp");
+          const account = await web3FromAddress(walletAddress);
+
+          if (!account) throw new Error("Account not found");
+
+          const txs = txsInfo.map(({ netuid, amount, validator }) => api.tx.subtensorModule.removeStake(
+            validator,
+            netuid,
+            amount * 1e9
+          )) 
+          const batchTx = api.tx.utility.batch(txs);
+
+          const unsub = await batchTx.signAndSend(
+            walletAddress,
+            {
+              signer: account.signer,
+              withSignedTransaction: !0,
+            },
+            ({ status, events }) => {
+              if (status.isInBlock) {
+                console.log(
+                  `Batch transaction included in block ${status.asInBlock}`
+                );
+              } else if (status.isFinalized) {
+                console.log(
+                  `Batch transaction finalized in block ${status.asFinalized}`
+                );
+                unsub();
+              }
+            }
+          );
+        
+        } catch (error: any) {
+          console.error("Transaction failed:", error);
         }
       },
 

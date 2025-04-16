@@ -27,7 +27,7 @@ export default function QuotePanelContent({
   setBuys,
   setSells,
 }: QuotePanelContentProps) {
-  const { api, walletAddress } = useWalletStore();
+  const { selectedValidator, batchSell } = useWalletStore();
 
   const [taoToken, setTaoToken] = useState<Token>(DEFUALT_TOKEN);
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
@@ -73,50 +73,18 @@ export default function QuotePanelContent({
   };
 
   const handleConfirm = async () => {
-    if (!totalBuyAmount || buys.length === 0) return;
-    if (!api || !walletAddress) return;
     setIsProcessing(true);
 
     try {
-      // Create batch of transactions
-      const txs = [];
-
-      // Add sell transactions
-      for (const token of sells) {
-        txs.push(
-          api.tx.subtensorModule.transferExtrinsic(token.netuid, token.amount)
-        );
-      }
-
-      // Add buy transactions
-      for (const token of buys) {
-        txs.push(
-          api.tx.subtensorModule.swapExtrinsic(token.netuid, token.amount)
-        );
-      }
-
-      // Create batch transaction
-      const batchTx = api.tx.utility.batchAll(txs);
-
-      // Sign and send the batch transaction
-      const unsub = await batchTx.signAndSend(
-        walletAddress,
-        { nonce: -1 },
-        ({ status, events }) => {
-          if (status.isInBlock) {
-            console.log(
-              `Batch transaction included in block ${status.asInBlock}`
-            );
-          } else if (status.isFinalized) {
-            console.log(
-              `Batch transaction finalized in block ${status.asFinalized}`
-            );
-            setIsSuccess(true);
-            setTimeout(() => setIsSuccess(false), 5000);
-            unsub();
-          }
-        }
+      await batchSell(
+        sells.map(({ netuid, amount }) => ({
+          netuid,
+          amount,
+          validator: selectedValidator.hotkey,
+        }))
       );
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 5000);
     } catch (error) {
       console.error("Transaction failed:", error);
     } finally {
@@ -126,9 +94,9 @@ export default function QuotePanelContent({
 
   const isDisabled =
     isProcessing ||
-    !sells.length ||
+    sells.length === 0 ||
     (!buys.length && mode === "Standard") ||
-    !(totalBuyAmount && mode === "Standard") ||
+    (!totalBuyAmount && mode === "Standard") ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
 
   return (
