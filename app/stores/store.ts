@@ -36,7 +36,17 @@ interface WalletState extends PersistedState {
     validator: string,
     netuid: number
   ) => Promise<string>;
-  batchSell: (txsInfo: { netuid: number; amount: number; validator: string; }[]) => Promise<void>;
+  batchSell: (
+    txsInfo: { netuid: number; amount: number; validator: string }[]
+  ) => Promise<void>;
+  batchSellAndBuy: (
+    txsInfo: {
+      netuid: number;
+      amount: number;
+      type: "sell" | "buy";
+      validator: string;
+    }[]
+  ) => Promise<void>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -245,7 +255,10 @@ export const useWalletStore = create<WalletState>()(
             );
 
           const stakes =
-            infos?.filter(({netuid, hotkey}) => netuid.toString() === "0" && hotkey === selectedValidator.hotkey) ?? [];
+            infos?.filter(
+              ({ netuid, hotkey }) =>
+                netuid.toString() === "0" && hotkey === selectedValidator.hotkey
+            ) ?? [];
 
           const totalStaked = stakes?.reduce((total: number, curr: any) => {
             return total + Number(curr.stake.toString().replace(/,/g, ""));
@@ -477,11 +490,9 @@ export const useWalletStore = create<WalletState>()(
 
           if (!account) throw new Error("Account not found");
 
-          const txs = txsInfo.map(({ netuid, amount, validator }) => api.tx.subtensorModule.removeStake(
-            validator,
-            netuid,
-            amount * 1e9
-          )) 
+          const txs = txsInfo.map(({ netuid, amount, validator }) =>
+            api.tx.subtensorModule.removeStake(validator, netuid, amount * 1e9)
+          );
           const batchTx = api.tx.utility.batch(txs);
 
           const unsub = await batchTx.signAndSend(
@@ -503,9 +514,55 @@ export const useWalletStore = create<WalletState>()(
               }
             }
           );
-        
         } catch (error: any) {
           console.error("Transaction failed:", error);
+        }
+      },
+
+      batchSellAndBuy: async (txsInfo) => {
+        const { walletAddress, api, extension } = get();
+        if (!walletAddress) throw new Error("wallet address not found");
+        if (!api) throw new Error("API not initialized");
+        if (!extension) throw new Error("Extension not connected");
+
+        try {
+          const { web3FromAddress } = await import("@polkadot/extension-dapp");
+          const account = await web3FromAddress(walletAddress);
+
+          if (!account) throw new Error("Account not found");
+
+          const txs = txsInfo.map(({ netuid, amount, type, validator }) =>
+            type === "sell"
+              ? api.tx.subtensorModule.removeStake(
+                  validator,
+                  netuid,
+                  amount * 1e9
+                )
+              : api.tx.subtensorModule.addStake(validator, netuid, amount * 1e9)
+          );
+          const batchTx = api.tx.utility.batch(txs);
+
+          const unsub = await batchTx.signAndSend(
+            walletAddress,
+            {
+              signer: account.signer,
+              withSignedTransaction: !0,
+            },
+            ({ status, events }) => {
+              if (status.isInBlock) {
+                console.log(
+                  `Batch transaction included in block ${status.asInBlock}`
+                );
+              } else if (status.isFinalized) {
+                console.log(
+                  `Batch transaction finalized in block ${status.asFinalized}`
+                );
+                unsub();
+              }
+            }
+          );
+        } catch (error) {
+          console.log(error);
         }
       },
 
