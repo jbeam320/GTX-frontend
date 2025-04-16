@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ValidatorListItem from "../items/ValidatorListItem";
 import ValidatorListColumn from "../items/ValidatorListColumn";
-import { Validator } from "../../../lib/types/validator-type";
+import { Validator } from "../../../lib/types/validator";
 import { useWalletStore } from "../../../stores/store";
 
 interface ValidatorListProps {

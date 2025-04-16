@@ -3,27 +3,24 @@
 import TokenList from "../components/shared/lists/TokenList";
 import { subnets } from "../lib/data";
 import { useState, useEffect } from "react";
-import { Subnet } from "../lib/types";
+import { TokenForBulk } from "../lib/types";
 import { QuotePanel } from "../components/shared/panels";
 import { useWalletStore } from "../stores/store";
-
-interface Token extends Subnet {
-  balance: string;
-  amount: number;
-}
 
 export default function Bulk() {
   const { getValidatorStake, selectedValidator } = useWalletStore();
 
-  const [tokens, setTokens] = useState<Token[]>([]);
-  const [buys, setBuys] = useState<Token[]>([]);
-  const [sells, setSells] = useState<Token[]>([]);
-  const [isClear, setIsClear] = useState(true);
+  const [tokens, setTokens] = useState<TokenForBulk[]>([]);
 
   useEffect(() => {
     if (subnets.length) {
       setTokens(
-        subnets.map((subnet) => ({ ...subnet, balance: "0", amount: 0 }))
+        subnets.map((subnet) => ({
+          ...subnet,
+          balance: "0",
+          amount: 0,
+          type: "none",
+        }))
       );
 
       const loadBalances = async () => {
@@ -48,51 +45,38 @@ export default function Bulk() {
     }
   }, [subnets, selectedValidator]);
 
-  const onBuy = (token: Token, mode: "add" | "delete") => {
-    if (mode === "delete") {
-      setBuys((prev) => prev.filter((t) => t.netuid !== token.netuid));
+  const onBuy = (token: TokenForBulk) => {
+    if (token.type === "buy") {
+      token.type = "none";
       token.amount = 0;
-      return;
-    }
+    } else token.type = "buy";
 
-    setIsClear(false);
-    setBuys((prev) => [...prev, token]);
+    setTokens((prev) =>
+      prev.map((t) => (t.netuid === token.netuid ? token : t))
+    );
   };
 
-  const onSell = (token: Token, mode: "add" | "delete") => {
-    if (mode === "delete") {
-      setSells((prev) => prev.filter((t) => t.netuid !== token.netuid));
+  const onSell = (token: TokenForBulk) => {
+    if (token.type === "sell") {
+      token.type = "none";
       token.amount = 0;
+    } else token.type = "sell";
 
-      return;
-    }
-
-    setIsClear(false);
-    setSells((prev) => [...prev, token]);
+    setTokens((prev) =>
+      prev.map((t) => (t.netuid === token.netuid ? token : t))
+    );
   };
 
   const onClear = () => {
-    setBuys([]);
-    setSells([]);
-    setIsClear(true);
+    setTokens((prev) =>
+      prev.map((token) => ({ ...token, type: "none", amount: 0, balance: "" }))
+    );
   };
 
   return (
     <div className="flex justify-center gap-[4px] mt-[70px]">
-      <TokenList
-        tokens={tokens}
-        isClear={isClear}
-        onBuy={onBuy}
-        onSell={onSell}
-      />
-      <QuotePanel
-        buys={buys}
-        sells={sells}
-        tokens={tokens}
-        onClear={onClear}
-        setSells={setSells}
-        setBuys={setBuys}
-      />
+      <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
+      {/* <QuotePanel tokens={tokens} onClear={onClear} /> */}
     </div>
   );
 }

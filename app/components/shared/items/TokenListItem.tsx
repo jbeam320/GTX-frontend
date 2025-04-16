@@ -1,62 +1,20 @@
-import Image from "next/image";
-import { Subnet } from "../../../lib/types";
-import { formatCompact, formatPrice } from "../../../lib/utils/format";
 import { taoPrice } from "../../../lib/data";
-import * as service from "../../../services";
-import { useEffect } from "react";
-import { useState } from "react";
-import { on } from "events";
-
-interface Token extends Subnet {
-  balance: string;
-}
+import { TokenForBulk } from "../../../lib/types";
+import { formatCompact, formatPrice } from "../../../lib/utils/format";
 
 interface TokenListItemProps {
-  token: Token;
-  isClear?: boolean;
-  onBuy?: (mode: "add" | "delete") => void;
-  onSell?: (mode: "add" | "delete") => void;
+  token: TokenForBulk;
+  onBuy: (token: TokenForBulk) => void;
+  onSell: (token: TokenForBulk) => void;
   [key: string]: any;
 }
 
 const TokenListItem = ({
   token,
-  isClear = true,
   onBuy,
   onSell,
   ...restProps
 }: TokenListItemProps) => {
-  const [status, setStatus] = useState<string>("");
-
-  useEffect(() => {
-    if (isClear) {
-      setStatus("");
-    }
-  }, [isClear]);
-
-  const handleBuy = () => {
-    if (status === "buy") {
-      setStatus("");
-      onBuy?.("delete");
-      return;
-    }
-
-    setStatus("buy");
-    onBuy?.("add");
-  };
-
-  const handleSell = () => {
-    console.log(token);
-    if (status === "sell") {
-      setStatus("");
-      onSell?.("delete");
-      return;
-    }
-
-    setStatus("sell");
-    onSell?.("add");
-  };
-
   return (
     <div
       className="flex justify-between items-center px-4 py-3 w-[824px] h-[73px] px-[15px] font-montserrat"
@@ -95,18 +53,18 @@ const TokenListItem = ({
 
       <div className="flex gap-[19px]">
         <button
-          onClick={handleBuy}
+          onClick={() => onBuy(token)}
           className={`h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
-            status === "buy" ? "w-[185px]" : "w-[83px]"
-          } ${status === "sell" && "hidden"}`}
+            token.type === "buy" ? "w-[185px]" : "w-[83px]"
+          } ${token.type === "sell" && "hidden"}`}
         >
           Buy
         </button>
         <button
-          onClick={handleSell}
+          onClick={() => onSell(token)}
           className={`h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
-            status === "sell" ? "w-[185px]" : "w-[83px]"
-          } ${status === "buy" && "hidden"}`}
+            token.type === "sell" ? "w-[185px]" : "w-[83px]"
+          } ${token.type === "buy" && "hidden"}`}
         >
           Sell
         </button>

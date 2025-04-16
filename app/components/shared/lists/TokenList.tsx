@@ -1,28 +1,17 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Subnet } from "../../../lib/types";
+import { TokenForBulk } from "../../../lib/types";
 import TokenListItem from "../items/TokenListItem";
 import SearchIcon from "/public/icons/search-dark.svg";
 
-interface Token extends Subnet {
-  balance: string;
-  amount: number;
-}
-
 interface TokenListProps {
-  tokens: Token[];
-  isClear?: boolean;
-  onBuy?: (token: Token, mode: "add" | "delete") => void;
-  onSell?: (token: Token, mode: "add" | "delete") => void;
+  tokens: TokenForBulk[];
+  onBuy: (token: TokenForBulk) => void;
+  onSell: (token: TokenForBulk) => void;
 }
 
-export default function TokenList({
-  tokens,
-  isClear = true,
-  onBuy,
-  onSell,
-}: TokenListProps) {
+export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTokens = useMemo(
@@ -66,9 +55,8 @@ export default function TokenList({
           <TokenListItem
             key={`${token.symbol}-${token.netuid}`}
             token={token}
-            isClear={isClear}
-            onBuy={(mode) => onBuy?.(token, mode)}
-            onSell={(mode) => onSell?.(token, mode)}
+            onBuy={onBuy}
+            onSell={onSell}
             style={{
               background:
                 index % 2 === 0 ? "var(--bg-dark-4)" : "var(--bg-light-2)",

@@ -1,5 +1,5 @@
 import { taoPrice } from "../../../lib/data";
-import { Validator } from "../../../lib/types/validator-type";
+import { Validator } from "../../../lib/types/validator";
 import { formatCompactSimple, formatPercent } from "../../../lib/utils/format";
 
 export default function ValidatorListItem({
