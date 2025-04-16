@@ -27,7 +27,7 @@ export default function QuotePanelContent({
   setBuys,
   setSells,
 }: QuotePanelContentProps) {
-  const { selectedValidator, batchSell } = useWalletStore();
+  const { selectedValidator, batchSell, batchSellAndBuy } = useWalletStore();
 
   const [taoToken, setTaoToken] = useState<Token>(DEFUALT_TOKEN);
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
@@ -76,13 +76,43 @@ export default function QuotePanelContent({
     setIsProcessing(true);
 
     try {
-      await batchSell(
-        sells.map(({ netuid, amount }) => ({
-          netuid,
-          amount,
-          validator: selectedValidator.hotkey,
-        }))
-      );
+      if (mode === "Nuke") {
+        await batchSell(
+          sells.map(({ netuid, amount }) => ({
+            netuid,
+            amount,
+            validator: selectedValidator.hotkey,
+          }))
+        );
+      } else if (mode === "Standard") {
+        const txsInfos: {
+          netuid: number;
+          amount: number;
+          type: "sell" | "buy";
+          validator: string;
+        }[] = [];
+
+        for (const { amount, netuid } of sells) {
+          txsInfos.push({
+            netuid,
+            amount,
+            validator: selectedValidator.hotkey,
+            type: "sell",
+          });
+        }
+
+        for (const { amount, netuid } of buys) {
+          txsInfos.push({
+            netuid,
+            amount: amount,
+            validator: selectedValidator.hotkey,
+            type: "buy",
+          });
+        }
+
+        await batchSellAndBuy(txsInfos);
+      }
+
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (error) {
