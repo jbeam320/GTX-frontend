@@ -6,10 +6,11 @@ import ArrowDown from "/public/icons/arrow-down-dark.svg";
 import { formatPrice } from "../../../lib/utils/format";
 
 interface TokenInputProps {
-  token?: TokenForBulk;
+  token: TokenForBulk;
   value?: string;
   disabled?: boolean;
   errorIgnore?: boolean;
+  showTaoAmount?: boolean;
   errorHandle?: (error: string) => void;
   onChange?: (amount: number) => void;
 }
@@ -19,6 +20,7 @@ export default function TokenInput({
   value,
   disabled = false,
   errorIgnore = false,
+  showTaoAmount = false,
   errorHandle,
   onChange,
 }: TokenInputProps) {
@@ -85,9 +87,16 @@ export default function TokenInput({
         {error && <p className="text-red-500">{error}</p>}
       </div>
 
-      <div className="flex gap-[14px] items-center font-montserrat text-[12px] font-[500] text-[var(--color-dark-3)]">
-        <label>Quote Details</label>
-        <ArrowDown />
+      <div className="flex justify-between">
+        <div className="flex gap-[14px] items-center font-montserrat text-[12px] font-[500] text-[var(--color-dark-3)]">
+          <label>Quote Details</label>
+          <ArrowDown />
+        </div>
+        {showTaoAmount && (
+          <label>
+            {formatPrice((token?.amount * token?.price) / 1e9, null, 2)} TAO
+          </label>
+        )}
       </div>
     </div>
   );

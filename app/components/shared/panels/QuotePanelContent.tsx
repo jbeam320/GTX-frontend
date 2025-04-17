@@ -203,6 +203,7 @@ export default function QuotePanelContent({
             <TokenInput
               key={token.netuid}
               token={token}
+              showTaoAmount={true}
               errorIgnore={true}
               onChange={(amount) => handleChange(token, amount)}
             />
