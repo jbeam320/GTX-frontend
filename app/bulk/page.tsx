@@ -13,29 +13,24 @@ export default function Bulk() {
   const [tokens, setTokens] = useState<TokenForBulk[]>([]);
 
   useEffect(() => {
-    if (subnets.length) {
-      setTokens(
-        subnets.map((subnet) => ({
-          ...subnet,
-          balance: "0",
-          amount: 0,
-          type: "none",
-        }))
-      );
-
+    if (subnets.length && selectedValidator.hotkey) {
       const loadBalances = async () => {
         try {
-          for (const subnet of subnets) {
-            const stake = await getValidatorStake(
-              selectedValidator.hotkey,
-              subnet.netuid
-            );
-            setTokens((prev) =>
-              prev.map((t) =>
-                t.netuid === subnet.netuid ? { ...t, balance: stake } : t
-              )
-            );
-          }
+          const balances = await Promise.all(
+            subnets.map(
+              async (subnet) =>
+                await getValidatorStake(selectedValidator.hotkey, subnet.netuid)
+            )
+          );
+
+          const tokens = subnets.map((subnet, index) => ({
+            ...subnet,
+            balance: balances[index],
+            amount: 0,
+            type: "none" as "none" | "sell" | "buy",
+          }));
+
+          setTokens(tokens);
         } catch (error) {
           console.error(error);
         }

@@ -47,7 +47,9 @@ const TokenListItem = ({
       </div>
 
       <div className="flex flex-col basis-[100px] gap-[10px]">
-        <span className="text-[15px] font-semibold">{token.balance}</span>
+        <span className="text-[15px] font-semibold">
+          {formatPrice(+token.balance, null, 2)}
+        </span>
         <span className="text-[12px] font-medium">0.000 B</span>
       </div>
 

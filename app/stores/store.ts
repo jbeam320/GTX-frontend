@@ -491,7 +491,7 @@ export const useWalletStore = create<WalletState>()(
           if (!account) throw new Error("Account not found");
 
           const txs = txsInfo.map(({ netuid, amount, validator }) =>
-            api.tx.subtensorModule.removeStake(validator, netuid, amount * 1e9)
+            api.tx.subtensorModule.removeStake(validator, netuid, amount)
           );
           const batchTx = api.tx.utility.batch(txs);
 
@@ -538,7 +538,7 @@ export const useWalletStore = create<WalletState>()(
                   netuid,
                   amount * 1e9
                 )
-              : api.tx.subtensorModule.addStake(validator, netuid, amount * 1e9)
+              : api.tx.subtensorModule.addStake(validator, netuid, amount)
           );
           const batchTx = api.tx.utility.batch(txs);
 
@@ -586,9 +586,8 @@ export const useWalletStore = create<WalletState>()(
 
           const stakeStr = stake.toString().replace(/,/g, "");
           const stakeValue = Number(stakeStr);
-          const stakeInTao = stakeValue / Number(PLANCK_PER_TAO);
-          const formattedStake = stakeInTao.toFixed(2);
-          return formattedStake;
+          
+          return stakeValue.toString();
         } catch (error) {
           console.error("Error getting validator stake:", error);
           return "0";

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TokenForBulk } from "../../../lib/types";
 import ArrowDown from "/public/icons/arrow-down-dark.svg";
+import { formatPrice } from "../../../lib/utils/format";
 
 interface TokenInputProps {
   token?: TokenForBulk;
@@ -25,7 +26,8 @@ export default function TokenInput({
 
     setError(null);
 
-    const value = parseInt(e.target.value, 10);
+    // const value = parseInt(e.target.value, 10);
+    const value = +e.target.value;
     const { balance } = token;
 
     if (value < 0) {
@@ -61,7 +63,7 @@ export default function TokenInput({
 
           <input
             type="number"
-            value={token?.amount ?? 0}
+            value={formatPrice(token?.amount ?? 0, null, 2)}
             placeholder="0"
             onChange={handleChange}
             className="w-full h-[29px] text-[24px] font-[600] outline-none text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
