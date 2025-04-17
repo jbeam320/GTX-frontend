@@ -9,6 +9,7 @@ interface TokenInputProps {
   token?: TokenForBulk;
   disabled?: boolean;
   errorIgnore?: boolean;
+  errorHandle?: (error: string) => void;
   onChange?: (amount: number) => void;
 }
 
@@ -16,6 +17,7 @@ export default function TokenInput({
   token,
   disabled = false,
   errorIgnore = false,
+  errorHandle,
   onChange,
 }: TokenInputProps) {
   const [error, setError] = useState<string | null>(null);
@@ -25,13 +27,15 @@ export default function TokenInput({
     if (!token) return;
 
     setError(null);
+    errorHandle?.("");
 
     // const value = parseInt(e.target.value, 10);
     const value = +e.target.value;
-    const { balance } = token;
+    const balance = formatPrice(+token.balance, null, 2);
 
     if (value < 0) {
       setError("Amount cannot be negative");
+      errorHandle?.("Amount cannot be negative");
       return;
     }
 
@@ -39,6 +43,7 @@ export default function TokenInput({
       onChange(+value);
       if (value > +balance && !errorIgnore) {
         setError("Insufficient balance");
+        errorHandle?.("Insufficient balance");
       }
     }
   };

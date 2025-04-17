@@ -536,7 +536,7 @@ export const useWalletStore = create<WalletState>()(
               ? api.tx.subtensorModule.removeStake(
                   validator,
                   netuid,
-                  amount * 1e9
+                  amount
                 )
               : api.tx.subtensorModule.addStake(validator, netuid, amount)
           );

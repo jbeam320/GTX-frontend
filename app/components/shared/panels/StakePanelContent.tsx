@@ -70,7 +70,7 @@ export default function StakePanelContent({
       <TransactionDetail
         tokenAmount={amount}
         usdAmount={(+amount * taoPrice.price).toFixed(2)}
-        isShow={!isDisabled && !isProcessing}
+        isShow={!isDisabled || isProcessing}
         style={{ marginTop: "40px", marginBottom: "24px" }}
       />
 

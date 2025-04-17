@@ -24,6 +24,7 @@ export default function QuotePanelContent({
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (mode === "Nuke" && tokens?.length) {
@@ -65,7 +66,9 @@ export default function QuotePanelContent({
 
   const handleChange = (token: TokenForBulk, amount: number) => {
     setTokens(
-      tokens.map((t) => (t.netuid === token.netuid ? { ...token, amount } : t))
+      tokens.map((t) =>
+        t.netuid === token.netuid ? { ...token, amount: amount * 1e9 } : t
+      )
     );
   };
 
@@ -138,6 +141,7 @@ export default function QuotePanelContent({
 
   const isDisabled =
     isProcessing ||
+    error !== "" ||
     sells.length === 0 ||
     taoToken.amount === 0 ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
@@ -157,6 +161,9 @@ export default function QuotePanelContent({
               disabled={mode === "Nuke"}
               key={token.netuid}
               token={token}
+              errorHandle={(error) => {
+                setError(error);
+              }}
               onChange={(amount) => handleChange(token, amount)}
             />
           ))}
