@@ -1,7 +1,6 @@
 import Button from "./Button";
 import Confetti from "react-confetti";
 import SuccessIcon from "/public/icons/success.svg";
-import { getFontSize } from "@mantine/core";
 
 interface ConfirmButtonProps {
   isProcessing: boolean;
@@ -9,6 +8,8 @@ interface ConfirmButtonProps {
   isDisabled: boolean;
   onClick: () => void;
   disabledText?: string;
+  label?: string;
+  style?: {};
 }
 
 export default function ConfirmButton({
@@ -17,6 +18,8 @@ export default function ConfirmButton({
   isDisabled,
   onClick,
   disabledText,
+  label = "CONFIRM",
+  style,
 }: ConfirmButtonProps) {
   return (
     <>
@@ -30,13 +33,14 @@ export default function ConfirmButton({
             ? "PROCESSING..."
             : isDisabled
             ? disabledText
-            : "CONFIRM"
+            : label
         }
         icon={isSuccess ? <SuccessIcon /> : null}
         variant={isSuccess ? "success" : "dark"}
         size="large"
         onClick={onClick}
         disabled={isDisabled}
+        {...style}
       />
     </>
   );

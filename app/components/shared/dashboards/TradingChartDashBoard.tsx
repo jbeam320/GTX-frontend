@@ -21,6 +21,15 @@ interface TradingChartContainerProps {
   tokenInfo: TokenInfo;
 }
 
+interface ChartData {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 interface ChartValues {
   time: string;
   open: number;
@@ -33,14 +42,21 @@ interface ChartValues {
 const DEFAULT_WIDTH = 760;
 const DEFAULT_HEIGHT = 306;
 
+type IntervalType = "5M" | "1H" | "1D";
+
+const INTERVALS: Record<IntervalType, 5 | 60 | 1440> = {
+  "5M": 5,
+  "1H": 60,
+  "1D": 1440,
+};
+
 export default function TradingChartContainer({
   tokenInfo,
 }: TradingChartContainerProps) {
-  const [period, setPeriod] = useState<"5M" | "1H" | "1D">("1H");
+  const [interval, setInterval] = useState<IntervalType>("1H");
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [height, setHeight] = useState(DEFAULT_HEIGHT);
-  const [chartData, setChartData] = useState(generateMockChartData(100));
   const [chartValues, setChartValues] = useState<ChartValues | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -61,11 +77,6 @@ export default function TradingChartContainer({
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, [isFullScreen]);
-
-  useEffect(() => {
-    const dataPoints = period === "5M" ? 100 : period === "1H" ? 24 : 30;
-    setChartData(generateMockChartData(dataPoints));
-  }, [period]);
 
   const handleFullScreen = async () => {
     if (!containerRef.current) return;
@@ -158,10 +169,8 @@ export default function TradingChartContainer({
           <div className="flex flex-row gap-[8px] h-[38px]">
             <ButtonGroup
               labels={["5M", "1H", "1D"]}
-              activeButton={period}
-              setActiveButton={(period) =>
-                setPeriod(period as "5M" | "1H" | "1D")
-              }
+              activeButton={interval}
+              setActiveButton={(value) => setInterval(value as IntervalType)}
             />
             <button
               className="cursor-pointer rounded-[4px] bg-[var(--border-black)] w-[38px] h-[38px] flex items-center justify-center"
@@ -279,10 +288,9 @@ export default function TradingChartContainer({
       </div>
 
       <TradingChart
-        data={chartData}
         width={width}
         height={height}
-        period={period}
+        interval={INTERVALS[interval]}
         onCrosshairMove={setChartValues}
       />
 
@@ -311,33 +319,4 @@ export default function TradingChartContainer({
       </div>
     </div>
   );
-}
-
-// Mock data generation function
-function generateMockChartData(count: number) {
-  const data = [];
-  const now = Date.now();
-  let price = 100;
-
-  for (let i = 0; i < count; i++) {
-    const time = now - (count - i) * 60000;
-    const open = price;
-    const close = open + (Math.random() - 0.5) * 10;
-    const high = Math.max(open, close) + Math.random() * 5;
-    const low = Math.min(open, close) - Math.random() * 5;
-    const volume = Math.floor(Math.random() * 1000) + 100;
-
-    data.push({
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    });
-
-    price = close;
-  }
-
-  return data;
 }

@@ -1,10 +1,13 @@
+"use client";
+
 import {
   createChart,
   IChartApi,
   MouseEventParams,
   UTCTimestamp,
 } from "lightweight-charts";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { chartDatas } from "../../../lib/data";
 
 interface ChartData {
   time: number;
@@ -16,9 +19,8 @@ interface ChartData {
 }
 
 interface TradingChartProps {
-  data: ChartData[];
   height?: number;
-  period?: "5M" | "1H" | "1D";
+  interval?: 5 | 60 | 1440;
   width: number;
   onCrosshairMove?: (param: {
     time: string;
@@ -30,70 +32,141 @@ interface TradingChartProps {
   }) => void;
 }
 
-const formatDate = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
+const ONE_MINUTE = 60 * 1000;
+
+const formatDate = (timestamp: number, interval?: 5 | 60 | 1440): string => {
+  const timestampSec =
+    timestamp > 9999999999 ? Math.floor(timestamp / 1000) : timestamp;
+  const date = new Date(timestampSec * 1000);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+  if (interval === 1440) {
+    return `${year}-${month}-${day}`;
+  }
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
+const formatCandles = (candles: ChartData[]) =>
+  candles.map((d) => ({
+    time: Math.floor(d.time / 1000) as UTCTimestamp,
+    open: d.open,
+    high: d.high,
+    low: d.low,
+    close: d.close,
+  }));
+
+const formatVolumes = (candles: ChartData[]) =>
+  candles.map((d) => ({
+    time: (d.time / 1000) as UTCTimestamp,
+    value: d.volume,
+    color:
+      d.close > d.open ? "rgba(37, 38, 38, 0.3)" : "rgba(152, 152, 152, 0.3)",
+  }));
+
 const TradingChart: React.FC<TradingChartProps> = ({
-  data,
   height = 306,
+  interval = 60,
   width = 760,
   onCrosshairMove,
 }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
+  const isFetchingRef = useRef(false);
+  const mainSeriesRef = useRef<any>(null);
+  const volumeSeriesRef = useRef<any>(null);
+  const latestDataRef = useRef<ChartData[]>([]);
+  const viewportRef = useRef<{ from: number; to: number } | null>(null);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      const now = Math.floor(Date.now());
+      const endTime = now;
+      const startTime = now - interval * ONE_MINUTE * 100;
+      const initialData = await loadDataForTimeRange(startTime, endTime);
+      setChartData(initialData);
+    };
+    loadInitialData();
+  }, [interval]);
+
+  const loadDataForTimeRange = async (startTime: number, endTime: number) => {
+    const filteredData = chartDatas.filter(
+      (d) => d.time >= startTime && d.time <= endTime
+    );
+    return aggregateDataByInterval(filteredData, interval);
+  };
+
+  const aggregateDataByInterval = (data: ChartData[], interval: number) => {
+    const intervalMs = interval * ONE_MINUTE;
+    const aggregatedData = new Map<number, ChartData>();
+    data.forEach((candle) => {
+      const intervalStart = Math.floor(candle.time / intervalMs) * intervalMs;
+      if (!aggregatedData.has(intervalStart)) {
+        aggregatedData.set(intervalStart, { ...candle, time: intervalStart });
+      } else {
+        const existing = aggregatedData.get(intervalStart)!;
+        existing.high = Math.max(existing.high, candle.high);
+        existing.low = Math.min(existing.low, candle.low);
+        existing.close = candle.close;
+        existing.volume += candle.volume;
+      }
+    });
+    return Array.from(aggregatedData.values()).sort((a, b) => a.time - b.time);
+  };
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
+    if (chartRef.current) chartRef.current.remove();
 
-    // Clean up previous chart instance if it exists
-    if (chartRef.current) {
-      chartRef.current.remove();
-      chartRef.current = null;
-    }
-
-    const chartInstance = createChart(chartContainerRef.current, {
-      width: width,
-      height: height,
-      layout: {
-        background: { color: "#ffffff" },
-        textColor: "#333",
-      },
+    const chart = createChart(chartContainerRef.current, {
+      width,
+      height,
+      layout: { background: { color: "#ffffff" }, textColor: "#333" },
       grid: {
         vertLines: { color: "#f0f0f0" },
         horzLines: { color: "#f0f0f0" },
       },
       crosshair: {
         mode: 1,
-        vertLine: {
-          labelVisible: true,
-        },
-        horzLine: {
-          labelVisible: true,
-        },
+        vertLine: { labelVisible: true },
+        horzLine: { labelVisible: true },
       },
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
         tickMarkFormatter: (time: UTCTimestamp) => {
           const date = new Date(time * 1000);
-          const hours = String(date.getHours()).padStart(2, "0");
-          const minutes = String(date.getMinutes()).padStart(2, "0");
-          return `${hours}:${minutes}`;
+          if (interval === 1440) {
+            return `${String(date.getUTCDate()).padStart(2, "0")} ${
+              [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ][date.getUTCMonth()]
+            } ${date.getUTCFullYear()}`;
+          }
+          return `${String(date.getUTCHours()).padStart(2, "0")}:${String(
+            date.getUTCMinutes()
+          ).padStart(2, "0")}`;
         },
       },
     });
 
-    chartRef.current = chartInstance;
-
-    // Create price series
-    const mainSeries = chartInstance.addCandlestickSeries({
+    chartRef.current = chart;
+    const mainSeries = chart.addCandlestickSeries({
       downColor: "#ffffff",
       upColor: "#252626",
       borderVisible: true,
@@ -102,72 +175,40 @@ const TradingChart: React.FC<TradingChartProps> = ({
       wickDownColor: "#252626",
       priceScaleId: "right",
     });
+    mainSeriesRef.current = mainSeries;
 
-    // Configure main price scale to leave room for volume
-    const mainPriceScale = chartInstance.priceScale("right");
-    if (mainPriceScale) {
-      mainPriceScale.applyOptions({
-        scaleMargins: {
-          top: 0.1, // Leave 10% space from top
-          bottom: 0.2, // Leave 20% space for volume
-        },
-      });
-    }
-
-    // Create volume series
-    const volumeSeries = chartInstance.addHistogramSeries({
+    const volumeSeries = chart.addHistogramSeries({
       color: "#26a69a",
-      priceFormat: {
-        type: "volume",
-      },
+      priceFormat: { type: "volume" },
       priceScaleId: "volume",
     });
+    volumeSeriesRef.current = volumeSeries;
+    chart.priceScale("volume")?.applyOptions({
+      scaleMargins: { top: 0.8, bottom: 0 },
+      visible: true,
+      autoScale: true,
+    });
 
-    // Configure the volume scale
-    const volumePriceScale = chartInstance.priceScale("volume");
-    if (volumePriceScale) {
-      volumePriceScale.applyOptions({
-        scaleMargins: {
-          top: 0.8, // Start at 80% of the chart height
-          bottom: 0.0,
-        },
-        visible: true,
-        autoScale: true,
-      });
+    if (chartData.length) {
+      mainSeries.setData(formatCandles(chartData));
+      volumeSeries.setData(formatVolumes(chartData));
     }
 
-    // Set the data for main series
-    mainSeries.setData(
-      data.map((d) => ({
-        time: (d.time / 1000) as UTCTimestamp,
-        open: d.open,
-        high: d.high,
-        low: d.low,
-        close: d.close,
-      }))
-    );
-
-    // Set the data for volume series
-    volumeSeries.setData(
-      data.map((d) => ({
-        time: (d.time / 1000) as UTCTimestamp,
-        value: d.volume,
-        color:
-          d.close > d.open
-            ? "rgba(37, 38, 38, 0.3)"
-            : "rgba(152, 152, 152, 0.3)",
-      }))
-    );
-
-    // Subscribe to crosshair moves
-    chartInstance.subscribeCrosshairMove((param: MouseEventParams) => {
+    chart.subscribeCrosshairMove((param: MouseEventParams) => {
       if (onCrosshairMove && param.time) {
-        const candleData = param.seriesData.get(mainSeries) as any;
-        const volumeData = param.seriesData.get(volumeSeries) as any;
+        const candleData = param.seriesData.get(mainSeries) as {
+          open: number;
+          high: number;
+          low: number;
+          close: number;
+        };
+        const volumeData = param.seriesData.get(volumeSeries) as {
+          value: number;
+        };
 
         if (candleData) {
           onCrosshairMove({
-            time: formatDate(Number(param.time) * 1000),
+            time: formatDate(Number(param.time) * 1000, interval),
             open: candleData.open,
             high: candleData.high,
             low: candleData.low,
@@ -178,26 +219,48 @@ const TradingChart: React.FC<TradingChartProps> = ({
       }
     });
 
-    chartInstance.timeScale().fitContent();
+    chart.timeScale().subscribeVisibleLogicalRangeChange(async (range) => {
+      if (!range || isFetchingRef.current) return;
+
+      if (range.from < -35 && chartData.length) {
+        isFetchingRef.current = true;
+        try {
+          const toTimestamp = chartData[0].time;
+          const fromTimestamp = toTimestamp - interval * ONE_MINUTE * 10;
+          const moreData = await loadDataForTimeRange(
+            fromTimestamp,
+            toTimestamp
+          );
+
+          if (moreData.length) {
+            const newData = [...moreData, ...chartData];
+            setChartData(newData);
+
+            mainSeriesRef.current?.setData(formatCandles(newData));
+            volumeSeriesRef.current?.setData(formatVolumes(newData));
+          }
+        } finally {
+          isFetchingRef.current = false;
+        }
+      }
+    });
+
+    chart.timeScale().fitContent();
 
     return () => {
-      if (chartRef.current) {
-        chartRef.current.remove();
-        chartRef.current = null;
-      }
+      chart.remove();
+      chartRef.current = null;
+      mainSeriesRef.current = null;
+      volumeSeriesRef.current = null;
     };
-  }, [data, height, width, onCrosshairMove]);
+  }, [height, width, interval, onCrosshairMove, chartData]);
 
-  // Update chart size when dimensions change
   useEffect(() => {
-    if (chartRef.current) {
-      chartRef.current.resize(width, height);
-      chartRef.current.timeScale().fitContent();
-    }
+    chartRef.current?.resize(width, height);
   }, [width, height]);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div ref={chartContainerRef} />
     </div>
   );

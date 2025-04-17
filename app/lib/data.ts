@@ -1521,3 +1521,35 @@ export const subnetData = {
   priceChange: "-0.0087",
   priceChangePercent: "-4.94618%",
 }; 
+
+export const chartDatas = (() => {
+  const data = [];
+  const threeMonthsAgo = Date.now() - (90 * 24 * 60 * 60 * 1000); // 90 days in milliseconds
+  const minuteInterval = 60 * 1000; // 1 minute in milliseconds
+  
+  let basePrice = 100;
+  let time = threeMonthsAgo;
+  
+  while (time <= Date.now()) {
+    const volatility = 0.001; // Reduced volatility for more realistic minute-by-minute changes
+    const open = basePrice;
+    const close = open * (1 + (Math.random() - 0.5) * volatility);
+    const high = Math.max(open, close) * (1 + Math.random() * volatility * 0.5);
+    const low = Math.min(open, close) * (1 - Math.random() * volatility * 0.5);
+    const volume = Math.floor(Math.random() * 100) + 10; // Reduced volume for per-minute data
+
+    data.push({
+      time,
+      open,
+      high,
+      low,
+      close,
+      volume,
+    });
+
+    basePrice = close;
+    time += minuteInterval;
+  }
+
+  return data;
+})();

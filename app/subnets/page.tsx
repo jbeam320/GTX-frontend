@@ -29,7 +29,6 @@ export default function SubnetPage() {
 
   return (
     <div className="flex justify-center items-center mt-[70px]">
-      {/* Table with Data */}
       <div>
         <div className="mb-[14px] flex gap-[14px]">
           <SearchInput onChange={(value) => setSearch(value)} />
