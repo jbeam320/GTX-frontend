@@ -52,7 +52,10 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
 
   useEffect(() => {
     const fetchFromTokenBalance = async () => {
-      if (fromToken?.netuid !== undefined && isNewSelection) {
+      if (
+        fromToken?.netuid !== undefined &&
+        (isNewSelection || walletBalance)
+      ) {
         const { isStaked, netuid } = fromToken;
         const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
@@ -72,11 +75,17 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     };
 
     fetchFromTokenBalance();
-  }, [fromToken?.netuid, subnets, isNewSelection]);
+  }, [
+    fromToken?.netuid,
+    subnets,
+    isNewSelection,
+    selectedValidator,
+    walletBalance,
+  ]);
 
   useEffect(() => {
     const fetchToTokenBalance = async () => {
-      if (toToken?.netuid !== undefined && isNewSelection) {
+      if (toToken?.netuid !== undefined && (isNewSelection || walletBalance)) {
         const { isStaked, netuid } = toToken;
         const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
@@ -96,7 +105,13 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     };
 
     fetchToTokenBalance();
-  }, [toToken?.netuid, subnets, isNewSelection]);
+  }, [
+    toToken?.netuid,
+    subnets,
+    isNewSelection,
+    selectedValidator,
+    walletBalance,
+  ]);
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
