@@ -6,8 +6,14 @@ import { useEffect, useState } from "react";
 export const useBalances = () => {
   const [loading_balances, setLoading_balances] = useState(false);
 
-  const { walletAddress, api, walletBalance, stakedBalance, setWalletBalance, setStakedBalance } =
-    useWalletStore();
+  const {
+    walletAddress,
+    api,
+    walletBalance,
+    stakedBalance,
+    setWalletBalance,
+    setStakedBalance,
+  } = useWalletStore();
 
   useEffect(() => {
     if (api && walletAddress) {
@@ -51,11 +57,11 @@ export const useBalances = () => {
 
       const stakes =
         infos?.filter((info) => info.netuid.toString() === "0") ?? [];
-      
-        const totalStaked = stakes?.reduce((total: number, curr: any) => {
+
+      const totalStaked = stakes?.reduce((total: number, curr: any) => {
         return total + Number(curr.stake.toString().replace(/,/g, ""));
       }, 0);
-      
+
       const formattedBalance = (totalStaked / PLANCK_PER_TAO).toFixed(2);
       setStakedBalance(formattedBalance);
     } catch (error) {

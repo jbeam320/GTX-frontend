@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "@mantine/core";
 import React, { useMemo, useState } from "react";
 import { TokenForBulk } from "../../../lib/types";
 import TokenListItem from "../items/TokenListItem";
@@ -8,6 +9,7 @@ import SearchIcon from "/public/icons/search-dark.svg";
 interface TokenListProps {
   tokens: TokenForBulk[];
   disabled?: boolean;
+  loading?: boolean;
   onBuy: (token: TokenForBulk) => void;
   onSell: (token: TokenForBulk) => void;
 }
@@ -15,6 +17,7 @@ interface TokenListProps {
 export default function TokenList({
   tokens,
   disabled = false,
+  loading = false,
   onBuy,
   onSell,
 }: TokenListProps) {
@@ -29,7 +32,7 @@ export default function TokenList({
   );
 
   return (
-    <div className="w-[833px] h-[1025px] overflow-hidden bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
+    <div className="w-[840px] bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
       {/* search tokens */}
       <div className="flex justify-between items-center mx-[15px] p-[12px] border-b-[1px] border-[var(--color-black)]">
         <label className="font-montserrat text-[17px] font-[600]">Tokens</label>
@@ -56,20 +59,28 @@ export default function TokenList({
         <label>Trade</label>
       </div>
 
-      <div className="space-y-[1px]">
-        {filteredTokens.map((token, index) => (
-          <TokenListItem
-            key={`${token.symbol}-${token.netuid}`}
-            token={token}
-            disabled={disabled}
-            onBuy={onBuy}
-            onSell={onSell}
-            style={{
-              background:
-                index % 2 === 0 ? "var(--bg-dark-4)" : "var(--bg-light-2)",
-            }}
-          />
-        ))}
+      <div className="space-y-[1px] h-[800px] overflow-y-auto text-center">
+        {loading ? (
+          <Loader />
+        ) : filteredTokens.length ? (
+          filteredTokens.map((token, index) => (
+            <TokenListItem
+              key={`${token.symbol}-${token.netuid}`}
+              token={token}
+              disabled={disabled}
+              onBuy={onBuy}
+              onSell={onSell}
+              style={{
+                background:
+                  index % 2 === 0 ? "var(--bg-dark-4)" : "var(--bg-light-2)",
+              }}
+            />
+          ))
+        ) : (
+          <h1 className="font-[600] font-montserrat text-[20px]">
+            No Token data
+          </h1>
+        )}
       </div>
     </div>
   );

@@ -10,13 +10,17 @@ import TokenInput from "../../ui/inputs/TokenInput";
 interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
   tokens: TokenForBulk[];
+  errors?: string[];
   setTokens: (tokens: TokenForBulk[]) => void;
+  setErrors: (errors: string[]) => void;
 }
 
 export default function QuotePanelContent({
   mode,
   tokens,
+  errors,
   setTokens,
+  setErrors,
 }: QuotePanelContentProps) {
   const { selectedValidator, batchSell, batchSellAndBuy } = useWalletStore();
 
@@ -24,7 +28,6 @@ export default function QuotePanelContent({
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (mode === "Nuke" && tokens?.length) {
@@ -107,11 +110,11 @@ export default function QuotePanelContent({
             });
         }
 
-        for (const { amount, netuid } of buys) {
+        for (const { amount, netuid, price } of buys) {
           if (amount)
             txsInfos.push({
               netuid,
-              amount: amount,
+              amount: (amount * price) / 1e9,
               validator: selectedValidator.hotkey,
               type: "buy",
             });
@@ -141,7 +144,7 @@ export default function QuotePanelContent({
 
   const isDisabled =
     isProcessing ||
-    error !== "" ||
+    errors?.length !== 0 ||
     sells.length === 0 ||
     taoToken.amount === 0 ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
@@ -160,10 +163,12 @@ export default function QuotePanelContent({
             <TokenInput
               key={token.netuid}
               disabled={mode === "Nuke"}
-              value={mode === "Nuke" ? formatPrice(token.amount, null, 2) : ""}
+              defaultValue={
+                mode === "Nuke" ? formatPrice(token.amount, null, 2) : ""
+              }
               token={token}
               errorHandle={(error) => {
-                setError(error);
+                setErrors([...(errors ?? []), error]);
               }}
               onChange={(amount) => handleChange(token, amount)}
             />

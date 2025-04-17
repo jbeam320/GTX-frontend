@@ -1,45 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import TokenList from "../components/shared/lists/TokenList";
-import { subnets } from "../lib/data";
-import { useState, useEffect } from "react";
-import { TokenForBulk } from "../lib/types";
 import { QuotePanel } from "../components/shared/panels";
-import { useWalletStore } from "../stores/store";
+import { useTokens } from "../hooks";
+import { TokenForBulk } from "../lib/types";
 
 export default function Bulk() {
-  const { getValidatorStake, selectedValidator } = useWalletStore();
-
-  const [tokens, setTokens] = useState<TokenForBulk[]>([]);
+  const { tokens, loading, setTokens } = useTokens();
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
-
-  useEffect(() => {
-    if (subnets.length && selectedValidator.hotkey) {
-      const loadBalances = async () => {
-        try {
-          const balances = await Promise.all(
-            subnets.map(
-              async (subnet) =>
-                await getValidatorStake(selectedValidator.hotkey, subnet.netuid)
-            )
-          );
-
-          const tokens = subnets.map((subnet, index) => ({
-            ...subnet,
-            balance: balances[index],
-            amount: 0,
-            type: "none" as "none" | "sell" | "buy",
-          }));
-
-          setTokens(tokens);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      loadBalances();
-    }
-  }, [subnets, selectedValidator]);
 
   const onBuy = (token: TokenForBulk) => {
     if (token.type === "buy") {
@@ -73,6 +42,7 @@ export default function Bulk() {
     <div className="flex justify-center gap-[4px] mt-[70px]">
       <TokenList
         tokens={tokens}
+        loading={loading}
         onBuy={onBuy}
         onSell={onSell}
         disabled={mode === "Nuke" ? true : false}

@@ -22,11 +22,17 @@ export default function QuotePanel({
   setTokens,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleToggle = (mode: number) => {
-    onClear();
+    handleClear();
     onToggle?.(mode === 1 ? "Standard" : "Nuke");
     mode === 1 ? setMode("Standard") : setMode("Nuke");
+  };
+
+  const handleClear = () => {
+    onClear();
+    setErrors([]);
   };
 
   return (
@@ -36,7 +42,7 @@ export default function QuotePanel({
         <button
           className="cursor-pointer w-[67px] h-[25px] rounded-[16px] absolute right-[15px] border-[1px] p-[10px] text-center flex items-center justify-center"
           style={{ fontSize: "12px" }}
-          onClick={onClear}
+          onClick={handleClear}
         >
           Clear
         </button>
@@ -91,9 +97,11 @@ export default function QuotePanel({
           transition={{ duration: 0.2 }}
         >
           <QuotePanelContent
+            errors={errors}
             mode={mode}
             tokens={tokens}
             setTokens={setTokens}
+            setErrors={setErrors}
           />
         </motion.div>
       </AnimatePresence>
