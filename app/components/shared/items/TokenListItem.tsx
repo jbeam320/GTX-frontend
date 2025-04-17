@@ -4,6 +4,7 @@ import { formatCompact, formatPrice } from "../../../lib/utils/format";
 
 interface TokenListItemProps {
   token: TokenForBulk;
+  disabled?: boolean;
   onBuy: (token: TokenForBulk) => void;
   onSell: (token: TokenForBulk) => void;
   [key: string]: any;
@@ -11,6 +12,7 @@ interface TokenListItemProps {
 
 const TokenListItem = ({
   token,
+  disabled = false,
   onBuy,
   onSell,
   ...restProps
@@ -55,6 +57,7 @@ const TokenListItem = ({
 
       <div className="flex gap-[19px]">
         <button
+          disabled={disabled}
           onClick={() => onBuy(token)}
           className={`h-[37px] rounded-[16px] bg-[var(--bg-light)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
             token.type === "buy" ? "w-[185px]" : "w-[83px]"
@@ -63,6 +66,7 @@ const TokenListItem = ({
           Buy
         </button>
         <button
+          disabled={disabled}
           onClick={() => onSell(token)}
           className={`h-[37px] rounded-[16px] bg-[var(--bg-dark-2)] border-[1px] border-[var(--color-black)] text-[14px] font-medium cursor-pointer ${
             token.type === "sell" ? "w-[185px]" : "w-[83px]"

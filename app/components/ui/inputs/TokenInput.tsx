@@ -7,6 +7,7 @@ import { formatPrice } from "../../../lib/utils/format";
 
 interface TokenInputProps {
   token?: TokenForBulk;
+  value?: string;
   disabled?: boolean;
   errorIgnore?: boolean;
   errorHandle?: (error: string) => void;
@@ -15,6 +16,7 @@ interface TokenInputProps {
 
 export default function TokenInput({
   token,
+  value,
   disabled = false,
   errorIgnore = false,
   errorHandle,
@@ -68,7 +70,7 @@ export default function TokenInput({
 
           <input
             type="number"
-            value={formatPrice(token?.amount ?? 0, null, 2)}
+            value={value}
             placeholder="0"
             onChange={handleChange}
             className="w-full h-[29px] text-[24px] font-[600] outline-none text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

@@ -7,11 +7,17 @@ import SearchIcon from "/public/icons/search-dark.svg";
 
 interface TokenListProps {
   tokens: TokenForBulk[];
+  disabled?: boolean;
   onBuy: (token: TokenForBulk) => void;
   onSell: (token: TokenForBulk) => void;
 }
 
-export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
+export default function TokenList({
+  tokens,
+  disabled = false,
+  onBuy,
+  onSell,
+}: TokenListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTokens = useMemo(
@@ -55,6 +61,7 @@ export default function TokenList({ tokens, onBuy, onSell }: TokenListProps) {
           <TokenListItem
             key={`${token.symbol}-${token.netuid}`}
             token={token}
+            disabled={disabled}
             onBuy={onBuy}
             onSell={onSell}
             style={{

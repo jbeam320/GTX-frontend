@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface QuotePanelProps {
   tokens: TokenForBulk[];
+  onToggle?: (mode: "Standard" | "Nuke") => void;
   onClear: () => void;
   setTokens(tokens: TokenForBulk[]): void;
 }
@@ -17,12 +18,14 @@ interface QuotePanelProps {
 export default function QuotePanel({
   tokens,
   onClear,
+  onToggle,
   setTokens,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
 
   const handleToggle = (mode: number) => {
     onClear();
+    onToggle?.(mode === 1 ? "Standard" : "Nuke");
     mode === 1 ? setMode("Standard") : setMode("Nuke");
   };
 

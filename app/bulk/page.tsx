@@ -11,6 +11,7 @@ export default function Bulk() {
   const { getValidatorStake, selectedValidator } = useWalletStore();
 
   const [tokens, setTokens] = useState<TokenForBulk[]>([]);
+  const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
 
   useEffect(() => {
     if (subnets.length && selectedValidator.hotkey) {
@@ -70,8 +71,18 @@ export default function Bulk() {
 
   return (
     <div className="flex justify-center gap-[4px] mt-[70px]">
-      <TokenList tokens={tokens} onBuy={onBuy} onSell={onSell} />
-      <QuotePanel tokens={tokens} onClear={onClear} setTokens={setTokens} />
+      <TokenList
+        tokens={tokens}
+        onBuy={onBuy}
+        onSell={onSell}
+        disabled={mode === "Nuke" ? true : false}
+      />
+      <QuotePanel
+        tokens={tokens}
+        onClear={onClear}
+        setTokens={setTokens}
+        onToggle={(mode) => setMode(mode)}
+      />
     </div>
   );
 }

@@ -158,8 +158,9 @@ export default function QuotePanelContent({
         <div className="flex flex-col gap-[4px]">
           {sells.map((token, index) => (
             <TokenInput
-              disabled={mode === "Nuke"}
               key={token.netuid}
+              disabled={mode === "Nuke"}
+              value={mode === "Nuke" ? formatPrice(token.amount, null, 2) : ""}
               token={token}
               errorHandle={(error) => {
                 setError(error);
@@ -183,7 +184,12 @@ export default function QuotePanelContent({
           <label>Amount</label>
         </div>
       </div>
-      <TokenInput token={taoToken} disabled />
+
+      <TokenInput
+        token={taoToken}
+        disabled
+        value={formatPrice(taoToken.amount, null, 2)}
+      />
 
       <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
         <label>You buy</label>
