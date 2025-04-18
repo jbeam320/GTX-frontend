@@ -51,67 +51,48 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    const fetchFromTokenBalance = async () => {
-      if (
-        fromToken?.netuid !== undefined &&
-        (isNewSelection || walletBalance)
-      ) {
-        const { isStaked, netuid } = fromToken;
-        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+    if (isNewSelection || walletBalance) {
+      fetchFromTokenBalance();
+      fetchToTokenBalance();
+    }
+    setIsNewSelection(false); // Reset the new selection flag after fetching balance
+  }, [isNewSelection, walletBalance]);
 
-        const balance = isStaked
-          ? await getValidatorStake(selectedValidator.hotkey, netuid)
-          : walletBalance;
-        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
+  const fetchToTokenBalance = async () => {
+    if (toToken?.netuid !== undefined) {
+      const { isStaked, netuid } = toToken;
+      const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
-        setFromToken({
-          ...fromToken,
-          balance: isStaked ? formatPrice(+balance, null, 2) : balance,
-          price,
-        });
+      const balance = isStaked
+        ? await getValidatorStake(selectedValidator.hotkey, netuid)
+        : walletBalance;
+      const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
-        setIsNewSelection(false); // Reset the new selection flag after fetching balance
-      }
-    };
+      setToToken({
+        ...toToken,
+        balance: isStaked ? formatPrice(+balance, null, 2) : balance,
+        price,
+      });
+    }
+  };
 
-    fetchFromTokenBalance();
-  }, [
-    fromToken?.netuid,
-    subnets,
-    isNewSelection,
-    selectedValidator,
-    walletBalance,
-  ]);
+  const fetchFromTokenBalance = async () => {
+    if (fromToken?.netuid !== undefined) {
+      const { isStaked, netuid } = fromToken;
+      const subnet = subnets.find((subnet) => subnet.netuid === netuid);
 
-  useEffect(() => {
-    const fetchToTokenBalance = async () => {
-      if (toToken?.netuid !== undefined && (isNewSelection || walletBalance)) {
-        const { isStaked, netuid } = toToken;
-        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+      const balance = isStaked
+        ? await getValidatorStake(selectedValidator.hotkey, netuid)
+        : walletBalance;
+      const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
-        const balance = isStaked
-          ? await getValidatorStake(selectedValidator.hotkey, netuid)
-          : walletBalance;
-        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
-
-        setToToken({
-          ...toToken,
-          balance: isStaked ? formatPrice(+balance, null, 2) : balance,
-          price,
-        });
-
-        setIsNewSelection(false); // Reset the new selection flag after fetching balance
-      }
-    };
-
-    fetchToTokenBalance();
-  }, [
-    toToken?.netuid,
-    subnets,
-    isNewSelection,
-    selectedValidator,
-    walletBalance,
-  ]);
+      setFromToken({
+        ...fromToken,
+        balance: isStaked ? formatPrice(+balance, null, 2) : balance,
+        price,
+      });
+    }
+  };
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
