@@ -247,8 +247,8 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
               isFromAlpha={fromToken?.isStaked}
               usdAmount={
                 toToken?.isStaked
-                  ? (+amount * taoPrice.price).toFixed(2)
-                  : (+toTokenAmount * taoPrice.price).toFixed(2)
+                  ? (+amount * taoPrice?.price).toFixed(2)
+                  : (+toTokenAmount * taoPrice?.price).toFixed(2)
               }
               isShow={!isDisabled || isProcessing}
             />
