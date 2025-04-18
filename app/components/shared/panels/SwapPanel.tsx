@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 import { PLANCK_PER_TAO } from "../../../lib/constants";
 import { subnets, taoPrice } from "../../../lib/data";
 import { Token } from "../../../lib/types";
+import { formatPrice } from "../../../lib/utils/format";
 import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
 import Button from "../../ui/buttons/Button";
 import SwapButton from "../../ui/buttons/SwapButton";
+import { TransactionDetail } from "../../ui/cards";
 import { TaoInput } from "../../ui/inputs/TaoInput";
 import SubnetSelector from "../../ui/modals/SubnetSelector";
 import TransactionPanel from "./TransactionPanel";
 import ChartIcon from "/public/icons/chart.svg";
 import CloseIcon from "/public/icons/close-small.svg";
-import { TransactionDetail } from "../../ui/cards";
-import { formatPrice } from "../../../lib/utils/format";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -56,7 +56,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
       fetchToTokenBalance();
     }
     setIsNewSelection(false); // Reset the new selection flag after fetching balance
-  }, [isNewSelection, walletBalance]);
+  }, [isNewSelection, walletBalance, selectedValidator]);
 
   const fetchToTokenBalance = async () => {
     if (toToken?.netuid !== undefined) {
@@ -188,8 +188,8 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
         }
         bottomNode={
           <Button
-            label="VIEW CHART"
-            variant="primary"
+            label={isChartVisible ? "ClOSE CHART" : "VIEW CHART"}
+            variant={isChartVisible ? "secondary" : "primary"}
             onClick={onToggleChart}
             icon={isChartVisible ? <CloseIcon /> : <ChartIcon />}
             isRounded={true}
@@ -244,6 +244,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
             <TransactionDetail
               tokenAmount={toToken?.isStaked ? amount : toTokenAmount}
               alphaAmount={toToken?.isStaked ? toTokenAmount : amount}
+              isFromAlpha={fromToken?.isStaked}
               usdAmount={
                 toToken?.isStaked
                   ? (+amount * taoPrice.price).toFixed(2)
