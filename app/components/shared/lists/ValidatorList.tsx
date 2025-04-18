@@ -36,7 +36,7 @@ export default function ValidatorList({ validators }: ValidatorListProps) {
 
   useEffect(() => {
     setData(
-      validators.map((validator) => ({
+      validators?.map((validator) => ({
         ...validator,
         balance: validatorStakes[validator.hotkey] || "0",
       }))

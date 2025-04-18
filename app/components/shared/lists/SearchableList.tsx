@@ -34,7 +34,7 @@ export default function SearchableList<T>({
 }: SearchableListProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredData = data.filter((item) => {
+  const filteredData = data?.filter((item) => {
     if (searchQuery === "") return true;
     const query = searchQuery.toLowerCase();
 
@@ -73,7 +73,7 @@ export default function SearchableList<T>({
 
       <div className={`space-y-1  ${listClassName}`} style={{ maxHeight }}>
         <AnimatePresence>
-          {filteredData.map((item, index) => (
+          {filteredData?.map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -86,7 +86,7 @@ export default function SearchableList<T>({
           ))}
         </AnimatePresence>
 
-        {filteredData.length === 0 && (
+        {filteredData?.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

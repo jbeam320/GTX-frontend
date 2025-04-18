@@ -80,7 +80,7 @@ export default function Header() {
             {walletAddress ? (
               <Flex align="center" gap="32px">
                 <DropdownMenu
-                  options={validators.map((validator: Validator) => ({
+                  options={validators?.map((validator: Validator) => ({
                     label: validator.name,
                     value: validator.hotkey,
                   }))}

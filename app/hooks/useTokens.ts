@@ -18,13 +18,13 @@ export const useTokens = () => {
           setLoading(true);
 
           const balances = await Promise.all(
-            subnets.map(
+            subnets?.map(
               async (subnet: Subnet) =>
                 await getValidatorStake(selectedValidator.hotkey, subnet.netuid)
             )
           );
 
-          const tokens = subnets.map((subnet: Subnet, index: number) => ({
+          const tokens = subnets?.map((subnet: Subnet, index: number) => ({
             ...subnet,
             balance: balances[index],
             amount: 0,
