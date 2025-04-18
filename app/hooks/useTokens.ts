@@ -5,7 +5,7 @@ import { TokenForBulk, Subnet } from "../lib/types";
 import { subnets } from "../lib/data";
 
 export const useTokens = () => {
-  const { selectedValidator, getValidatorStake } = useWalletStore();
+  const { selectedValidator, walletBalance, getValidatorStake } = useWalletStore();
   // const { subnets } = useSubnets();
 
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export const useTokens = () => {
 
       init();
     }
-  }, [subnets, selectedValidator]);
+  }, [subnets, selectedValidator, walletBalance]);
 
   return {
     tokens,

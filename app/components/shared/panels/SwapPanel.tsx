@@ -139,7 +139,6 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     if (!amount || !fromToken || !toToken) return;
 
     const taoAmount = +amount;
-    console.log(fromToken, toToken);
     setIsProcessing(true);
 
     try {

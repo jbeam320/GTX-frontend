@@ -232,12 +232,22 @@ export default function QuotePanelContent({
             ? "var(--bg-dark-9)"
             : "var(--color-black)",
           border: "none",
-          margin: "20px 0px 20px 10px",
+          margin: "20px 0px 2px 10px",
           fontSize: "18px",
           fontWeight: 500,
           fontFamily: "Montserrat",
         }}
       />
+      {sells.length === 0 ? (
+        // <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
+        //   select tokens to sell
+        // </label>
+        ""
+      ) : totalBuyAmount > taoToken.amount && mode === "Standard" ? (
+        <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
+          the received amount is more than selling amount
+        </label>
+      ) : null}
     </div>
   );
 }
