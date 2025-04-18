@@ -10,15 +10,15 @@ import TokenInput from "../../ui/inputs/TokenInput";
 interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
   tokens: TokenForBulk[];
-  errors?: string[];
+  errors: { [key: number]: string };
   setTokens: (tokens: TokenForBulk[]) => void;
-  setErrors: (errors: string[]) => void;
+  setErrors: (errors: { [key: number]: string }) => void;
 }
 
 export default function QuotePanelContent({
   mode,
   tokens,
-  errors,
+  errors = {},
   setTokens,
   setErrors,
 }: QuotePanelContentProps) {
@@ -144,7 +144,7 @@ export default function QuotePanelContent({
 
   const isDisabled =
     isProcessing ||
-    errors?.length !== 0 ||
+    Object.values(errors).join("").trim() !== "" ||
     sells.length === 0 ||
     taoToken.amount === 0 ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
@@ -168,7 +168,7 @@ export default function QuotePanelContent({
               }
               token={token}
               errorHandle={(error) => {
-                setErrors([...(errors ?? []), error]);
+                setErrors({ ...errors, [token.netuid]: error });
               }}
               onChange={(amount) => handleChange(token, amount)}
             />
