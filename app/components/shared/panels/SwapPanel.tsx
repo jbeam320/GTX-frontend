@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSubnets, useTaoPrice } from "../../../hooks";
 import { PLANCK_PER_TAO } from "../../../lib/constants";
-import { subnets, taoPrice } from "../../../lib/data";
-import { Token } from "../../../lib/types";
+import { Subnet, Token } from "../../../lib/types";
 import { formatPrice } from "../../../lib/utils/format";
 import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
@@ -39,7 +39,8 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     unstakeTx,
   } = useWalletStore();
 
-  // const { subnets } = useSubnet();
+  const { subnets } = useSubnets();
+  const { taoPrice } = useTaoPrice();
 
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
@@ -61,7 +62,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   const fetchToTokenBalance = async () => {
     if (toToken?.netuid !== undefined) {
       const { isStaked, netuid } = toToken;
-      const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+      const subnet = subnets.find((subnet: Subnet) => subnet.netuid === netuid);
 
       const balance = isStaked
         ? await getValidatorStake(selectedValidator.hotkey, netuid)
@@ -79,7 +80,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   const fetchFromTokenBalance = async () => {
     if (fromToken?.netuid !== undefined) {
       const { isStaked, netuid } = fromToken;
-      const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+      const subnet = subnets.find((subnet: Subnet) => subnet.netuid === netuid);
 
       const balance = isStaked
         ? await getValidatorStake(selectedValidator.hotkey, netuid)

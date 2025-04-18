@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { TaoInput } from "../../ui/inputs/TaoInput";
+import { useTaoPrice, useValidatorStake } from "../../../hooks";
+import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
 import TransactionDetail from "../../ui/cards/TransactionDetail";
-import { useWalletStore } from "../../../stores/store";
-import { useValidatorStake } from "../../../hooks";
-import { taoPrice } from "../../../lib/data";
+import { TaoInput } from "../../ui/inputs/TaoInput";
 
 export default function StakePanelContent({
   isStake,
@@ -20,6 +19,8 @@ export default function StakePanelContent({
   const { walletBalance, selectedValidator, stakeTx, unstakeTx } =
     useWalletStore();
   const { validatorStake } = useValidatorStake();
+  const { taoPrice } = useTaoPrice();
+  console.log(taoPrice);
 
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
@@ -69,7 +70,7 @@ export default function StakePanelContent({
 
       <TransactionDetail
         tokenAmount={amount}
-        usdAmount={(+amount * taoPrice.price).toFixed(2)}
+        usdAmount={(+amount * taoPrice?.price).toFixed(2)}
         isShow={!isDisabled || isProcessing}
         style={{ marginTop: "40px", marginBottom: "24px" }}
       />

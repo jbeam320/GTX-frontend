@@ -3,3 +3,4 @@ export * from "./useSubnets";
 export * from "./useTaoPrice";
 export * from "./useValidatorStake";
 export * from "./useTokens"
+export * from "./useValidators";

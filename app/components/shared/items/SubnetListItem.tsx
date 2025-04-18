@@ -1,13 +1,11 @@
-import { Line, LineChart } from "recharts";
-import { ResponsiveContainer } from "recharts";
+import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { useTaoPrice } from "../../../hooks";
 import { Subnet } from "../../../lib/types";
-
 import {
   formatCompact,
   formatPercent,
   formatPrice,
 } from "../../../lib/utils/format";
-import { taoPrice } from "../../../lib/data";
 
 interface SubnetListItemProps {
   subnet: Subnet & { index: number };
@@ -18,6 +16,8 @@ export default function SubnetListItem({
   subnet,
   isUSD = false,
 }: SubnetListItemProps) {
+  const { taoPrice } = useTaoPrice();
+
   return (
     <div className="w-[1200px] h-[73px] px-[14px] py-[10px] my-[2px] rounded-[8px] bg-[var(--bg-light-1)] font-montserrat flex space-between items-center text-[14px] hover:bg-[var(--bg-dark-1)]">
       <div className="flex items-center basis-[250px]">

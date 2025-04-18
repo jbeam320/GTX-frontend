@@ -1,14 +1,16 @@
-import { ValidatorList } from "../lists";
+import { useTaoPrice, useValidators } from "../../../hooks";
+import { formatCompactSimple, formatPercent } from "../../../lib/utils/format";
 import { TaoInfo } from "../../ui/cards";
-import { taoPrice, validators } from "../../../lib/data";
-import { formatPercent, formatCompactSimple } from "../../../lib/utils/format";
-import { useTaoPrice } from "../../../hooks";
+import { ValidatorList } from "../lists";
 
 type TaoPriceKey = "price" | "market_cap" | "volume_24h" | "staked_supply";
 
 export default function ValidatorDashboard() {
-  // const { taoPrice } = useTaoPrice();
+  const { taoPrice } = useTaoPrice();
+  const { validators } = useValidators();
+
   const price_percent = formatPercent(taoPrice.percent_24h_change);
+
   const cards = [
     { label: "BITTENSOR PRICE", key: "price" as TaoPriceKey },
     { label: "MARKET CAP", key: "market_cap" as TaoPriceKey },

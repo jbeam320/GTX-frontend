@@ -3,14 +3,14 @@
 import { Box, Container, Flex, Loader } from "@mantine/core";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useBalances } from "../../hooks";
-import { validators } from "../../lib/data";
+import { useBalances, useValidators } from "../../hooks";
+import { Validator } from "../../lib/types";
 import { useWalletStore } from "../../stores/store";
 import { Button } from "../ui/buttons";
+import WalletInfo from "../ui/cards/WalletInfo";
 import DropdownMenu from "../ui/dropdowns/Dropdown";
 import WalletConnectModal from "../ui/modals/WalletConnectModal";
 import SettingIcon from "/public/icons/setting.svg";
-import WalletInfo from "../ui/cards/WalletInfo";
 
 const tabs = ["SWAP", "SUBNET", "BULK", "STAKE"];
 
@@ -27,8 +27,7 @@ export default function Header() {
     reconnectWallet,
   } = useWalletStore();
   const { walletBalance, stakedBalance, loading_balances } = useBalances();
-
-  console.log(walletAddress);
+  const { validators } = useValidators();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -81,7 +80,7 @@ export default function Header() {
             {walletAddress ? (
               <Flex align="center" gap="32px">
                 <DropdownMenu
-                  options={validators.map((validator) => ({
+                  options={validators.map((validator: Validator) => ({
                     label: validator.name,
                     value: validator.hotkey,
                   }))}

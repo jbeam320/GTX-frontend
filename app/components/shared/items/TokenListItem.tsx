@@ -1,4 +1,4 @@
-import { taoPrice } from "../../../lib/data";
+import { useTaoPrice } from "../../../hooks";
 import { TokenForBulk } from "../../../lib/types";
 import { formatCompact, formatPrice } from "../../../lib/utils/format";
 
@@ -17,6 +17,8 @@ const TokenListItem = ({
   onSell,
   ...restProps
 }: TokenListItemProps) => {
+  const { taoPrice } = useTaoPrice();
+
   return (
     <div
       className="flex justify-between items-center px-4 py-3 w-[824px] h-[73px] px-[15px] font-montserrat"

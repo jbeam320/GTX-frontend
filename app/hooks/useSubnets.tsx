@@ -25,11 +25,17 @@ export const useSubnet = (netuid: string) => {
   };
 };
 
-export const useSubnetChartData = (netuid: string, period: string) => {
+export const useSubnetChartData = (
+  netuid: number,
+  period: string,
+  startTime: number,
+  endTime: number
+) => {
   const { data: subnetChartData, isLoading: loading_subnetChartData } =
     useQuery({
       queryKey: ["subnetChart", netuid, period],
-      queryFn: () => services.getSubnetChartData(netuid, period),
+      queryFn: () =>
+        services.getSubnetChartData(netuid, period, startTime, endTime),
     });
 
   return {

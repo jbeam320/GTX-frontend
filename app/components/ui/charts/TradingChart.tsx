@@ -8,6 +8,7 @@ import {
 } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
 import { chartDatas } from "../../../lib/data";
+import { useSubnetChartData } from "../../../hooks";
 
 interface ChartData {
   time: number;
@@ -73,13 +74,18 @@ const TradingChart: React.FC<TradingChartProps> = ({
   width = 760,
   onCrosshairMove,
 }) => {
+  // const { subnetChartData: chartDatas } = useSubnetChartData(
+  //   0,
+  //   interval.toString(),
+  //   Math.floor(Date.now()) - interval * ONE_MINUTE * 100,
+  //   Math.floor(Date.now())
+  // );
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const isFetchingRef = useRef(false);
   const mainSeriesRef = useRef<any>(null);
   const volumeSeriesRef = useRef<any>(null);
-  const latestDataRef = useRef<ChartData[]>([]);
-  const viewportRef = useRef<{ from: number; to: number } | null>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
 
   useEffect(() => {
@@ -95,7 +101,7 @@ const TradingChart: React.FC<TradingChartProps> = ({
 
   const loadDataForTimeRange = async (startTime: number, endTime: number) => {
     const filteredData = chartDatas.filter(
-      (d) => d.time >= startTime && d.time <= endTime
+      (d: { time: number }) => d.time >= startTime && d.time <= endTime
     );
     return aggregateDataByInterval(filteredData, interval);
   };
