@@ -10,15 +10,15 @@ import TokenInput from "../../ui/inputs/TokenInput";
 interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
   tokens: TokenForBulk[];
-  errors?: string[];
+  errors: { [key: number]: string };
   setTokens: (tokens: TokenForBulk[]) => void;
-  setErrors: (errors: string[]) => void;
+  setErrors: (errors: { [key: number]: string }) => void;
 }
 
 export default function QuotePanelContent({
   mode,
   tokens,
-  errors,
+  errors = {},
   setTokens,
   setErrors,
 }: QuotePanelContentProps) {
@@ -144,7 +144,7 @@ export default function QuotePanelContent({
 
   const isDisabled =
     isProcessing ||
-    errors?.length !== 0 ||
+    Object.values(errors).join("").trim() !== "" ||
     sells.length === 0 ||
     taoToken.amount === 0 ||
     (totalBuyAmount > taoToken.amount && mode === "Standard");
@@ -168,7 +168,7 @@ export default function QuotePanelContent({
               }
               token={token}
               errorHandle={(error) => {
-                setErrors([...(errors ?? []), error]);
+                setErrors({ ...errors, [token.netuid]: error });
               }}
               onChange={(amount) => handleChange(token, amount)}
             />
@@ -232,12 +232,22 @@ export default function QuotePanelContent({
             ? "var(--bg-dark-9)"
             : "var(--color-black)",
           border: "none",
-          margin: "20px 0px 20px 10px",
+          margin: "20px 0px 2px 10px",
           fontSize: "18px",
           fontWeight: 500,
           fontFamily: "Montserrat",
         }}
       />
+      {sells.length === 0 ? (
+        // <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
+        //   select tokens to sell
+        // </label>
+        ""
+      ) : totalBuyAmount > taoToken.amount && mode === "Standard" ? (
+        <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
+          the received amount is more than selling amount
+        </label>
+      ) : null}
     </div>
   );
 }

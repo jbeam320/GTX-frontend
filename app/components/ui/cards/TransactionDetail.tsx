@@ -10,7 +10,7 @@ interface TransactionDetailProps {
   fee?: string;
   priceImpact?: string;
   slippageTolerance?: string;
-  isSwapTransaction?: boolean;
+  isFromAlpha?: boolean;
   alphaAmount?: string;
   isShow?: boolean;
   [key: string]: any;
@@ -23,7 +23,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
   fee = "0.00005",
   priceImpact = "0.08%",
   slippageTolerance = "0.99%",
-  isSwapTransaction = false,
+  isFromAlpha = true,
   alphaAmount,
   isShow = true,
   ...restProps
@@ -46,12 +46,9 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
         </div>
 
         <div className="flex justify-between items-center relative">
-          <div
-            className={`flex  ${
-              isSwapTransaction ? "flex-row ml-[8px]" : "justify-center"
-            } w-full`}
-          >
-            {alphaAmount ? `${alphaAmount} ALPHA = ` : ""} {tokenAmount} TAO (
+          <div className={`flex justify-center w-full`}>
+            {isFromAlpha ? `${alphaAmount} ALPHA` : `${tokenAmount} TAO`} =
+            {isFromAlpha ? `${tokenAmount} TAO` : `${alphaAmount} ALPHA`} (
             {usdAmount} USD) &nbsp;
             <div className="bg-[var(--bg-secondary)] text-[var(--color-black-secondary)]">
               {percentageChange}

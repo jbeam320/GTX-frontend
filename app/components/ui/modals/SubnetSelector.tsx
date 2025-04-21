@@ -54,7 +54,7 @@ const SubnetSelector = ({
   );
 
   const data = useMemo(() => {
-    return subnets.map((subnet) => ({
+    return subnets?.map((subnet) => ({
       ...subnet,
       balance: "0",
       isStaked: true,

@@ -10,8 +10,8 @@ export const getSubnet = async (subnetId: string) => {
   return response;
 };
 
-export const getSubnetChartData = async (netuid: string, period: string) => {
-  const response = await api.get(`/chart?netuid=${netuid}&period=${period}`);
+export const getSubnetChartData = async (netuid: number, interval: string, startTime: number, endTime: number) => {
+  const response = await api.get(`/chart?netuid=${netuid}&interval=${interval}&start_time=${startTime}&end_time=${endTime}`);
   return response;
 };
 

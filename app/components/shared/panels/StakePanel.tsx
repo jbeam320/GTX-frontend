@@ -1,13 +1,13 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Button from "../../ui/buttons/Button";
+import Toggle from "../../ui/toggles/Toggle";
 import StakePanelContent from "./StakePanelContent";
 import TransactionPanel from "./TransactionPanel";
-import Toggle from "../../ui/toggles/Toggle";
-import Button from "../../ui/buttons/Button";
-import ViewIcon from "/public/icons/view.svg";
 import CloseIcon from "/public/icons/close-small.svg";
+import ViewIcon from "/public/icons/view.svg";
 
 export default function StakePanel({
   handleViewValidators,

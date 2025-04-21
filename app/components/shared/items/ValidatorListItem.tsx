@@ -1,4 +1,4 @@
-import { taoPrice } from "../../../lib/data";
+import { useTaoPrice } from "../../../hooks";
 import { Validator } from "../../../lib/types/validator";
 import { formatCompactSimple, formatPercent } from "../../../lib/utils/format";
 
@@ -9,6 +9,8 @@ export default function ValidatorListItem({
     balance: string;
   };
 }) {
+  const { taoPrice } = useTaoPrice();
+
   return (
     <div className="flex items-center h-[64px] bg-[var(--bg-dark-3)] rounded-[4px] text-[14px] hover:bg-[var(--bg-dark-15)] mb-[2px] px-[18px]">
       <div className="flex items-center gap-[16px] min-w-[152px] mr-[30px] ">

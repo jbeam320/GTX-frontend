@@ -12,7 +12,7 @@ export default function SubnetList({
   return (
     <div>
       <SubnetListColumn />
-      {subnets.map((subnet, index) => (
+      {subnets?.map((subnet, index) => (
         <SubnetListItem
           key={index}
           subnet={{ ...subnet, index }}

@@ -67,8 +67,8 @@ export default function TradingChartContainer({
           setWidth(DEFAULT_WIDTH);
           setHeight(DEFAULT_HEIGHT);
         } else {
-          setWidth(window.innerWidth - 100); // Leave some padding
-          setHeight(window.innerHeight - 300); // Leave space for header and info
+          setWidth(window.innerWidth - 100); 
+          setHeight(window.innerHeight - 300); 
         }
       }
     };

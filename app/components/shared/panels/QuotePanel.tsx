@@ -22,7 +22,7 @@ export default function QuotePanel({
   setTokens,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<{ [key: number]: string }>({});
 
   const handleToggle = (mode: number) => {
     handleClear();
@@ -32,7 +32,7 @@ export default function QuotePanel({
 
   const handleClear = () => {
     onClear();
-    setErrors([]);
+    setErrors({});
   };
 
   return (

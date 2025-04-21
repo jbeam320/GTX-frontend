@@ -38,7 +38,7 @@ interface WalletState extends PersistedState {
   ) => Promise<string>;
   batchSell: (
     txsInfo: { netuid: number; amount: number; validator: string }[]
-  ) => Promise<void>;
+  ) => Promise<string>;
   batchSellAndBuy: (
     txsInfo: {
       netuid: number;
@@ -46,7 +46,7 @@ interface WalletState extends PersistedState {
       type: "sell" | "buy";
       validator: string;
     }[]
-  ) => Promise<void>;
+  ) => Promise<string>;
 
   // Setters
   setWalletAddress: (address: string) => void;
@@ -479,7 +479,13 @@ export const useWalletStore = create<WalletState>()(
       },
 
       batchSell: async (txsInfo) => {
-        const { walletAddress, api, extension } = get();
+        const {
+          walletAddress,
+          api,
+          extension,
+          fetchStakedBalance,
+          fetchWalletBalance,
+        } = get();
         if (!walletAddress) throw new Error("wallet address not found");
         if (!api) throw new Error("API not initialized");
         if (!extension) throw new Error("Extension not connected");
@@ -495,32 +501,46 @@ export const useWalletStore = create<WalletState>()(
           );
           const batchTx = api.tx.utility.batch(txs);
 
-          const unsub = await batchTx.signAndSend(
-            walletAddress,
-            {
-              signer: account.signer,
-              withSignedTransaction: !0,
-            },
-            ({ status, events }) => {
-              if (status.isInBlock) {
-                console.log(
-                  `Batch transaction included in block ${status.asInBlock}`
-                );
-              } else if (status.isFinalized) {
-                console.log(
-                  `Batch transaction finalized in block ${status.asFinalized}`
-                );
-                unsub();
+          return new Promise((resolve, reject) => {
+            batchTx.signAndSend(
+              walletAddress,
+              {
+                signer: account.signer,
+                withSignedTransaction: !0,
+              },
+              async ({ status, txHash, dispatchError }) => {
+                if (dispatchError) {
+                  console.error(
+                    "Transaction failed:",
+                    dispatchError.toString()
+                  );
+                  reject(dispatchError);
+                  return;
+                } else if (status.isFinalized) {
+                  await fetchWalletBalance(walletAddress, api);
+                  await fetchStakedBalance(walletAddress, api);
+                  console.log(
+                    `Batch transaction finalized in block ${status.asFinalized}`
+                  );
+                  resolve(txHash.toString());
+                }
               }
-            }
-          );
+            );
+          });
         } catch (error: any) {
           console.error("Transaction failed:", error);
+          throw new Error("Transaction failed: " + error.message);
         }
       },
 
       batchSellAndBuy: async (txsInfo) => {
-        const { walletAddress, api, extension } = get();
+        const {
+          walletAddress,
+          api,
+          extension,
+          fetchStakedBalance,
+          fetchWalletBalance,
+        } = get();
         if (!walletAddress) throw new Error("wallet address not found");
         if (!api) throw new Error("API not initialized");
         if (!extension) throw new Error("Extension not connected");
@@ -531,38 +551,44 @@ export const useWalletStore = create<WalletState>()(
 
           if (!account) throw new Error("Account not found");
 
+          console.log("ss", txsInfo);
+
           const txs = txsInfo.map(({ netuid, amount, type, validator }) =>
             type === "sell"
-              ? api.tx.subtensorModule.removeStake(
-                  validator,
-                  netuid,
-                  amount
-                )
+              ? api.tx.subtensorModule.removeStake(validator, netuid, amount)
               : api.tx.subtensorModule.addStake(validator, netuid, amount)
           );
           const batchTx = api.tx.utility.batch(txs);
 
-          const unsub = await batchTx.signAndSend(
-            walletAddress,
-            {
-              signer: account.signer,
-              withSignedTransaction: !0,
-            },
-            ({ status, events }) => {
-              if (status.isInBlock) {
-                console.log(
-                  `Batch transaction included in block ${status.asInBlock}`
-                );
-              } else if (status.isFinalized) {
-                console.log(
-                  `Batch transaction finalized in block ${status.asFinalized}`
-                );
-                unsub();
+          return new Promise((resolve, reject) => {
+            batchTx.signAndSend(
+              walletAddress,
+              {
+                signer: account.signer,
+                withSignedTransaction: !0,
+              },
+              async ({ status, txHash, dispatchError }) => {
+                if (dispatchError) {
+                  console.error(
+                    "Transaction failed:",
+                    dispatchError.toString()
+                  );
+                  reject(dispatchError);
+                  return;
+                } else if (status.isFinalized) {
+                  await fetchWalletBalance(walletAddress, api);
+                  await fetchStakedBalance(walletAddress, api);
+                  console.log(
+                    `Batch transaction finalized in block ${status.asFinalized}`
+                  );
+                  resolve(txHash.toString());
+                }
               }
-            }
-          );
+            );
+          });
         } catch (error) {
-          console.log(error);
+          console.error(error);
+          throw new Error("Transaction failed");
         }
       },
 
@@ -586,7 +612,7 @@ export const useWalletStore = create<WalletState>()(
 
           const stakeStr = stake.toString().replace(/,/g, "");
           const stakeValue = Number(stakeStr);
-          
+
           return stakeValue.toString();
         } catch (error) {
           console.error("Error getting validator stake:", error);

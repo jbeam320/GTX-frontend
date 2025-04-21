@@ -1,15 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Subnet } from "../lib/types";
-
 import SubnetList from "../components/shared/lists/SubnetList";
 import SearchInput from "../components/ui/inputs/SearchInput";
 import TokenToggle from "../components/ui/toggles/TokenToggle";
-import { subnets } from "../lib/data";
+import { useSubnets } from "../hooks";
 
 export default function SubnetPage() {
-  // const { subnets, loading_subnets } = useSubnet();
-  // const { taoPrice, loading_taoPrice } = useTaoPrice();
+  const { subnets } = useSubnets();
 
   const [filtered, setFiltered] = useState<Subnet[]>([]);
   const [search, setSearch] = useState("");

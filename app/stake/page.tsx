@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import StakePanel from "../components/shared/panels/StakePanel";
-import ValidatorDashboard from "../components/shared/dashboards/ValidatorDashboard";
 import { Container } from "@mantine/core";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import ValidatorDashboard from "../components/shared/dashboards/ValidatorDashboard";
+import StakePanel from "../components/shared/panels/StakePanel";
 
 export default function StakeModalContainer() {
   const [showValidators, setShowValidators] = useState(false);

@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSubnets, useTaoPrice } from "../../../hooks";
 import { PLANCK_PER_TAO } from "../../../lib/constants";
-import { subnets, taoPrice } from "../../../lib/data";
-import { Token } from "../../../lib/types";
+import { Subnet, Token } from "../../../lib/types";
+import { formatPrice } from "../../../lib/utils/format";
 import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
 import Button from "../../ui/buttons/Button";
 import SwapButton from "../../ui/buttons/SwapButton";
+import { TransactionDetail } from "../../ui/cards";
 import { TaoInput } from "../../ui/inputs/TaoInput";
 import SubnetSelector from "../../ui/modals/SubnetSelector";
 import TransactionPanel from "./TransactionPanel";
 import ChartIcon from "/public/icons/chart.svg";
 import CloseIcon from "/public/icons/close-small.svg";
-import { TransactionDetail } from "../../ui/cards";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -38,51 +39,61 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     unstakeTx,
   } = useWalletStore();
 
-  // const { subnets } = useSubnet();
+  const { subnets } = useSubnets();
+  const { taoPrice } = useTaoPrice();
 
   const [fromToken, setFromToken] = useState<Token | null>(null);
   const [toToken, setToToken] = useState<Token | null>(null);
-  const [amount, setAmount] = useState("0");
+  const [amount, setAmount] = useState("");
   const [isSelectorOpen, setSelectorOpen] = useState(false);
   const [isSelectingFrom, setSelectingFrom] = useState(true);
+  const [isNewSelection, setIsNewSelection] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    const fetchFromTokenBalance = async () => {
-      if (fromToken?.netuid !== undefined) {
-        const { isStaked, netuid } = fromToken;
-        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+    if (isNewSelection || walletBalance) {
+      fetchFromTokenBalance();
+      fetchToTokenBalance();
+    }
+    setIsNewSelection(false); // Reset the new selection flag after fetching balance
+  }, [isNewSelection, walletBalance, selectedValidator]);
 
-        const balance = isStaked
-          ? await getValidatorStake(selectedValidator.hotkey, netuid)
-          : walletBalance;
-        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
+  const fetchToTokenBalance = async () => {
+    if (toToken?.netuid !== undefined) {
+      const { isStaked, netuid } = toToken;
+      const subnet = subnets.find((subnet: Subnet) => subnet.netuid === netuid);
 
-        setFromToken({ ...fromToken, balance, price });
-      }
-    };
+      const balance = isStaked
+        ? await getValidatorStake(selectedValidator.hotkey, netuid)
+        : walletBalance;
+      const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
-    fetchFromTokenBalance();
-  }, [fromToken?.netuid, subnets]);
+      setToToken({
+        ...toToken,
+        balance: isStaked ? formatPrice(+balance, null, 2) : balance,
+        price,
+      });
+    }
+  };
 
-  useEffect(() => {
-    const fetchToTokenBalance = async () => {
-      if (toToken?.netuid !== undefined) {
-        const { isStaked, netuid } = toToken;
-        const subnet = subnets.find((subnet) => subnet.netuid === netuid);
+  const fetchFromTokenBalance = async () => {
+    if (fromToken?.netuid !== undefined) {
+      const { isStaked, netuid } = fromToken;
+      const subnet = subnets.find((subnet: Subnet) => subnet.netuid === netuid);
 
-        const balance = isStaked
-          ? await getValidatorStake(selectedValidator.hotkey, netuid)
-          : walletBalance;
-        const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
+      const balance = isStaked
+        ? await getValidatorStake(selectedValidator.hotkey, netuid)
+        : walletBalance;
+      const price = (subnet?.price ?? 0) / PLANCK_PER_TAO;
 
-        setToToken({ ...toToken, balance, price });
-      }
-    };
-
-    fetchToTokenBalance();
-  }, [toToken?.netuid, subnets]);
+      setFromToken({
+        ...fromToken,
+        balance: isStaked ? formatPrice(+balance, null, 2) : balance,
+        price,
+      });
+    }
+  };
 
   const handleSubnetClick = (isFrom: boolean) => {
     setSelectingFrom(isFrom);
@@ -90,20 +101,20 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   };
 
   const handleSelect = (token: Token) => {
+    setIsNewSelection(true);
+
     if (isSelectingFrom) {
-      // If selecting FROM token, set selected token as FROM and TAO as TO
       setFromToken({ ...token, isStaked: true });
       setToToken({ ...ROOT_TOKEN, balance: walletBalance });
     } else {
-      // If selecting TO token, set TAO as FROM and selected token as TO
       setFromToken({ ...ROOT_TOKEN, balance: walletBalance });
       setToToken({ ...token, isStaked: true });
     }
+
     setSelectorOpen(false);
   };
 
   const handleSwapToggle = () => {
-    // Swap positions of subnet token and TAO
     const temp = fromToken;
     setFromToken(toToken);
     setToToken(temp);
@@ -122,8 +133,6 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
   };
 
   const handleFromTokenChange = (value: string) => {
-    // const amount = (+value * (fromToken?.price ?? 0)) / (toToken?.price ?? 0);
-    // setAmount(amount.toFixed(2));
     setAmount(value);
   };
 
@@ -131,7 +140,6 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     if (!amount || !fromToken || !toToken) return;
 
     const taoAmount = +amount;
-    console.log(fromToken, toToken);
     setIsProcessing(true);
 
     try {
@@ -180,8 +188,8 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
         }
         bottomNode={
           <Button
-            label="VIEW CHART"
-            variant="primary"
+            label={isChartVisible ? "ClOSE CHART" : "VIEW CHART"}
+            variant={isChartVisible ? "secondary" : "primary"}
             onClick={onToggleChart}
             icon={isChartVisible ? <CloseIcon /> : <ChartIcon />}
             isRounded={true}
@@ -236,10 +244,11 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
             <TransactionDetail
               tokenAmount={toToken?.isStaked ? amount : toTokenAmount}
               alphaAmount={toToken?.isStaked ? toTokenAmount : amount}
+              isFromAlpha={fromToken?.isStaked}
               usdAmount={
                 toToken?.isStaked
-                  ? (+amount * taoPrice.price).toFixed(2)
-                  : (+toTokenAmount * taoPrice.price).toFixed(2)
+                  ? (+amount * taoPrice?.price).toFixed(2)
+                  : (+toTokenAmount * taoPrice?.price).toFixed(2)
               }
               isShow={!isDisabled || isProcessing}
             />

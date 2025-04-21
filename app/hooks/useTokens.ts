@@ -1,12 +1,12 @@
-import { useSubnets } from "./useSubnets";
 import { useEffect, useState } from "react";
+import { Subnet, TokenForBulk } from "../lib/types";
 import { useWalletStore } from "../stores/store";
-import { TokenForBulk, Subnet } from "../lib/types";
-import { subnets } from "../lib/data";
+import { useSubnets } from "./useSubnets";
 
 export const useTokens = () => {
-  const { selectedValidator, getValidatorStake } = useWalletStore();
-  // const { subnets } = useSubnets();
+  const { selectedValidator, walletBalance, getValidatorStake } =
+    useWalletStore();
+  const { subnets } = useSubnets();
 
   const [loading, setLoading] = useState(false);
   const [tokens, setTokens] = useState<TokenForBulk[]>([]);
@@ -18,13 +18,13 @@ export const useTokens = () => {
           setLoading(true);
 
           const balances = await Promise.all(
-            subnets.map(
+            subnets?.map(
               async (subnet: Subnet) =>
                 await getValidatorStake(selectedValidator.hotkey, subnet.netuid)
             )
           );
 
-          const tokens = subnets.map((subnet: Subnet, index: number) => ({
+          const tokens = subnets?.map((subnet: Subnet, index: number) => ({
             ...subnet,
             balance: balances[index],
             amount: 0,
@@ -41,7 +41,7 @@ export const useTokens = () => {
 
       init();
     }
-  }, [subnets, selectedValidator]);
+  }, [subnets, selectedValidator, walletBalance]);
 
   return {
     tokens,
