@@ -1,7 +1,6 @@
 export const formatUrl = (url: string) => {
-    // ensure the url ends with a slash (/)
-    if (!url.endsWith('/')) {
-        url += '/';
-    }
-    return url;
-}
+  const [baseUrl, queryString] = url.split("?");
+  const formattedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+
+  return queryString ? `${formattedBase}?${queryString}` : formattedBase;
+};

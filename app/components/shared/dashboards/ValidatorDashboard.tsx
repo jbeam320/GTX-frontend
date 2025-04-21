@@ -9,7 +9,7 @@ export default function ValidatorDashboard() {
   const { taoPrice } = useTaoPrice();
   const { validators } = useValidators();
 
-  const price_percent = formatPercent(taoPrice.percent_24h_change);
+  const price_percent = formatPercent(taoPrice?.percent_24h_change);
 
   const cards = [
     { label: "BITTENSOR PRICE", key: "price" as TaoPriceKey },
@@ -28,8 +28,8 @@ export default function ValidatorDashboard() {
             label={label}
             value={
               key === "staked_supply"
-                ? `${formatPercent(taoPrice[key])}%`
-                : `$${formatCompactSimple(taoPrice[key])}`
+                ? `${formatPercent(taoPrice[key] ?? 0)}%`
+                : `$${formatCompactSimple(taoPrice[key] ?? 0)}`
             }
             percentage={price_percent}
           />
