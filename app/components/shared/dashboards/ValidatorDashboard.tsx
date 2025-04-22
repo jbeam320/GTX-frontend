@@ -22,7 +22,7 @@ export default function ValidatorDashboard() {
   return (
     <div className="w-full flex flex-col gap-[24px] md:gap-[16px]">
       {/* 4 Cards */}
-      <div className="w-full grid grid-cols-2 md:flex md:flex-row gap-[8px] md:gap-[18px]">
+      <div className="w-full grid grid-cols-2 md:flex md:flex-row gap-[8px] md:justify-between">
         {cards.map(({ key, label }) => (
           <TaoInfo
             key={key}
@@ -33,7 +33,6 @@ export default function ValidatorDashboard() {
                 : `$${formatCompactSimple(taoPrice?.[key] ?? 0)}`
             }
             percentage={price_percent}
-            // className="w-full"
           />
         ))}
       </div>
