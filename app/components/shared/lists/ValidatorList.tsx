@@ -61,7 +61,7 @@ export default function ValidatorList({ validators }: ValidatorListProps) {
   });
 
   return (
-    <div className="overflow-y-auto bg-[var(--bg-light)] rounded-[8px] border-[var(--border-black-15)] border-[1px] w-[792px] max-h-[844px] px-[8px]">
+    <div className="overflow-y-auto bg-[var(--bg-light)] rounded-[8px] border-[var(--border-black-15)] border-[1px] w-full max-h-[844px] px-[8px]">
       {/* title */}
       <div className="text-[20px] text-[var(--color-black)] px-[8px] py-[16px] border-b-[var(--border-dark)] border-b-[1px]">
         VALIDATORS

@@ -10,7 +10,7 @@ export default function StakeModalContainer() {
   const [showValidators, setShowValidators] = useState(false);
 
   return (
-    <Container size="1200px" className="mt-[140px] md:mt-[116px]">
+    <Container size="1230px" className="mt-[140px] md:mt-[116px]">
       <div className="w-full flex flex-col md:flex-row md:justify-between">
         {/* Validators Dashboard */}
         <AnimatePresence>
