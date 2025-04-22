@@ -42,7 +42,7 @@ export default function SubnetListItem({
       </div>
 
       <div className="text-[14px] p-[10px]  md:w-[100px] font-[600]">
-        T {formatPrice(subnet.price, isUSD ? taoPrice.price : null)}
+        T {formatPrice(subnet.price, isUSD ? taoPrice?.price : null)}
       </div>
 
       {/* 24h price for mobile */}
@@ -90,15 +90,15 @@ export default function SubnetListItem({
       </div>
 
       <div className="w-[90px] md:w-[100px] p-[10px] text-center font-[600]">
-        {formatCompact(subnet.market_cap, isUSD ? taoPrice.price : null)}
+        {formatCompact(subnet.market_cap, isUSD ? taoPrice?.price : null)}
       </div>
 
       <div className="hidden md:block w-[96px] p-[10px] text-center font-[600]">
-        {formatCompact(subnet.volume_24h, isUSD ? taoPrice.price : null)}
+        {formatCompact(subnet.volume_24h, isUSD ? taoPrice?.price : null)}
       </div>
 
       <div className="hidden md:block w-[100px] p-[10px] text-center font-[600]">
-        {formatCompact(subnet.liquidity || 0, isUSD ? taoPrice.price : null)}
+        {formatCompact(subnet.liquidity || 0, isUSD ? taoPrice?.price : null)}
       </div>
 
       {/* chart */}
