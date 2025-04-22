@@ -10,7 +10,7 @@
   --bg-dark-6: #f2f2f2;
   --bg-dark-7: #353535;
   --bg-dark-8: #25262614;
-  --bg-dark-9: #A0A0A0;
+  --bg-dark-9: #a0a0a0;
   --bg-dark-10: #ebe6c81a;
   --bg-light: #ffffff;
   --bg-light-1: #efefef;
@@ -23,8 +23,11 @@
   --border-black: #1c1d22;
   --border-dark-70: #989898b2;
   --border-dark: #cecece;
+  --border-dark-1: #404040;
   --border-dark-50: #cecece1a;
   --border-black-15: #25262626;
+  --border-gray: #aeaeae;
+  --border-light-66: #ffffff66;
 
   --color-dark-100: #686a76;
   --color-light: #ffffff;
@@ -33,7 +36,7 @@
   --color-dark: #666666;
   --color-dark-1: #6a6a6a;
   --color-dark-2: #616161;
-  --color-dark-3: #6F6F6F;
+  --color-dark-3: #6f6f6f;
   --color-dark-5: #2526260d;
   --color-dark-70: #252626b2;
   --color-black: #000000;
