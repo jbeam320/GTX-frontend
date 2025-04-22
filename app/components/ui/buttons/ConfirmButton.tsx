@@ -1,5 +1,5 @@
-import Button from "./Button";
 import Confetti from "react-confetti";
+import Button from "./Button";
 import SuccessIcon from "/public/icons/success.svg";
 
 interface ConfirmButtonProps {

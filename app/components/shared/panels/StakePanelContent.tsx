@@ -83,6 +83,7 @@ export default function StakePanelContent({
         disabledText={
           !amount || +amount <= 0 ? "ENTER AMOUNT" : "INSUFFICIENT BALANCE"
         }
+        style={{ width: "100%" }}
       />
     </>
   );

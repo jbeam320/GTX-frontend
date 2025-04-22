@@ -36,7 +36,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
 
   return (
     <div
-      className="w-[366px] bg-[var(--bg-light)] font-[Contango Black] color-[var(--color-black-secondary)] text-[12px]"
+      className="w-full bg-[var(--bg-light)] font-[Contango Black] color-[var(--color-black-secondary)] text-[12px]"
       {...restProps}
     >
       {/* Main details (Token + Percentage) */}
