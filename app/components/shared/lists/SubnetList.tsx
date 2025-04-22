@@ -10,7 +10,7 @@ export default function SubnetList({
   isUSD: boolean;
 }) {
   return (
-    <div>
+    <div className="max-md:px-[5px]">
       <SubnetListColumn />
       {subnets?.map((subnet, index) => (
         <SubnetListItem

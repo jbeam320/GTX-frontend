@@ -26,7 +26,6 @@ export default function TokenToggle({
   return (
     <div
       className={`flex items-center bg-[var(--bg-dark-6)] border-[1px] border-[var(--bg-dark-1)]  rounded-[16px] px-[7px] py-[4px] ${className}`}
-      style={{ border: "1px solid var(--border-dark-1)" }}
     >
       <button
         onClick={() => setToggleState(1)}
