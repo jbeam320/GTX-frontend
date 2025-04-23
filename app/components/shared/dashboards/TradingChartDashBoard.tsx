@@ -328,7 +328,7 @@ export default function TradingChartContainer({
       <div
         className={`${
           isFullScreen ? "max-md:flex-grow max-md:min-h-0" : ""
-        } flex flex-col`}
+        } flex flex-col relative`}
       >
         <TradingChart
           width={isFullScreen ? window.innerWidth - 32 : width}
@@ -339,7 +339,7 @@ export default function TradingChartContainer({
 
         {/* Chart Values */}
         {chartValues && (
-          <div className="w-full flex flex-wrap gap-x-[16px] gap-y-[8px] text-[12px] font-mono font-normal mt-2">
+          <div className="w-full flex flex-wrap gap-x-[16px] gap-y-[8px] text-[12px] font-mono font-normal mt-2 md:relative md:bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:bg-[var(--bg-light)] max-md:p-4 max-md:border-t max-md:border-[var(--border-dark)] max-md:z-50">
             <div className="text-[var(--color-dark-100)]">
               T: {new Date(chartValues.time).toLocaleString()}
             </div>
