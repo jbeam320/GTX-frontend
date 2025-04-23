@@ -76,12 +76,12 @@ const SubnetSelector = ({
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="w-[400px] max-h-[1012px] h-full rounded-[8px] overflow-y-hidden"
+          className="w-full md:w-[400px] max-h-[1012px] h-full rounded-[8px] overflow-y-hidden"
           style={{ backgroundColor: "var(--bg-dark)" }}
         >
           <div className="flex justify-center mb-[27px] mt-[24px] relative">
             <div className="text-[18px] text-white flex justify-center items-center w-[250px] h-[43px]">
-              SELECT SUBNET
+              SELECT A SUBNET
             </div>
 
             <CloseIcon
@@ -100,6 +100,7 @@ const SubnetSelector = ({
             style={{
               backgroundColor: "var(--bg-dark-10)",
               border: "1px solid var(--border-dark-50)",
+              marginBottom: "24px",
             }}
           />
         </motion.div>

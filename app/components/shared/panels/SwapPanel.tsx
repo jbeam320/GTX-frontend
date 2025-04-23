@@ -15,6 +15,7 @@ import SubnetSelector from "../../ui/modals/SubnetSelector";
 import TransactionPanel from "./TransactionPanel";
 import ChartIcon from "/public/icons/chart.svg";
 import CloseIcon from "/public/icons/close-small.svg";
+import { subnets } from "../../../lib/data";
 
 const ROOT_TOKEN: Token = {
   symbol: "TAO",
@@ -39,7 +40,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
     unstakeTx,
   } = useWalletStore();
 
-  const { subnets } = useSubnets();
+  // const { subnets } = useSubnets();
   const { taoPrice } = useTaoPrice();
 
   const [fromToken, setFromToken] = useState<Token | null>(null);
@@ -259,6 +260,7 @@ const SwapPanel = ({ onToggleChart, isChartVisible }: SwapPanelProps) => {
               isDisabled={isDisabled}
               onClick={handleConfirm}
               disabledText={"SELECT TOKENS"}
+              style={{ width: "100%" }}
             />
           </div>
         }
