@@ -47,7 +47,7 @@ export default function Bulk() {
   };
 
   return (
-    <div className="max-md:px-[25px] flex flex-col md:flex-row md:justify-center gap-[4px] mt-[70px] relative min-h-screen pb-[76px]">
+    <div className="max-md:px-[25px] flex flex-col md:flex-row max-md:items-center md:justify-center gap-[4px] mt-[70px] relative min-h-screen pb-[76px]">
       <div className="md:hidden text-[30px] font-montserrat font-[600] mt-[24px]">
         Batch
       </div>
@@ -80,14 +80,13 @@ export default function Bulk() {
         viewForMobile={viewMode === "Tokens"}
       />
 
-      {viewMode === "Quote" && (
-        <QuotePanel
-          tokens={tokens}
-          onClear={onClear}
-          setTokens={setTokens}
-          onToggle={(mode) => setMode(mode)}
-        />
-      )}
+      <QuotePanel
+        tokens={tokens}
+        onClear={onClear}
+        setTokens={setTokens}
+        viewForMobile={viewMode === "Quote"}
+        onToggle={(mode) => setMode(mode)}
+      />
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 flex h-[76px] items-center justify-center gap-[145px] bg-[var(--color-black)]">
         <button
