@@ -147,7 +147,7 @@ export default function Header() {
 
       {/* Mobile Header */}
       <Box
-        bg="var(--bg-dark)"
+        bg="var(--color-black)"
         className="md:hidden fixed top-0 left-0 right-0 z-30 h-[86px]"
       >
         <div className="flex justify-between items-center px-[19px] pt-[10px]">
@@ -169,13 +169,29 @@ export default function Header() {
             </div>
           </div>
 
-          {loading_balances ? (
-            <Loader color="var(--color-primary)" size="sm" />
+          {walletAddress ? (
+            <div>
+              {loading_balances ? (
+                <Loader color="var(--color-primary)" size="sm" />
+              ) : (
+                <WalletInfo
+                  walletAddress={walletAddress}
+                  walletBalance={walletBalance}
+                  stakedBalance={stakedBalance}
+                />
+              )}
+            </div>
           ) : (
-            <WalletInfo
-              walletAddress={walletAddress}
-              walletBalance={walletBalance}
-              stakedBalance={stakedBalance}
+            <Button
+              label="Connect Wallet"
+              fontSize="14px"
+              color="var(--color-light)"
+              backgroundColor="var(--bg-dark)"
+              borderRadius="8px"
+              border="1px solid var(--border-dark)"
+              width="167px"
+              height="40px"
+              onClick={() => setIsModalOpen(true)}
             />
           )}
         </div>
