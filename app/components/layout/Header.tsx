@@ -10,6 +10,7 @@ import { Button } from "../ui/buttons";
 import WalletInfo from "../ui/cards/WalletInfo";
 import DropdownMenu from "../ui/dropdowns/Dropdown";
 import MobileNavigationModal from "../ui/modals/MobileNavigationModal";
+import SettingsModal from "../ui/modals/SettingsModal";
 import WalletConnectModal from "../ui/modals/WalletConnectModal";
 import MenuIcon from "/public/icons/menu.svg";
 import SettingIcon from "/public/icons/setting.svg";
@@ -33,6 +34,7 @@ export default function Header() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     reconnectWallet();
@@ -134,7 +136,10 @@ export default function Header() {
                 />
               )}
 
-              <SettingIcon className="cursor-pointer" />
+              <SettingIcon
+                className="cursor-pointer"
+                onClick={() => setShowSettings(true)}
+              />
             </Flex>
           </Flex>
         </Container>
@@ -184,6 +189,11 @@ export default function Header() {
       <WalletConnectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </>
   );

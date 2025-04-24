@@ -15,7 +15,7 @@ export const get = async (url: string, params: any = {}) => {
     const response = await api.get(url, { params });
     return response.data;
   } catch (error) {
-    errorHandler(error);
+    throw errorHandler(error);
   }
 };
 
@@ -24,7 +24,7 @@ export const post = async (url: string, data: any) => {
     const response = await api.post(url, data);
     return response.data;
   } catch (error) {
-    errorHandler(error);
+    throw errorHandler(error);
   }
 };
 
@@ -33,7 +33,7 @@ export const put = async (url: string, data: any) => {
     const response = await api.put(url, data);
     return response.data;
   } catch (error) {
-    errorHandler(error);
+    throw errorHandler(error);
   }
 };
 
@@ -42,16 +42,16 @@ export const del = async (url: string, data: any) => {
     const response = await api.delete(url, data);
     return response.data;
   } catch (error) {
-    errorHandler(error);
+    throw errorHandler(error);
   }
 };
 
 const errorHandler = (error: any) => {
   if (axios.isAxiosError(error)) {
     if (error.code === 'ECONNREFUSED' || !error.response) {
-      console.log('Unable to connect to the server. Please check if the server is running.');
+      throw new Error('Unable to connect to the server. Please check if the server is running.');
     }
-    console.log(error);
+    throw error;
   }
-  console.log(error);
+  throw error;
 };

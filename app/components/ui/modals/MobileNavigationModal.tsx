@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import SettingsModal from "./SettingsModal";
 import CloseIcon from "/public/icons/close-gray.svg";
 import DarkSettingIcon from "/public/icons/setting-dark.svg";
-
 interface MobileNavigationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,6 +18,8 @@ export default function MobileNavigationModal({
 }: MobileNavigationModalProps) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -87,7 +89,10 @@ export default function MobileNavigationModal({
       {/* Bottom Section */}
       <div className="absolute bottom-0 left-0 right-0 px-4 pb-6">
         <div className="flex items-center justify-center">
-          <button className="flex items-center gap-[10px] opacity-50 rounded-[16px] border-[1px] border-[var(--border-light-66)] h-[40px] px-[18px] py-[10px]">
+          <button
+            className="cursor-pointer flex items-center gap-[10px] opacity-50 rounded-[16px] border-[1px] border-[var(--border-light-66)] h-[40px] px-[18px] py-[10px]"
+            onClick={() => setShowSettings(true)}
+          >
             <DarkSettingIcon />
             <span className="text-[14px] font-[450] text-[var(--border-light-66)]">
               SETTINGS
@@ -99,6 +104,11 @@ export default function MobileNavigationModal({
           © 2025 TaoMarketCap. All rights reserved.
         </div>
       </div>
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 }
