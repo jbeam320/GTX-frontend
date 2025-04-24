@@ -22,7 +22,7 @@ export default function ConfirmButton({
   style,
 }: ConfirmButtonProps) {
   return (
-    <>
+    <div className="flex items-center justify-center">
       {isSuccess && <Confetti numberOfPieces={250} recycle={false} />}
 
       <Button
@@ -42,6 +42,6 @@ export default function ConfirmButton({
         disabled={isDisabled}
         {...style}
       />
-    </>
+    </div>
   );
 }

@@ -54,10 +54,10 @@ export default function TokenInput({
   };
 
   return (
-    <div className="w-[356px] flex flex-col gap-[9px] rounded-[8px] bg-[var(--bg-dark-4)] px-[20px] pt-[9px] pb-[13px]">
+    <div className="w-full md:w-[356px] flex flex-col gap-[9px] rounded-[8px] bg-[var(--bg-dark-4)] px-[20px] pt-[9px] pb-[13px]">
       <div>
         <div
-          className={`w-[316px] h-[52px]  font-montserrat rounded-[8px] bg-[var(--bg-light)] border-[1px] ${
+          className={`w-full md:w-[316px] h-[52px]  font-montserrat rounded-[8px] bg-[var(--bg-light)] border-[1px] ${
             error ? "border-red-500" : "border-[var(--color-black)]"
           } flex justify-between p-[10px]`}
         >

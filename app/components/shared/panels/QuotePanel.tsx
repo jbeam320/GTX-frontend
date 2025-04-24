@@ -40,7 +40,7 @@ export default function QuotePanel({
   return (
     <div
       className={`${
-        viewForMobile ? "max-md:w-full" : "max-md:hidden"
+        viewForMobile ? "max-[400px]:w-full" : "max-md:hidden"
       } flex items-center flex-col gap-[28px] w-[383px] h-full rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative`}
     >
       <div className="flex items-center justify-center">
@@ -96,6 +96,7 @@ export default function QuotePanel({
 
       <AnimatePresence mode="wait">
         <motion.div
+          className="w-full"
           key={mode}
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, y: 0 }}

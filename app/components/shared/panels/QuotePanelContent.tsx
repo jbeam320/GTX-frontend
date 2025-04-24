@@ -28,6 +28,7 @@ export default function QuotePanelContent({
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showTokenSelector, setShowTokenSelector] = useState(false);
 
   useEffect(() => {
     if (mode === "Nuke" && tokens?.length) {
@@ -150,11 +151,25 @@ export default function QuotePanelContent({
     (totalBuyAmount > taoToken.amount && mode === "Standard");
 
   return (
-    <div className="w-[356px]">
+    <div className="w-full md:w-[356px]">
       <div className="flex justify-between font-montserrat text-[11px] font-[500] pl-[26px] mb-[12px]">
-        <label>You sell</label>
-        <label>Amount</label>
+        <label className="max-md:hidden">You sell</label>
+        <label className="md:hidden">You Pay</label>
+
+        {sells.length !== 0 && <label>Amount</label>}
       </div>
+
+      {sells.length === 0 && (
+        <div className="w-full h-[98px] rounded-[8px] bg-[var(--bg-dark-4)] flex justify-center items-center">
+          <button
+            className="font-montserrat text-center cursor-pointer rounded-[8px]  bg-[var(--bg-light)] border-[1px] h-[52px] w-full mx-[20px]"
+            style={{ fontSize: "15px", fontWeight: 500 }}
+            onClick={() => setShowTokenSelector(true)}
+          >
+            Click to Select Tokens
+          </button>
+        </div>
+      )}
 
       {/* sells */}
       {sells.length > 0 && (
@@ -177,29 +192,50 @@ export default function QuotePanelContent({
       )}
 
       {/* received Tao */}
-      <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
-        <label>You Receive</label>
-        <div className="flex gap-[12px] items-center">
-          <button
-            className="cursor-pointer rounded-[16px] border-[1px] bg-[var(--bg-light)] p-[10px] w-[67px] h-[24px] flex items-center justify-center"
-            style={{ fontSize: "12px" }}
-          >
-            Split
-          </button>
+      <div>
+        <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
+          <label>You Receive</label>
+
+          {sells.length !== 0 && (
+            <div className="flex gap-[12px] items-center">
+              <button
+                className="cursor-pointer rounded-[16px] border-[1px] bg-[var(--bg-light)] p-[10px] w-[67px] h-[24px] flex items-center justify-center"
+                style={{ fontSize: "12px" }}
+              >
+                Split
+              </button>
+              <label>Amount</label>
+            </div>
+          )}
+        </div>
+
+        {sells.length !== 0 && (
+          <TokenInput
+            token={taoToken}
+            disabled
+            value={formatPrice(taoToken.amount, null, 2)}
+          />
+        )}
+      </div>
+
+      {buys.length !== 0 && (
+        <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
+          <label>You buy</label>
           <label>Amount</label>
         </div>
-      </div>
+      )}
 
-      <TokenInput
-        token={taoToken}
-        disabled
-        value={formatPrice(taoToken.amount, null, 2)}
-      />
-
-      <div className="flex justify-between items-center pl-[26px] my-[17px] font-montserrat text-[11px] font-[500]">
-        <label>You buy</label>
-        <label>Amount</label>
-      </div>
+      {sells.length === 0 && buys.length === 0 && (
+        <div className="w-full h-[98px] rounded-[8px] bg-[var(--bg-dark-4)] flex justify-center items-center">
+          <button
+            className="font-montserrat text-center cursor-pointer rounded-[8px]  bg-[var(--bg-light)] border-[1px] h-[52px] w-full mx-[20px]"
+            style={{ fontSize: "15px", fontWeight: 500 }}
+            onClick={() => setShowTokenSelector(true)}
+          >
+            Click to Select Tokens
+          </button>
+        </div>
+      )}
 
       {/* buys */}
       {buys.length > 0 && mode === "Standard" && (
@@ -216,7 +252,7 @@ export default function QuotePanelContent({
         </div>
       )}
 
-      <TransactionDetail />
+      {sells.length !== 0 && <TransactionDetail />}
 
       <ConfirmButton
         isProcessing={isProcessing}
@@ -232,7 +268,7 @@ export default function QuotePanelContent({
             ? "var(--bg-dark-9)"
             : "var(--color-black)",
           border: "none",
-          margin: "20px 0px 2px 10px",
+          margin: "20px 0px 10px 0px",
           fontSize: "18px",
           fontWeight: 500,
           fontFamily: "Montserrat",

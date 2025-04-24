@@ -140,39 +140,37 @@ export default function Header() {
       {/* Mobile Header */}
       <Box
         bg="var(--bg-dark)"
-        className="md:hidden fixed top-0 left-0 right-0 z-30"
+        className="md:hidden fixed top-0 left-0 right-0 z-30 h-[86px]"
       >
-        <Container className="p-[22px]">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-[24px]">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="cursor-pointer"
-              >
-                <MenuIcon />
-              </button>
+        <div className="flex justify-between items-center px-[19px] pt-[10px]">
+          <div className="flex items-center gap-[24px]">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="cursor-pointer"
+            >
+              <MenuIcon />
+            </button>
 
-              <div className="flex flex-col gap-[5px]">
-                <div className="text-[23px] font-[900] text-white font-montserrat">
-                  GTX
-                </div>
-                <div className="text-[11px] font-[600] text-[var(--color-gray-secondary)]">
-                  General Tao Exchange
-                </div>
+            <div className="flex flex-col gap-[5px]">
+              <div className="text-[23px] font-[900] text-white font-montserrat">
+                GTX
+              </div>
+              <div className="text-[11px] font-[600] text-[var(--color-gray-secondary)]">
+                General Tao Exchange
               </div>
             </div>
-
-            {loading_balances ? (
-              <Loader color="var(--color-primary)" size="sm" />
-            ) : (
-              <WalletInfo
-                walletAddress={walletAddress}
-                walletBalance={walletBalance}
-                stakedBalance={stakedBalance}
-              />
-            )}
           </div>
-        </Container>
+
+          {loading_balances ? (
+            <Loader color="var(--color-primary)" size="sm" />
+          ) : (
+            <WalletInfo
+              walletAddress={walletAddress}
+              walletBalance={walletBalance}
+              stakedBalance={stakedBalance}
+            />
+          )}
+        </div>
       </Box>
 
       <MobileNavigationModal

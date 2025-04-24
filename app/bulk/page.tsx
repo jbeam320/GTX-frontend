@@ -47,8 +47,8 @@ export default function Bulk() {
   };
 
   return (
-    <div className="max-md:px-[25px] flex flex-col md:flex-row max-md:items-center md:justify-center gap-[4px] mt-[70px] relative min-h-screen pb-[76px]">
-      <div className="md:hidden text-[30px] w-full text-left font-montserrat font-[600] mt-[44px]">
+    <div className="max-md:px-[23px] flex flex-col md:flex-row max-md:items-center md:justify-center gap-[4px] mt-[70px] relative min-h-screen pb-[76px]">
+      <div className="md:hidden text-[30px] w-full text-left font-montserrat font-[600] mt-[24px]">
         Batch
       </div>
 
