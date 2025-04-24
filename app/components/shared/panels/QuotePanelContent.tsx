@@ -6,13 +6,13 @@ import { useWalletStore } from "../../../stores/store";
 import { ConfirmButton } from "../../ui/buttons";
 import TransactionDetail from "../../ui/cards/TransactionDetailForBulk";
 import TokenInput from "../../ui/inputs/TokenInput";
-
 interface QuotePanelContentProps {
   mode: "Standard" | "Nuke";
   tokens: TokenForBulk[];
   errors: { [key: number]: string };
   setTokens: (tokens: TokenForBulk[]) => void;
   setErrors: (errors: { [key: number]: string }) => void;
+  onTokenSelect: () => void;
 }
 
 export default function QuotePanelContent({
@@ -21,6 +21,7 @@ export default function QuotePanelContent({
   errors = {},
   setTokens,
   setErrors,
+  onTokenSelect,
 }: QuotePanelContentProps) {
   const { selectedValidator, batchSell, batchSellAndBuy } = useWalletStore();
 
@@ -28,7 +29,6 @@ export default function QuotePanelContent({
   const [totalBuyAmount, setTotalBuyAmount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showTokenSelector, setShowTokenSelector] = useState(false);
 
   useEffect(() => {
     if (mode === "Nuke" && tokens?.length) {
@@ -164,7 +164,7 @@ export default function QuotePanelContent({
           <button
             className="font-montserrat text-center cursor-pointer rounded-[8px]  bg-[var(--bg-light)] border-[1px] h-[52px] w-full mx-[20px]"
             style={{ fontSize: "15px", fontWeight: 500 }}
-            onClick={() => setShowTokenSelector(true)}
+            onClick={onTokenSelect}
           >
             Click to Select Tokens
           </button>
@@ -230,7 +230,7 @@ export default function QuotePanelContent({
           <button
             className="font-montserrat text-center cursor-pointer rounded-[8px]  bg-[var(--bg-light)] border-[1px] h-[52px] w-full mx-[20px]"
             style={{ fontSize: "15px", fontWeight: 500 }}
-            onClick={() => setShowTokenSelector(true)}
+            onClick={onTokenSelect}
           >
             Click to Select Tokens
           </button>
@@ -274,12 +274,8 @@ export default function QuotePanelContent({
           fontFamily: "Montserrat",
         }}
       />
-      {sells.length === 0 ? (
-        // <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
-        //   select tokens to sell
-        // </label>
-        ""
-      ) : totalBuyAmount > taoToken.amount && mode === "Standard" ? (
+
+      {totalBuyAmount > taoToken.amount && mode === "Standard" ? (
         <label className="text-red-500 text-[14px] font-montserrat font-[500] ml-[20px]">
           the received amount is more than selling amount
         </label>

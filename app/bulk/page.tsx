@@ -3,6 +3,7 @@
 import { useState } from "react";
 import TokenList from "../components/shared/lists/TokenList";
 import { QuotePanel } from "../components/shared/panels";
+import TokenSelector from "../components/ui/modals/TokenSelector";
 import { useTokens } from "../hooks";
 import { TokenForBulk } from "../lib/types";
 
@@ -11,10 +12,11 @@ const MOBILE_TOKEN_COLUMNS = ["Price", "Reserve", "Balance", "Trade"];
 export default function Bulk() {
   const { tokens, loading, setTokens } = useTokens();
 
-  const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
-
   // for mobile view
   const [viewMode, setViewMode] = useState<"Tokens" | "Quote">("Tokens");
+  const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
+
+  const [showTokenSelector, setShowTokenSelector] = useState(false);
   const [selectedMobileColumn, setSelectedMobileColumn] =
     useState<string>("Balance");
 
@@ -82,10 +84,21 @@ export default function Bulk() {
 
       <QuotePanel
         tokens={tokens}
+        onTokenSelect={() => setShowTokenSelector(true)}
         onClear={onClear}
         setTokens={setTokens}
         viewForMobile={viewMode === "Quote"}
         onToggle={(mode) => setMode(mode)}
+      />
+
+      <TokenSelector
+        tokens={tokens}
+        loading={loading}
+        disabled={mode === "Nuke" ? true : false}
+        isOpen={showTokenSelector}
+        onBuy={onBuy}
+        onSell={onSell}
+        onClose={() => setShowTokenSelector(false)}
       />
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 flex h-[76px] items-center justify-center gap-[145px] bg-[var(--color-black)]">

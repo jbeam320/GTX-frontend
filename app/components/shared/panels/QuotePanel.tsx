@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { TokenForBulk } from "../../../lib/types";
 import Toggle from "../../ui/toggles/Toggle";
@@ -6,13 +7,12 @@ import InfoIcon from "/public/icons/info-light.svg";
 import WhiteInfoIcon from "/public/icons/info-white.svg";
 import WhiteNukeIcon from "/public/icons/nuke-white.svg";
 import NukeIcon from "/public/icons/nuke.svg";
-import { motion, AnimatePresence } from "framer-motion";
-
 interface QuotePanelProps {
   tokens: TokenForBulk[];
   viewForMobile?: boolean;
   onToggle?: (mode: "Standard" | "Nuke") => void;
   onClear: () => void;
+  onTokenSelect: () => void;
   setTokens(tokens: TokenForBulk[]): void;
 }
 
@@ -20,6 +20,7 @@ export default function QuotePanel({
   tokens,
   onClear,
   onToggle,
+  onTokenSelect,
   setTokens,
   viewForMobile,
 }: QuotePanelProps) {
@@ -109,6 +110,7 @@ export default function QuotePanel({
             tokens={tokens}
             setTokens={setTokens}
             setErrors={setErrors}
+            onTokenSelect={onTokenSelect}
           />
         </motion.div>
       </AnimatePresence>
