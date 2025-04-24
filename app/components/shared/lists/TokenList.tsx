@@ -10,6 +10,8 @@ interface TokenListProps {
   tokens: TokenForBulk[];
   disabled?: boolean;
   loading?: boolean;
+  viewForMobile?: boolean;
+  selectedMobileColumn?: string;
   onBuy: (token: TokenForBulk) => void;
   onSell: (token: TokenForBulk) => void;
 }
@@ -18,6 +20,8 @@ export default function TokenList({
   tokens,
   disabled = false,
   loading = false,
+  viewForMobile,
+  selectedMobileColumn,
   onBuy,
   onSell,
 }: TokenListProps) {
@@ -32,9 +36,13 @@ export default function TokenList({
   );
 
   return (
-    <div className="w-[840px] bg-[var(--bg-light)] border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]">
+    <div
+      className={`${
+        viewForMobile ? "max-md:w-full" : "max-md:hidden"
+      } w-[840px] bg-[var(--bg-light)] md:border-[1px] border-[var(--border-dark)] rounded-[8px] p-[5px]`}
+    >
       {/* search tokens */}
-      <div className="flex justify-between items-center mx-[15px] p-[12px] border-b-[1px] border-[var(--color-black)]">
+      <div className="flex justify-between items-center md:mx-[15px] md:p-[12px] pb-[26px] md:border-b-[1px] border-[var(--color-black)]">
         <label className="font-montserrat text-[17px] font-[600]">Tokens</label>
         <div className="w-[207px] h-[37px] rounded-[16px] p-[10px] gap-[13px] flex items-center justify-center bg-[var(--bg-dark-4)] rounded-[16px]">
           <SearchIcon />
@@ -51,20 +59,22 @@ export default function TokenList({
       </div>
 
       {/* header */}
-      <div className="mx-[15px] my-[21px] px-[34px] flex space-between items-center text-[var(--color-black)] font-montserrat text-[14px] font-[500]">
-        <label className="basis-[150px]">Names</label>
-        <label className="basis-[110px]">Price(USDC)</label>
-        <label className="basis-[200px]">Market Cap(USDC)</label>
-        <label className="basis-[200px]">Balance</label>
-        <label>Trade</label>
+      <div className="md:mx-[15px] max-md:mb-[21px] md:my-[21px] md:px-[34px] max-md:pb-[10px] max-md:border-b-[1px] border-[var(--color-black)] flex space-between items-center text-[var(--color-black)] font-montserrat text-[14px] font-[500]">
+        <label className="max-md:flex-2 md:basis-[180px]">Names</label>
+        <label className="flex-1 md:hidden">{selectedMobileColumn}</label>
+        <label className="max-md:hidden basis-[110px]">Price(USDC)</label>
+        <label className="max-md:hidden basis-[170px]">Market Cap(USDC)</label>
+        <label className="max-md:hidden basis-[200px]">Balance</label>
+        <label className="max-md:hidden">Trade</label>
       </div>
 
-      <div className="space-y-[1px] h-[800px] overflow-y-auto text-center">
+      <div className="space-y-[4px] md:space-y-[1px] h-[800px] overflow-y-auto text-center">
         {loading ? (
           <Loader />
         ) : filteredTokens.length ? (
           filteredTokens.map((token, index) => (
             <TokenListItem
+              selectedMobileColumn={selectedMobileColumn}
               key={`${token.symbol}-${token.netuid}`}
               token={token}
               disabled={disabled}

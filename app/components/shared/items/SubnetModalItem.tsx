@@ -15,7 +15,7 @@ const SubnetModalItem: React.FC<SubnetModalItemProps> = ({
 }) => {
   return (
     <div
-      className="flex items-center space-between px-[24px] py-[16px] w-[400px] h-[74px] cursor-pointer"
+      className="flex items-center justify-between px-[24px] py-[16px] w-full md:w-[400px] h-[74px] cursor-pointer"
       style={{ backgroundColor: "var(--bg-dark)" }}
       onClick={onClick}
     >
@@ -29,9 +29,11 @@ const SubnetModalItem: React.FC<SubnetModalItemProps> = ({
           }}
         />
         <div className="flex flex-col w-[229px]">
-          <div className="text-white text-[20px]">{token}</div>
+          <div className="text-white text-[20px] font-[500] font-mono">
+            {token}
+          </div>
           <div
-            className="text-[12px]"
+            className="text-[12px] font-[400] font-mono"
             style={{ color: "var(--color-light-80)" }}
           >
             {subnet}
@@ -40,7 +42,9 @@ const SubnetModalItem: React.FC<SubnetModalItemProps> = ({
       </div>
 
       {/* netuid */}
-      <div className="text-white text-[14px] w-[72px] text-right">{netuid}</div>
+      <div className="text-white text-[14px] font-[300] w-[72px] font-mono text-right">
+        SN{netuid}
+      </div>
     </div>
   );
 };

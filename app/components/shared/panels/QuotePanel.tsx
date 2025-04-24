@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { TokenForBulk } from "../../../lib/types";
 import Toggle from "../../ui/toggles/Toggle";
@@ -6,12 +7,12 @@ import InfoIcon from "/public/icons/info-light.svg";
 import WhiteInfoIcon from "/public/icons/info-white.svg";
 import WhiteNukeIcon from "/public/icons/nuke-white.svg";
 import NukeIcon from "/public/icons/nuke.svg";
-import { motion, AnimatePresence } from "framer-motion";
-
 interface QuotePanelProps {
   tokens: TokenForBulk[];
+  viewForMobile?: boolean;
   onToggle?: (mode: "Standard" | "Nuke") => void;
   onClear: () => void;
+  onTokenSelect: () => void;
   setTokens(tokens: TokenForBulk[]): void;
 }
 
@@ -19,7 +20,9 @@ export default function QuotePanel({
   tokens,
   onClear,
   onToggle,
+  onTokenSelect,
   setTokens,
+  viewForMobile,
 }: QuotePanelProps) {
   const [mode, setMode] = useState<"Standard" | "Nuke">("Standard");
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
@@ -36,7 +39,11 @@ export default function QuotePanel({
   };
 
   return (
-    <div className="flex items-center flex-col gap-[28px] w-[383px] h-full rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative">
+    <div
+      className={`${
+        viewForMobile ? "max-[400px]:w-full" : "max-md:hidden"
+      } flex items-center flex-col gap-[28px] w-[383px] h-full rounded-[8px] border-[1px] border-[var(--border-dark)] font-montserrat p-[13px] font-[500] relative`}
+    >
       <div className="flex items-center justify-center">
         <label className="text-[18px] font-[500]">Quote</label>
         <button
@@ -90,6 +97,7 @@ export default function QuotePanel({
 
       <AnimatePresence mode="wait">
         <motion.div
+          className="w-full"
           key={mode}
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, y: 0 }}
@@ -102,6 +110,7 @@ export default function QuotePanel({
             tokens={tokens}
             setTokens={setTokens}
             setErrors={setErrors}
+            onTokenSelect={onTokenSelect}
           />
         </motion.div>
       </AnimatePresence>

@@ -67,8 +67,12 @@ export default function TradingChartContainer({
           setWidth(DEFAULT_WIDTH);
           setHeight(DEFAULT_HEIGHT);
         } else {
-          setWidth(window.innerWidth - 100); 
-          setHeight(window.innerHeight - 300); 
+          const windowHeight = window.innerHeight;
+          const headerHeight = 200; // Account for header elements
+          const bottomPadding = 50; // Add some padding at the bottom
+
+          setWidth(window.innerWidth - 32); // Subtract padding
+          setHeight(windowHeight - headerHeight - bottomPadding);
         }
       }
     };
@@ -99,8 +103,12 @@ export default function TradingChartContainer({
     const handleFullscreenChange = () => {
       setIsFullScreen(!!document.fullscreenElement);
       if (document.fullscreenElement) {
-        setWidth(window.innerWidth - 100);
-        setHeight(window.innerHeight - 300);
+        const windowHeight = window.innerHeight;
+        const headerHeight = 200;
+        const bottomPadding = 50;
+
+        setWidth(window.innerWidth - 32);
+        setHeight(windowHeight - headerHeight - bottomPadding);
       } else {
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
@@ -114,13 +122,19 @@ export default function TradingChartContainer({
 
   return (
     <div
-      className={`bg-[var(--bg-light)] rounded-[8px] border-[1px] border-[var(--border-dark)] p-[16px] w-[792px] flex flex-col gap-[21px] shadow-md ${
-        isFullScreen ? "fixed inset-0 z-50" : ""
+      className={`bg-[var(--bg-light)] rounded-[8px] border-[1px] border-[var(--border-dark)] p-[16px] w-full md:w-[792px] flex flex-col gap-[21px] shadow-md ${
+        isFullScreen ? "fixed inset-0 z-50 h-screen overflow-y-auto" : ""
       }`}
       ref={containerRef}
     >
       {/* Header */}
-      <div className="border-b-[1px] border-[var(--border-dark)] pb-[19px]">
+      <div
+        className={`border-b-[1px] border-[var(--border-dark)] pb-[19px] ${
+          isFullScreen
+            ? "max-md:sticky max-md:top-0 max-md:bg-[var(--bg-light)] max-md:z-10"
+            : ""
+        }`}
+      >
         <div className="flex items-center gap-[16px]">
           <div className="flex items-center gap-[16px]">
             <div
@@ -149,11 +163,18 @@ export default function TradingChartContainer({
       </div>
 
       {/* Price and subnet data */}
-      <div className="flex flex-col gap-[24px]">
+      <div
+        className={`flex flex-col gap-[24px] ${
+          isFullScreen
+            ? "max-md:sticky max-md:top-[80px] max-md:bg-[var(--bg-light)] max-md:z-10"
+            : ""
+        }`}
+      >
+        {/* Price and Controls Section */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-[8px]">
             <div className="flex flex-row items-center gap-[16px] h-[38px]">
-              <label className="text-[28px] font-haffer font-semibold">
+              <label className="text-[28px] font-montserrat font-[600]">
                 ${tokenInfo.price}
               </label>
               <span className={`text-[20px] font-light`}>τ1.00</span>
@@ -166,7 +187,7 @@ export default function TradingChartContainer({
             </div>
           </div>
 
-          <div className="flex flex-row gap-[8px] h-[38px]">
+          <div className="max-md:hidden flex flex-row gap-[8px] h-[38px]">
             <ButtonGroup
               labels={["5M", "1H", "1D"]}
               activeButton={interval}
@@ -181,8 +202,9 @@ export default function TradingChartContainer({
           </div>
         </div>
 
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col items-center">
+        {/* Stats Grid */}
+        <div className="flex flex-wrap md:flex-nowrap gap-x-[10px] gap-y-[10px] md:gap-x-8">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               Mket Cap
             </div>
@@ -190,7 +212,7 @@ export default function TradingChartContainer({
               {subnetData.marketCap}
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               Alpha in Pool
             </div>
@@ -198,7 +220,7 @@ export default function TradingChartContainer({
               {subnetData.alphaInPool}
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               TAO in Pool
             </div>
@@ -206,7 +228,7 @@ export default function TradingChartContainer({
               {subnetData.taoInPool}
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               24h Vol
             </div>
@@ -214,7 +236,7 @@ export default function TradingChartContainer({
               {subnetData.volume24h}
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               FDV (USD)
             </div>
@@ -222,34 +244,50 @@ export default function TradingChartContainer({
               {subnetData.fdvUSD}
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               Liquidity (a)
             </div>
             <div className="text-[14px] font-normal font-mono">
-              {subnetData.liquidityA}
+              {subnetData.liquidityA} a
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               Liquidity (t)
             </div>
             <div className="text-[14px] font-normal font-mono">
-              {subnetData.liquidityT}
+              {subnetData.liquidityT} t
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col md:min-w-0">
             <div className="text-[12px] font-normal font-haffer text-[var(--color-dark-100)]">
               Circulating supply
             </div>
             <div className="text-[14px] font-normal font-mono">
-              {subnetData.circulatingSupply}
+              {subnetData.circulatingSupply} a
             </div>
           </div>
         </div>
 
+        <div className="md:hidden flex flex-row-reverse gap-[8px] h-[38px]">
+          <button
+            className="cursor-pointer rounded-[4px] bg-[var(--border-black)] w-[38px] h-[38px] flex items-center justify-center"
+            onClick={handleFullScreen}
+          >
+            <ExpandIcon />
+          </button>
+
+          <ButtonGroup
+            labels={["5M", "1H", "1D"]}
+            activeButton={interval}
+            setActiveButton={(value) => setInterval(value as IntervalType)}
+          />
+        </div>
+
+        {/* Chart Values */}
         {chartValues && (
-          <div className="flex gap-[16px] text-[12px] font-mono font-normal">
+          <div className="max-md:hidden flex flex-wrap gap-x-[16px] gap-y-[8px] text-[12px] font-mono font-normal">
             <div className="text-[var(--color-dark-100)]">
               T: {new Date(chartValues.time).toLocaleString()}
             </div>
@@ -287,14 +325,63 @@ export default function TradingChartContainer({
         )}
       </div>
 
-      <TradingChart
-        width={width}
-        height={height}
-        interval={INTERVALS[interval]}
-        onCrosshairMove={setChartValues}
-      />
+      <div
+        className={`${
+          isFullScreen ? "max-md:flex-grow max-md:min-h-0" : ""
+        } flex flex-col relative`}
+      >
+        <TradingChart
+          width={isFullScreen ? window.innerWidth - 32 : width}
+          height={isFullScreen ? window.innerHeight - 350 : height}
+          interval={INTERVALS[interval]}
+          onCrosshairMove={setChartValues}
+        />
 
-      <div className="flex flex-col gap-[16px]">
+        {/* Chart Values */}
+        {chartValues && (
+          <div className="w-full flex flex-wrap gap-x-[16px] gap-y-[8px] text-[12px] font-mono font-normal mt-2 md:relative md:bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:bg-[var(--bg-light)] max-md:p-4 max-md:border-t max-md:border-[var(--border-dark)] max-md:z-50">
+            <div className="text-[var(--color-dark-100)]">
+              T: {new Date(chartValues.time).toLocaleString()}
+            </div>
+            <div>
+              O:{" "}
+              <label className="text-[var(--color-red)]">
+                {chartValues.open.toFixed(4)}
+              </label>
+            </div>
+            <div>
+              H:{" "}
+              <label className="text-[var(--color-red)]">
+                {chartValues.high.toFixed(4)}
+              </label>
+            </div>
+            <div>
+              L:{" "}
+              <label className="text-[var(--color-red)]">
+                {chartValues.low.toFixed(4)}
+              </label>
+            </div>
+            <div>
+              C:{" "}
+              <label className="text-[var(--color-red)]">
+                {chartValues.close.toFixed(4)}
+              </label>
+            </div>
+            <div>
+              V:{" "}
+              <label className="text-[var(--color-red)]">
+                {chartValues.volume.toFixed(4)}
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`flex flex-col gap-[16px] ${
+          isFullScreen ? "max-md:hidden" : ""
+        }`}
+      >
         <div className="flex flex-row gap-[8px] items-center">
           <label
             className="w-[24px] h-[24px] rounded-full"
@@ -311,7 +398,7 @@ export default function TradingChartContainer({
           this, standing as an icon of peak physical and mental prowess.
         </p>
 
-        <div className="flex flex-row gap-[100px] text-[14px] text-[var(--color-dark)]">
+        <div className="flex flex-col md:flex-row gap-[24px] md:gap-[100px] text-[14px] text-[var(--color-dark)]">
           <a href="https://alpha.to">ALPHA.TO</a>
           <a href="https://alphastats.io">ALPHASTATS.IO/</a>
           <a href="https://taomarketcap.com/alpha">TAOMARKETCAP.COM/ALPHA</a>

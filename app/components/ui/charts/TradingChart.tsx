@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useSubnetChartData } from "../../../hooks";
 import * as services from "../../../services";
+import { chartDatas } from "../../../lib/data";
 
 interface ChartData {
   time: number;
@@ -74,12 +75,12 @@ const TradingChart: React.FC<TradingChartProps> = ({
   width = 760,
   onCrosshairMove,
 }) => {
-  const { subnetChartData: chartDatas } = useSubnetChartData(
-    0,
-    "5m",
-    Math.floor(Date.now()) - interval * ONE_MINUTE * 40,
-    Math.floor(Date.now())
-  );
+  // const { subnetChartData: chartDatas } = useSubnetChartData(
+  //   0,
+  //   "5m",
+  //   Math.floor(Date.now()) - interval * ONE_MINUTE * 40,
+  //   Math.floor(Date.now())
+  // );
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -87,6 +88,23 @@ const TradingChart: React.FC<TradingChartProps> = ({
   const mainSeriesRef = useRef<any>(null);
   const volumeSeriesRef = useRef<any>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [containerWidth, setContainerWidth] = useState(width);
+
+  // Add resize observer to handle container width changes
+  useEffect(() => {
+    if (!chartContainerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const newWidth = entries[0].contentRect.width;
+      setContainerWidth(newWidth);
+      if (chartRef.current) {
+        chartRef.current.resize(newWidth, height);
+      }
+    });
+
+    resizeObserver.observe(chartContainerRef.current);
+    return () => resizeObserver.disconnect();
+  }, [height]);
 
   useEffect(() => {
     if (chartDatas?.length) {
@@ -104,7 +122,7 @@ const TradingChart: React.FC<TradingChartProps> = ({
     if (chartRef.current) chartRef.current.remove();
 
     const chart = createChart(chartContainerRef.current, {
-      width,
+      width: containerWidth,
       height,
       layout: { background: { color: "#ffffff" }, textColor: "#333" },
       grid: {
@@ -167,9 +185,13 @@ const TradingChart: React.FC<TradingChartProps> = ({
     });
     volumeSeriesRef.current = volumeSeries;
     chart.priceScale("volume")?.applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
+      scaleMargins: { top: 0.7, bottom: 0 },
       visible: true,
       autoScale: true,
+    });
+
+    chart.priceScale("right").applyOptions({
+      scaleMargins: { top: 0.1, bottom: 0.3 },
     });
 
     if (chartData.length) {
@@ -282,15 +304,18 @@ const TradingChart: React.FC<TradingChartProps> = ({
       mainSeriesRef.current = null;
       volumeSeriesRef.current = null;
     };
-  }, [height, width, interval, onCrosshairMove, chartData]);
+  }, [height, containerWidth, interval, onCrosshairMove, chartData]);
 
+  // Remove the width/height resize effect as we're using ResizeObserver
   useEffect(() => {
-    chartRef.current?.resize(width, height);
-  }, [width, height]);
+    if (chartRef.current) {
+      chartRef.current.resize(containerWidth, height);
+    }
+  }, [containerWidth, height]);
 
   return (
     <div className="w-full relative">
-      <div ref={chartContainerRef} />
+      <div ref={chartContainerRef} className="w-full" />
     </div>
   );
 };

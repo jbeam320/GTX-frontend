@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Subnet, TokenForBulk } from "../lib/types";
 import { useWalletStore } from "../stores/store";
 import { useSubnets } from "./useSubnets";
+import { subnets } from "../lib/data";
 
 export const useTokens = () => {
   const { selectedValidator, walletBalance, getValidatorStake } =
     useWalletStore();
-  const { subnets } = useSubnets();
+  // const { subnets } = useSubnets();
 
   const [loading, setLoading] = useState(false);
   const [tokens, setTokens] = useState<TokenForBulk[]>([]);

@@ -17,7 +17,7 @@ export default function Detail({
         Transaction Details
       </h3>
 
-      <div className="flex flex-col gap-[10px] font-montserrat text-[12px] font-[500] pr-[21px]">
+      <div className="flex flex-col gap-[10px] font-montserrat text-[12px] font-[500] pr-[10px]">
         <div className="flex justify-between">
           <h4>Value in excl. Price Impact</h4>
           <h4>{exclPriceImpact} USDC</h4>

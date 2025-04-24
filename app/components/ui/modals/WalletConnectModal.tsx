@@ -49,7 +49,7 @@ const WalletConnectModal = ({
       <div className="relative flex justify-end">
         <div
           ref={modalRef}
-          className=" w-[388px] h-[575px] bg-[var(--bg-light)] rounded-[8px] overflow-hidden mt-[56px] mr-[114px] border-[1px] border-[var(--border-dark-1)]"
+          className="max-[400px]:w-full max-[400px]:mx-[8px] w-[388px] h-[575px] bg-[var(--bg-light)] rounded-[8px] overflow-hidden mt-[56px] mx-auto md:mr-[114px] border-[1px] border-[var(--border-dark-1)]"
         >
           <div className="p-[14px] flex flex-col items-center">
             <h2 className="text-[18px] font-montserrat text-center mb-[12px]">

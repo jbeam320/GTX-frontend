@@ -54,9 +54,9 @@ export default function SearchableList<T>({
   return (
     <div className={className}>
       {showSearch && (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center max-md:px-[20px]">
           <div
-            className="px-[10px] py-[8px] w-[360px] h-[40px] rounded-[8px] flex items-center space-x-[13px]"
+            className="px-[10px] py-[8px] max-md:w-full w-[360px] h-[40px] rounded-[8px] flex items-center space-x-[13px]"
             {...restprops}
           >
             <SearchIcon />

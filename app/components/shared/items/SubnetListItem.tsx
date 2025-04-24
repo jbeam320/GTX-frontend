@@ -19,61 +19,91 @@ export default function SubnetListItem({
   const { taoPrice } = useTaoPrice();
 
   return (
-    <div className="w-[1200px] h-[73px] px-[14px] py-[10px] my-[2px] rounded-[8px] bg-[var(--bg-light-1)] font-montserrat flex space-between items-center text-[14px] hover:bg-[var(--bg-dark-1)]">
-      <div className="flex items-center basis-[250px]">
-        <div className="text-[13px]">{subnet.index}</div>
+    <div className="w-full md:w-[1200px] h-[73px] px-[0px] md:px-[14px] py-[10px] my-[2px] rounded-[8px] bg-[var(--bg-light-1)] font-[500] font-montserrat flex items-center justify-between text-[13px] md:text-[14px] hover:bg-[var(--bg-dark-1)]">
+      {/* Name */}
+      <div className="flex items-center min-w-[110px] md:w-[230px]">
+        <div className="text-[13px] max-md:hidden font-[400]">
+          {subnet.index}
+        </div>
         <div
-          className="mx-[15px] rounded-full w-[34px] h-[34px]"
+          className="mx-[10px] md:mx-[15px] rounded-full w-[34px] h-[34px]"
           style={{
             background: `linear-gradient(180deg, #000000 0%, #666666 100%)`,
           }}
         />
         <div className="flex flex-col h-[38px] justify-between">
-          <div className="text-[14px]">{subnet.name}</div>
+          <div className="md:text-[14px] font-[600]">{subnet.name}</div>
           <div className="text-[12px]">{subnet.netuid}</div>
         </div>
       </div>
 
-      <div className="text-[14px] p-[10px] basis-[100px]">
+      <div className="hidden md:block text-[14px] p-[10px] w-[100px] font-[600]">
         {formatPercent(subnet.emission / 1e9)}
       </div>
-      <div className="text-[14px] p-[10px]  basis-[120px]">
-        {formatPrice(subnet.price, isUSD ? taoPrice.price : null)}
+
+      <div className="text-[14px] p-[10px]  md:w-[100px] font-[600]">
+        T {formatPrice(subnet.price, isUSD ? taoPrice?.price : null)}
       </div>
 
-      <div className="flex gap-[25px] text-[14px] mr-[30px]">
-        {["price_change_1h", "price_change_24h", "price_change_1w"].map(
-          (key) => (
-            <div
-              key={key}
-              className={`text-center h-[24px] w-full min-w-[83px]  border-[var(--border-black)] border-[1px] rounded-[16px] ${
-                (subnet[key as keyof Subnet] as number) < 0
-                  ? "bg-[var(--bg-dark-2)]"
-                  : "bg-[var(--bg-light)]"
-              }`}
-            >
-              {formatPercent(subnet[key as keyof Subnet] as number)}
-            </div>
-          )
-        )}
+      {/* 24h price for mobile */}
+      <div
+        className={`md:hidden text-center h-[24px] w-[83px] border-[var(--border-black)] border-[1px] rounded-[16px] ${
+          subnet.price_change_24h < 0
+            ? "bg-[var(--bg-dark-2)]"
+            : "bg-[var(--bg-light)]"
+        }`}
+      >
+        {formatPercent(subnet.price_change_24h)}
       </div>
 
-      <div className="basis-[100px] p-[10px] text-center">
-        {formatCompact(subnet.market_cap, isUSD ? taoPrice.price : null)}
-      </div>
-      <div className="basis-[96px] p-[10px] text-center">
-        {formatCompact(subnet.volume_24h, isUSD ? taoPrice.price : null)}
-      </div>
-      <div className="basis-[100px] p-[10px] text-center">
-        {formatCompact(subnet.liquidity || 0, isUSD ? taoPrice.price : null)}
-      </div>
-
-      <div className="w-[66px] h-[15px] flex items-center justify-center">
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-          className="justify-center items-center"
+      {/* price changes */}
+      <div className="hidden md:flex gap-[25px] text-[14px]">
+        <div
+          className={`text-center h-[24px] w-[83px] border-[var(--border-black)] border-[1px] rounded-[16px] ${
+            subnet.price_change_1h < 0
+              ? "bg-[var(--bg-dark-2)]"
+              : "bg-[var(--bg-light)]"
+          }`}
         >
+          {formatPercent(subnet.price_change_1h)}
+        </div>
+
+        <div
+          className={`text-center h-[24px] w-[83px] border-[var(--border-black)] border-[1px] rounded-[16px] ${
+            subnet.price_change_24h < 0
+              ? "bg-[var(--bg-dark-2)]"
+              : "bg-[var(--bg-light)]"
+          }`}
+        >
+          {formatPercent(subnet.price_change_24h)}
+        </div>
+
+        <div
+          className={`text-center h-[24px] w-[83px] border-[var(--border-black)] border-[1px] rounded-[16px] ${
+            subnet.price_change_1w < 0
+              ? "bg-[var(--bg-dark-2)]"
+              : "bg-[var(--bg-light)]"
+          }`}
+        >
+          {formatPercent(subnet.price_change_1w)}
+        </div>
+      </div>
+
+      <div className="w-[90px] md:w-[100px] p-[10px] text-center font-[600]">
+        {formatCompact(subnet.market_cap, isUSD ? taoPrice?.price : null)}
+      </div>
+
+      <div className="hidden md:block w-[96px] p-[10px] text-center font-[600]">
+        {formatCompact(subnet.volume_24h, isUSD ? taoPrice?.price : null)}
+      </div>
+
+      <div className="hidden md:block w-[100px] p-[10px] text-center font-[600]">
+        {formatCompact(subnet.liquidity || 0, isUSD ? taoPrice?.price : null)}
+      </div>
+
+      {/* chart */}
+      <div className="hidden md:block w-[66px] h-[15px]">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={subnet.last_7days_trends.map((value, index) => ({
               name: `Day ${index + 1}`,
@@ -95,7 +125,6 @@ export default function SubnetListItem({
                 </linearGradient>
               </defs>
             </svg>
-
             <Line
               type="monotone"
               dataKey="value"

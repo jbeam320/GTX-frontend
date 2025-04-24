@@ -9,7 +9,7 @@ export default function SearchInput({
 }) {
   return (
     <div
-      className="bg-[var(--bg-dark-6)] border-[1px] border-[var(--bg-dark-1)] py-[10px] px-[23px] w-[282px] rounded-[16px] flex items-center"
+      className="bg-[var(--bg-dark-6)] border-[1px] border-[var(--bg-dark-1)] py-[10px] px-[23px] w-full md:w-[282px] rounded-[16px] flex items-center"
       {...restProps}
     >
       <SearchIcon />

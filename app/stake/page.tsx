@@ -10,8 +10,8 @@ export default function StakeModalContainer() {
   const [showValidators, setShowValidators] = useState(false);
 
   return (
-    <Container size="1200px" px={0} mt={116}>
-      <div className="w-full flex justify-between">
+    <Container size="1245px" className="mt-[140px] md:mt-[100px]">
+      <div className="w-full flex flex-col md:flex-row md:justify-between">
         {/* Validators Dashboard */}
         <AnimatePresence>
           {showValidators && (
@@ -21,6 +21,7 @@ export default function StakeModalContainer() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="max-md:mt-[60px] mb-[20px] order-2 md:order-1"
             >
               <ValidatorDashboard />
             </motion.div>
@@ -31,10 +32,7 @@ export default function StakeModalContainer() {
         <motion.div
           layout
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          style={{
-            marginLeft: showValidators ? "0px" : "auto",
-            marginRight: showValidators ? "0px" : "auto",
-          }}
+          className="order-1 md:order-2 m-auto"
         >
           <StakePanel
             handleViewValidators={() => setShowValidators(!showValidators)}

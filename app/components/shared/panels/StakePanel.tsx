@@ -32,8 +32,8 @@ export default function StakePanel({
       }
       bottomNode={
         <Button
-          label="VIEW VALIDATORS"
-          variant="primary"
+          label={showValidators ? "ClOSE VALIDATORS" : "VIEW VALIDATORS"}
+          variant={showValidators ? "secondary" : "primary"}
           onClick={handleViewValidators}
           icon={showValidators ? <CloseIcon /> : <ViewIcon />}
           isRounded={true}

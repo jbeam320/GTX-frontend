@@ -56,7 +56,7 @@ export function TaoInput({
   return (
     <div>
       <div
-        className={`w-[366px] h-[91px] rounded-[8px] bg-[var(--bg-light)] border-[1px] ${
+        className={`w-full h-[91px] rounded-[8px] bg-[var(--bg-light)] border-[1px] ${
           error ? "border-red-500" : "border-[var(--color-disabled)]"
         }  flex justify-center items-center relative`}
       >

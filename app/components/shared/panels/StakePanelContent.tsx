@@ -20,7 +20,6 @@ export default function StakePanelContent({
     useWalletStore();
   const { validatorStake } = useValidatorStake();
   const { taoPrice } = useTaoPrice();
-  console.log(taoPrice);
 
   const [amount, setAmount] = useState("");
   const [success, setSuccess] = useState(false);
@@ -34,14 +33,14 @@ export default function StakePanelContent({
     setIsProcessing(true);
     try {
       const { hotkey } = selectedValidator;
-      console.log(hotkey);
+
       if (isStake) {
         await stakeTx(+amount, hotkey, 0);
       } else {
         await unstakeTx(+amount, hotkey, 0);
       }
       setSuccess(true);
-      setAmount(""); // Clear amount after success
+      setAmount("");
 
       setTimeout(() => setSuccess(false), 5000);
     } catch (error) {
@@ -83,6 +82,7 @@ export default function StakePanelContent({
         disabledText={
           !amount || +amount <= 0 ? "ENTER AMOUNT" : "INSUFFICIENT BALANCE"
         }
+        style={{ width: "100%" }}
       />
     </>
   );
