@@ -1,14 +1,13 @@
 "use client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout";
 
 //styles
-import "./styles/globals.css";
-import "@mantine/core/styles.css"; // Make sure this comes after globals.css
 import "@mantine/charts/styles.css";
-
+import "@mantine/core/styles.css";
+import "./styles/globals.css";
 
 // Create a client with default options
 const queryClient = new QueryClient({

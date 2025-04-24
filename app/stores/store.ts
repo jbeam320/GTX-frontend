@@ -304,7 +304,6 @@ export const useWalletStore = create<WalletState>()(
         validator: string,
         netuid: number = 0
       ) => {
-        console.log(netuid, amount);
 
         const {
           walletAddress,
@@ -323,7 +322,6 @@ export const useWalletStore = create<WalletState>()(
           const account = await web3FromAddress(walletAddress);
 
           if (!account) throw new Error("Account not found");
-          console.log(netuid, amount);
 
           const stakeTx = api.tx.subtensorModule.addStake(
             validator,
@@ -360,9 +358,6 @@ export const useWalletStore = create<WalletState>()(
                         "Transaction finalized, refreshing balances..."
                       );
                       try {
-                        // await new Promise((resolve) =>
-                        //   setTimeout(resolve, 2000)
-                        // );
                         await fetchWalletBalance(walletAddress, api);
                         await fetchStakedBalance(walletAddress, api);
                         if (unsub) unsub();
@@ -410,7 +405,6 @@ export const useWalletStore = create<WalletState>()(
           fetchWalletBalance,
           fetchStakedBalance,
         } = get();
-        console.log(netuid, amount, validator);
 
         if (!walletAddress) throw new Error("wallet address not found");
         if (!extension) throw new Error("Extension not connected");
@@ -457,7 +451,6 @@ export const useWalletStore = create<WalletState>()(
                 if (isFinalized) {
                   console.log("Transaction finalized, refreshing balances...");
                   try {
-                    // await new Promise((resolve) => setTimeout(resolve, 1000));
                     await fetchWalletBalance(walletAddress, currentApi);
                     await fetchStakedBalance(walletAddress, currentApi);
                     resolve(result.txHash.toString());
@@ -550,8 +543,6 @@ export const useWalletStore = create<WalletState>()(
           const account = await web3FromAddress(walletAddress);
 
           if (!account) throw new Error("Account not found");
-
-          console.log("ss", txsInfo);
 
           const txs = txsInfo.map(({ netuid, amount, type, validator }) =>
             type === "sell"

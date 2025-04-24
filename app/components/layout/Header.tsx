@@ -91,10 +91,13 @@ export default function Header() {
               {walletAddress ? (
                 <Flex align="center" gap="32px">
                   <DropdownMenu
-                    options={validators?.map((validator: Validator) => ({
-                      label: validator.name,
-                      value: validator.hotkey,
-                    }))}
+                    options={
+                      validators ??
+                      []?.map((validator: Validator) => ({
+                        label: validator.name,
+                        value: validator.hotkey,
+                      }))
+                    }
                     selectedOption={{
                       value: selectedValidator.hotkey,
                       label: selectedValidator.name,

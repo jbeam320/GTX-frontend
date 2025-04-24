@@ -47,6 +47,11 @@ export const del = async (url: string, data: any) => {
 };
 
 const errorHandler = (error: any) => {
-  throw error;
-  // TODO: handle error
+  if (axios.isAxiosError(error)) {
+    if (error.code === 'ECONNREFUSED' || !error.response) {
+      console.log('Unable to connect to the server. Please check if the server is running.');
+    }
+    console.log(error);
+  }
+  console.log(error);
 };
