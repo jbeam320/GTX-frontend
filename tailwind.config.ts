@@ -8,13 +8,8 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        "green-stroke": "var(--green-stroke)",
-        "red-stroke": "var(--red-stroke)",
-        "green-fill": "var(--green-fill)",
-        "red-fill": "var(--red-fill)",
+      fontFamily: {
+        montserrat: ["Montserrat", "cursive"],
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-in-out",
